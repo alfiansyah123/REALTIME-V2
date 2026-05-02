@@ -10,6 +10,7 @@ export default function ReportsTable({ data = [], currency = 'USD', currencyRate
     const isTrafee = selectedNetwork === 'TRAFEE';
 
     const fetchCountryDetails = async (row, rowIndex) => {
+        if (!row) return;
         const smartlinkName = row.smartlink;
         const smartlinkId = row.smartlink_id;
 
@@ -25,9 +26,7 @@ export default function ReportsTable({ data = [], currency = 'USD', currencyRate
             const end = endDate || new Date().toISOString().split('T')[0];
 
             if (smartlinkId) {
-                // USE THE API UTILITY INSTEAD OF DIRECT FETCH
                 const fnData = await api.getReportCountries(start, end, smartlinkId);
-                
                 if (fnData && Array.isArray(fnData.data)) {
                     setRowDetails(prev => ({ ...prev, [smartlinkName]: fnData.data }));
                     return;
@@ -67,13 +66,14 @@ export default function ReportsTable({ data = [], currency = 'USD', currencyRate
     };
 
     const sortedData = useMemo(() => {
+        if (!Array.isArray(data)) return [];
         if (!sortConfig.key) return data;
         return [...data].sort((a, b) => {
             let aValue = a[sortConfig.key];
             let bValue = b[sortConfig.key];
             if (['clicks', 'leads', 'payouts', 'cr', 'visits', 'unique'].includes(sortConfig.key)) {
-                aValue = parseFloat(String(aValue).replace(/[^0-9.-]+/g, ""));
-                bValue = parseFloat(String(bValue).replace(/[^0-9.-]+/g, ""));
+                aValue = parseFloat(String(aValue || 0).replace(/[^0-9.-]+/g, ""));
+                bValue = parseFloat(String(bValue || 0).replace(/[^0-9.-]+/g, ""));
             }
             if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
             if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
@@ -82,9 +82,9 @@ export default function ReportsTable({ data = [], currency = 'USD', currencyRate
     }, [data, sortConfig]);
 
     const formatCurrency = (num) => {
-        if (num === undefined || num === null) return currency === 'IDR' ? 'Rp 0' : '$0.00';
-        if (currency === 'IDR') return `Rp ${(num * currencyRate).toLocaleString('id-ID')}`;
-        return `$${num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        const value = parseFloat(num) || 0;
+        if (currency === 'IDR') return `Rp ${(value * currencyRate).toLocaleString('id-ID')}`;
+        return `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     };
 
     const countryCodeMapping = {
@@ -144,21 +144,22 @@ export default function ReportsTable({ data = [], currency = 'USD', currencyRate
                     <span>No data available</span>
                 </div>
             ) : (
-                <table className="w-full text-left border-collapse text-[11px]">
+                <table className="w-full text-left border-collapse text-xs">
                     <thead className="bg-gray-50 dark:bg-gray-800 text-[10px] uppercase text-gray-500 dark:text-gray-400 font-semibold sticky top-0 z-10 border-b border-gray-200 dark:border-gray-700">
                         <tr>
-                            <th className="px-2 py-2.5 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('smartlink')}>SMARTLINK</th>
-                            <th className="px-2 py-2.5 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('network')}>NETWORK</th>
-                            {!isTrafee && <th className="px-2 py-2.5 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('visits')}>VISITS</th>}
-                            {!isTrafee && <th className="px-2 py-2.5 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('unique')}>UNIQUE</th>}
-                            <th className="px-2 py-2.5 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('clicks')}>CLICKS</th>
-                            <th className="px-2 py-2.5 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('leads')}>LEADS</th>
-                            <th className="px-2 py-2.5 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('cr')}>CR</th>
-                            <th className="px-2 py-2.5 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('payouts')}>PAYOUTS</th>
+                            <th className="px-4 py-3 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('smartlink')}>SMARTLINK</th>
+                            <th className="px-4 py-3 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('network')}>NETWORK</th>
+                            {!isTrafee && <th className="px-4 py-3 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('visits')}>VISITS</th>}
+                            {!isTrafee && <th className="px-4 py-3 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('unique')}>UNIQUE</th>}
+                            <th className="px-4 py-3 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('clicks')}>CLICKS</th>
+                            <th className="px-4 py-3 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('leads')}>LEADS</th>
+                            <th className="px-4 py-3 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('cr')}>CR</th>
+                            <th className="px-4 py-3 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('payouts')}>PAYOUTS</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
                         {sortedData.map((row, index) => {
+                            if (!row) return null;
                             const clicks = parseInt(row.clicks) || 0;
                             const leads = parseInt(row.leads) || 0;
                             const cr = clicks > 0 ? ((leads / clicks) * 100).toFixed(2) + '%' : '0.00%';
@@ -169,7 +170,7 @@ export default function ReportsTable({ data = [], currency = 'USD', currencyRate
                             return (
                                 <Fragment key={index}>
                                     <tr className="hover:bg-gray-50 dark:hover:bg-gray-800/40 group">
-                                        <td className="px-2 py-2 text-left text-gray-800 dark:text-gray-200 whitespace-nowrap cursor-pointer" onClick={() => handleExpandClick(row, index)}>
+                                        <td className="px-4 py-3 text-left text-gray-800 dark:text-gray-200 whitespace-nowrap cursor-pointer" onClick={() => handleExpandClick(row, index)}>
                                             <div className="flex items-center gap-2">
                                                 <button className="p-0.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors focus:outline-none">
                                                     {isLoading ? (
@@ -181,16 +182,17 @@ export default function ReportsTable({ data = [], currency = 'USD', currencyRate
                                                 <span>{row.smartlink || '-'}</span>
                                             </div>
                                         </td>
-                                        <td className="px-2 py-2 text-center">{getNetworkBadge(row.network || 'IMONETIZEIT')}</td>
-                                        {!isTrafee && <td className="px-2 py-2 text-center text-gray-800 dark:text-gray-200">{row.visits}</td>}
-                                        {!isTrafee && <td className="px-2 py-2 text-center text-gray-800 dark:text-gray-200">{row.unique}</td>}
-                                        <td className="px-2 py-2 text-center text-gray-800 dark:text-gray-200">{row.clicks}</td>
-                                        <td className="px-2 py-2 text-center text-gray-800 dark:text-gray-200">{row.leads}</td>
-                                        <td className="px-2 py-2 text-center text-gray-500 dark:text-gray-400">{cr}</td>
-                                        <td className="px-2 py-2 text-center font-semibold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">{formatCurrency(row.payouts)}</td>
+                                        <td className="px-4 py-3 text-center">{getNetworkBadge(row.network || 'IMONETIZEIT')}</td>
+                                        {!isTrafee && <td className="px-4 py-3 text-center text-gray-800 dark:text-gray-200">{row.visits}</td>}
+                                        {!isTrafee && <td className="px-4 py-3 text-center text-gray-800 dark:text-gray-200">{row.unique}</td>}
+                                        <td className="px-4 py-3 text-center text-gray-800 dark:text-gray-200">{row.clicks}</td>
+                                        <td className="px-4 py-3 text-center text-gray-800 dark:text-gray-200">{row.leads}</td>
+                                        <td className="px-4 py-3 text-center text-gray-500 dark:text-gray-400">{cr}</td>
+                                        <td className="px-4 py-3 text-center font-semibold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">{formatCurrency(row.payouts)}</td>
                                     </tr>
                                     {isExpanded && !isLoading && countries.length > 0 && (
                                         countries.map((country, cIndex) => {
+                                            if (!country) return null;
                                             const cClicks = parseInt(country.clicks) || 0;
                                             const cLeads = parseInt(country.leads) || 0;
                                             const cCr = cClicks > 0 ? ((cLeads / cClicks) * 100).toFixed(2) + '%' : '0.00%';
@@ -198,26 +200,26 @@ export default function ReportsTable({ data = [], currency = 'USD', currencyRate
                                             const flagUrl = `https://flagcdn.com/20x15/${getAlpha2Code(countryCode)}.png`;
                                             return (
                                                 <tr key={`${index}-${cIndex}`} className="bg-gray-50/50 dark:bg-gray-900/30 hover:bg-gray-100 dark:hover:bg-gray-800/50 text-[11px] border-b border-gray-100 dark:border-gray-800/50 last:border-0 text-gray-600 dark:text-gray-400">
-                                                    <td className="px-2 py-1.5 text-left pl-12 border-r border-transparent">
+                                                    <td className="px-4 py-2 text-left pl-12 border-r border-transparent">
                                                         <div className="flex items-center gap-2">
                                                             <img src={flagUrl} alt={countryCode} className="w-5 h-3.5 object-cover rounded-[1px] shadow-sm" onError={(e) => e.target.style.display = 'none'} />
                                                             <span className="font-medium text-[10px]">{countryCode}</span>
                                                         </div>
                                                     </td>
-                                                    <td className="px-2 py-1.5 text-center"></td>
-                                                    {!isTrafee && <td className="px-2 py-1.5 text-center">{parseInt(country.visits) || 0}</td>}
-                                                    {!isTrafee && <td className="px-2 py-1.5 text-center">{parseInt(country.unique) || 0}</td>}
-                                                    <td className="px-2 py-1.5 text-center">{cClicks}</td>
-                                                    <td className="px-2 py-1.5 text-center">{cLeads}</td>
-                                                    <td className="px-2 py-1.5 text-center text-gray-500">{cCr}</td>
-                                                    <td className="px-2 py-1.5 text-center font-medium text-emerald-600 dark:text-emerald-500">{formatCurrency(country.payouts)}</td>
+                                                    <td className="px-4 py-2 text-center"></td>
+                                                    {!isTrafee && <td className="px-4 py-2 text-center">{parseInt(country.visits) || 0}</td>}
+                                                    {!isTrafee && <td className="px-4 py-2 text-center">{parseInt(country.unique) || 0}</td>}
+                                                    <td className="px-4 py-2 text-center">{cClicks}</td>
+                                                    <td className="px-4 py-2 text-center">{cLeads}</td>
+                                                    <td className="px-4 py-2 text-center text-gray-500">{cCr}</td>
+                                                    <td className="px-4 py-2 text-center font-medium text-emerald-600 dark:text-emerald-500">{formatCurrency(country.payouts)}</td>
                                                 </tr>
                                             );
                                         })
                                     )}
                                     {isExpanded && !isLoading && countries.length === 0 && (
                                         <tr className="bg-gray-50/50 dark:bg-gray-900/30">
-                                            <td colSpan={isTrafee ? "6" : "8"} className="px-2 py-2 text-center text-xs text-gray-400 italic">No country data or unable to fetch details.</td>
+                                            <td colSpan={isTrafee ? "6" : "8"} className="px-4 py-3 text-center text-xs text-gray-400 italic">No country data or unable to fetch details.</td>
                                         </tr>
                                     )}
                                 </Fragment>
@@ -226,13 +228,13 @@ export default function ReportsTable({ data = [], currency = 'USD', currencyRate
                     </tbody>
                     <tfoot className="bg-gray-100 dark:bg-gray-800 font-bold border-t-2 border-gray-300 dark:border-gray-600 sticky bottom-0 z-10">
                         <tr>
-                            <td className="px-2 py-2 text-center text-[10px] uppercase" colSpan="2">TOTAL</td>
-                            {!isTrafee && <td className="px-2 py-2 text-center text-gray-800 dark:text-gray-200">{totalStats.visits}</td>}
-                            {!isTrafee && <td className="px-2 py-2 text-center text-gray-800 dark:text-gray-200">{totalStats.unique}</td>}
-                            <td className="px-2 py-2 text-center text-gray-800 dark:text-gray-200">{totalStats.clicks}</td>
-                            <td className="px-2 py-2 text-center text-gray-800 dark:text-gray-200">{totalStats.leads}</td>
-                            <td className="px-2 py-2 text-center text-gray-500 dark:text-gray-400">{totalStats.clicks > 0 ? ((totalStats.leads / totalStats.clicks) * 100).toFixed(2) + '%' : '0.00%'}</td>
-                            <td className="px-2 py-2 text-center font-semibold text-emerald-600 dark:text-emerald-400">{formatCurrency(totalStats.payouts)}</td>
+                            <td className="px-4 py-3 text-center text-[10px] uppercase" colSpan="2">TOTAL</td>
+                            {!isTrafee && <td className="px-4 py-3 text-center text-gray-800 dark:text-gray-200">{totalStats.visits}</td>}
+                            {!isTrafee && <td className="px-4 py-3 text-center text-gray-800 dark:text-gray-200">{totalStats.unique}</td>}
+                            <td className="px-4 py-3 text-center text-gray-800 dark:text-gray-200">{totalStats.clicks}</td>
+                            <td className="px-4 py-3 text-center text-gray-800 dark:text-gray-200">{totalStats.leads}</td>
+                            <td className="px-4 py-3 text-center text-gray-500 dark:text-gray-400">{totalStats.clicks > 0 ? ((totalStats.leads / totalStats.clicks) * 100).toFixed(2) + '%' : '0.00%'}</td>
+                            <td className="px-4 py-3 text-center font-semibold text-emerald-600 dark:text-emerald-400">{formatCurrency(totalStats.payouts)}</td>
                         </tr>
                     </tfoot>
                 </table>

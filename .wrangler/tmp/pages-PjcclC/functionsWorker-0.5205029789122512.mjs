@@ -1,7 +1,7 @@
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
-// ../.wrangler/tmp/bundle-N1uDgb/checked-fetch.js
+// ../.wrangler/tmp/bundle-agRWyG/checked-fetch.js
 var urls = /* @__PURE__ */ new Set();
 function checkURL(request, init) {
   const url = request instanceof URL ? request : new URL(
@@ -421,13 +421,16 @@ __name(onRequest4, "onRequest");
 // api/debug-d1.js
 async function onRequest5(context) {
   const db = context.env.DB;
-  const headers = { "Content-Type": "application/json" };
   try {
-    const { results: linksSample } = await db.prepare("SELECT * FROM links LIMIT 3").all();
-    const { results: teamSample } = await db.prepare("SELECT * FROM team LIMIT 3").all();
-    return new Response(JSON.stringify({ linksSample, teamSample }), { status: 200, headers });
+    const { results: links } = await db.prepare("SELECT * FROM links LIMIT 5").all();
+    const { results: team } = await db.prepare("SELECT * FROM team LIMIT 5").all();
+    const content = JSON.stringify({ links, team }, null, 2);
+    return new Response(content, {
+      status: 200,
+      headers: { "Content-Type": "text/plain" }
+    });
   } catch (e) {
-    return new Response(JSON.stringify({ error: e.message }), { status: 500, headers });
+    return new Response(e.message, { status: 500, headers: { "Content-Type": "text/plain" } });
   }
 }
 __name(onRequest5, "onRequest");
@@ -1230,7 +1233,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// ../.wrangler/tmp/bundle-N1uDgb/middleware-insertion-facade.js
+// ../.wrangler/tmp/bundle-agRWyG/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -1262,7 +1265,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// ../.wrangler/tmp/bundle-N1uDgb/middleware-loader.entry.ts
+// ../.wrangler/tmp/bundle-agRWyG/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;
