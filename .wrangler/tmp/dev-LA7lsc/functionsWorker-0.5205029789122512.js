@@ -448,22 +448,6 @@ __name(onRequest4, "onRequest4");
 __name2(onRequest4, "onRequest");
 async function onRequest5(context) {
   const db = context.env.DB;
-  try {
-    const slug = "VrLYTRP5zBPMTDQE";
-    const { results: linkMatch } = await db.prepare("SELECT * FROM links WHERE slug = ?").bind(slug).all();
-    const { results: teamMatch } = await db.prepare("SELECT * FROM team WHERE user_id = ? OR name = ?").bind(slug, slug).all();
-    return new Response(JSON.stringify({ slug, linkMatch, teamMatch }, null, 2), {
-      status: 200,
-      headers: { "Content-Type": "text/plain" }
-    });
-  } catch (e) {
-    return new Response(e.message, { status: 500, headers: { "Content-Type": "text/plain" } });
-  }
-}
-__name(onRequest5, "onRequest5");
-__name2(onRequest5, "onRequest");
-async function onRequest6(context) {
-  const db = context.env.DB;
   const headers = {
     "Access-Control-Allow-Origin": "*",
     "Content-Type": "application/json"
@@ -504,9 +488,9 @@ async function onRequest6(context) {
     return new Response(JSON.stringify({ error: error.message }), { status: 500, headers });
   }
 }
-__name(onRequest6, "onRequest6");
-__name2(onRequest6, "onRequest");
-async function onRequest7(context) {
+__name(onRequest5, "onRequest5");
+__name2(onRequest5, "onRequest");
+async function onRequest6(context) {
   const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -612,9 +596,9 @@ async function onRequest7(context) {
     });
   }
 }
-__name(onRequest7, "onRequest7");
-__name2(onRequest7, "onRequest");
-async function onRequest8(context) {
+__name(onRequest6, "onRequest6");
+__name2(onRequest6, "onRequest");
+async function onRequest7(context) {
   const db = context.env.DB;
   const url = new URL(context.request.url);
   const startDate = url.searchParams.get("startDate") || (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
@@ -631,14 +615,15 @@ async function onRequest8(context) {
   try {
     const { results: d1Stats } = await db.prepare(`
             SELECT 
-                COALESCE(t.name, c.slug) as smartlink,
+                COALESCE(t.name, l.user_id, c.slug) as smartlink,
                 c.slug,
                 'TRAFEE' as network,
                 COUNT(c.id) as clicks,
                 SUM(CASE WHEN c.is_lead = 1 THEN 1 ELSE 0 END) as leads,
                 SUM(COALESCE(c.payout, 0)) as payouts
             FROM clicks c
-            LEFT JOIN team t ON c.slug = t.user_id
+            LEFT JOIN links l ON c.slug = l.slug
+            LEFT JOIN team t ON (l.user_id = t.user_id OR c.slug = t.user_id OR c.slug = t.name)
             WHERE (c.s3 = 'TRAFEE' OR c.s3 IS NULL)
               AND DATE(c.created_at) BETWEEN ? AND ?
             GROUP BY c.slug
@@ -654,8 +639,8 @@ async function onRequest8(context) {
     return new Response(JSON.stringify({ error: error.message, data: [] }), { status: 500, headers });
   }
 }
-__name(onRequest8, "onRequest8");
-__name2(onRequest8, "onRequest");
+__name(onRequest7, "onRequest7");
+__name2(onRequest7, "onRequest");
 var routes = [
   {
     routePath: "/api/change-password",
@@ -735,32 +720,25 @@ var routes = [
     modules: [onRequest4]
   },
   {
-    routePath: "/api/debug-d1",
+    routePath: "/api/log-click",
     mountPath: "/api",
     method: "",
     middlewares: [],
     modules: [onRequest5]
   },
   {
-    routePath: "/api/log-click",
+    routePath: "/api/report-countries",
     mountPath: "/api",
     method: "",
     middlewares: [],
     modules: [onRequest6]
   },
   {
-    routePath: "/api/report-countries",
-    mountPath: "/api",
-    method: "",
-    middlewares: [],
-    modules: [onRequest7]
-  },
-  {
     routePath: "/api/trafee-reports",
     mountPath: "/api",
     method: "",
     middlewares: [],
-    modules: [onRequest8]
+    modules: [onRequest7]
   },
   {
     routePath: "/api/verify-password",

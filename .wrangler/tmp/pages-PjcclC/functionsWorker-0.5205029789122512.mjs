@@ -1,7 +1,7 @@
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
-// ../.wrangler/tmp/bundle-m5RlYK/checked-fetch.js
+// ../.wrangler/tmp/bundle-JvG0Q5/checked-fetch.js
 var urls = /* @__PURE__ */ new Set();
 function checkURL(request, init) {
   const url = request instanceof URL ? request : new URL(
@@ -418,25 +418,8 @@ async function onRequest4(context) {
 }
 __name(onRequest4, "onRequest");
 
-// api/debug-d1.js
-async function onRequest5(context) {
-  const db = context.env.DB;
-  try {
-    const slug = "VrLYTRP5zBPMTDQE";
-    const { results: linkMatch } = await db.prepare("SELECT * FROM links WHERE slug = ?").bind(slug).all();
-    const { results: teamMatch } = await db.prepare("SELECT * FROM team WHERE user_id = ? OR name = ?").bind(slug, slug).all();
-    return new Response(JSON.stringify({ slug, linkMatch, teamMatch }, null, 2), {
-      status: 200,
-      headers: { "Content-Type": "text/plain" }
-    });
-  } catch (e) {
-    return new Response(e.message, { status: 500, headers: { "Content-Type": "text/plain" } });
-  }
-}
-__name(onRequest5, "onRequest");
-
 // api/log-click.js
-async function onRequest6(context) {
+async function onRequest5(context) {
   const db = context.env.DB;
   const headers = {
     "Access-Control-Allow-Origin": "*",
@@ -478,10 +461,10 @@ async function onRequest6(context) {
     return new Response(JSON.stringify({ error: error.message }), { status: 500, headers });
   }
 }
-__name(onRequest6, "onRequest");
+__name(onRequest5, "onRequest");
 
 // api/report-countries.js
-async function onRequest7(context) {
+async function onRequest6(context) {
   const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -585,10 +568,10 @@ async function onRequest7(context) {
     });
   }
 }
-__name(onRequest7, "onRequest");
+__name(onRequest6, "onRequest");
 
 // api/trafee-reports.js
-async function onRequest8(context) {
+async function onRequest7(context) {
   const db = context.env.DB;
   const url = new URL(context.request.url);
   const startDate = url.searchParams.get("startDate") || (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
@@ -605,14 +588,15 @@ async function onRequest8(context) {
   try {
     const { results: d1Stats } = await db.prepare(`
             SELECT 
-                COALESCE(t.name, c.slug) as smartlink,
+                COALESCE(t.name, l.user_id, c.slug) as smartlink,
                 c.slug,
                 'TRAFEE' as network,
                 COUNT(c.id) as clicks,
                 SUM(CASE WHEN c.is_lead = 1 THEN 1 ELSE 0 END) as leads,
                 SUM(COALESCE(c.payout, 0)) as payouts
             FROM clicks c
-            LEFT JOIN team t ON c.slug = t.user_id
+            LEFT JOIN links l ON c.slug = l.slug
+            LEFT JOIN team t ON (l.user_id = t.user_id OR c.slug = t.user_id OR c.slug = t.name)
             WHERE (c.s3 = 'TRAFEE' OR c.s3 IS NULL)
               AND DATE(c.created_at) BETWEEN ? AND ?
             GROUP BY c.slug
@@ -628,7 +612,7 @@ async function onRequest8(context) {
     return new Response(JSON.stringify({ error: error.message, data: [] }), { status: 500, headers });
   }
 }
-__name(onRequest8, "onRequest");
+__name(onRequest7, "onRequest");
 
 // ../.wrangler/tmp/pages-PjcclC/functionsRoutes-0.6126270461134293.mjs
 var routes = [
@@ -710,32 +694,25 @@ var routes = [
     modules: [onRequest4]
   },
   {
-    routePath: "/api/debug-d1",
+    routePath: "/api/log-click",
     mountPath: "/api",
     method: "",
     middlewares: [],
     modules: [onRequest5]
   },
   {
-    routePath: "/api/log-click",
+    routePath: "/api/report-countries",
     mountPath: "/api",
     method: "",
     middlewares: [],
     modules: [onRequest6]
   },
   {
-    routePath: "/api/report-countries",
-    mountPath: "/api",
-    method: "",
-    middlewares: [],
-    modules: [onRequest7]
-  },
-  {
     routePath: "/api/trafee-reports",
     mountPath: "/api",
     method: "",
     middlewares: [],
-    modules: [onRequest8]
+    modules: [onRequest7]
   },
   {
     routePath: "/api/verify-password",
@@ -1233,7 +1210,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// ../.wrangler/tmp/bundle-m5RlYK/middleware-insertion-facade.js
+// ../.wrangler/tmp/bundle-JvG0Q5/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -1265,7 +1242,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// ../.wrangler/tmp/bundle-m5RlYK/middleware-loader.entry.ts
+// ../.wrangler/tmp/bundle-JvG0Q5/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;

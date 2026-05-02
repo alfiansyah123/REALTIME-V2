@@ -119,7 +119,7 @@ const ReportsPage = ({ onLogout, currency, setCurrency, currencyRate, setCurrenc
                 </div>
             </div>
 
-            <div className="flex-1 h-fit min-w-0 mx-6 rounded-3xl glass-panel relative z-10 pb-4 overflow-clip">
+            <div className="flex-1 h-fit min-w-0 rounded-3xl glass-panel relative z-10 pb-4 overflow-clip">
                 {isLoading ? (
                     <div className="flex items-center justify-center h-64">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
