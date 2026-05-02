@@ -448,13 +448,13 @@ __name(onRequest4, "onRequest4");
 __name2(onRequest4, "onRequest");
 async function onRequest5(context) {
   const db = context.env.DB;
-  if (!db) return new Response(JSON.stringify({ error: "DB binding 'DB' not found in context.env" }), { status: 500 });
   const headers = { "Content-Type": "application/json" };
   try {
-    const { results: tables } = await db.prepare("SELECT name FROM sqlite_master WHERE type='table'").all();
-    return new Response(JSON.stringify({ tables }), { status: 200, headers });
+    const { results: linksSample } = await db.prepare("SELECT * FROM links LIMIT 3").all();
+    const { results: teamSample } = await db.prepare("SELECT * FROM team LIMIT 3").all();
+    return new Response(JSON.stringify({ linksSample, teamSample }), { status: 200, headers });
   } catch (e) {
-    return new Response(JSON.stringify({ error: e.message, stack: e.stack }), { status: 500, headers });
+    return new Response(JSON.stringify({ error: e.message }), { status: 500, headers });
   }
 }
 __name(onRequest5, "onRequest5");
