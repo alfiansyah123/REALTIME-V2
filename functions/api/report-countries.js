@@ -1,7 +1,19 @@
-export async function onRequestPost(context) {
+export async function onRequest(context) {
     const db = context.env.DB;
-    const body = await context.request.json();
-    const { startDate, endDate, smartlinkId } = body;
+    const url = new URL(context.request.url);
+    
+    // Try to get from body (POST) or searchParams (GET)
+    let startDate, endDate, smartlinkId;
+    try {
+        const body = await context.request.json();
+        startDate = body.startDate;
+        endDate = body.endDate;
+        smartlinkId = body.smartlinkId;
+    } catch {
+        startDate = url.searchParams.get('startDate');
+        endDate = url.searchParams.get('endDate');
+        smartlinkId = url.searchParams.get('smartlinkId');
+    }
     
     const headers = {
         'Access-Control-Allow-Origin': '*',
