@@ -1,4 +1,4 @@
-export async function onRequestGet(context) {
+export async function onRequest(context) {
     const db = context.env.DB;
     const url = new URL(context.request.url);
     const limit = parseInt(url.searchParams.get('limit')) || 100;
