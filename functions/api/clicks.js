@@ -5,25 +5,33 @@ export async function onRequest(context) {
     
     const headers = {
         'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
         'Content-Type': 'application/json'
     };
 
     if (!db) {
-        return new Response(JSON.stringify({ error: 'Database connection error' }), { status: 500, headers });
+        return new Response(JSON.stringify({ error: 'Database connection error', data: [] }), { status: 500, headers });
     }
 
     try {
-        // Fetch clicks from D1
-        // Note: For now we don't join with links table unless we migrate that too
+        // Fetch clicks from D1 sorted by ID or created_at
+        // Using SQLite syntax
         const { results } = await db.prepare(`
             SELECT * FROM clicks 
-            ORDER BY created_at DESC 
+            ORDER BY id DESC 
             LIMIT ?
         `).bind(limit).all();
 
-        return new Response(JSON.stringify({ data: results }), { status: 200, headers });
+        return new Response(JSON.stringify({ 
+            success: true, 
+            data: results || [] 
+        }), { status: 200, headers });
     } catch (error) {
-        return new Response(JSON.stringify({ error: error.message }), { status: 500, headers });
+        return new Response(JSON.stringify({ 
+            success: false, 
+            error: error.message, 
+            data: [] 
+        }), { status: 500, headers });
     }
 }
 
@@ -31,7 +39,7 @@ export async function onRequestOptions() {
     return new Response(null, {
         headers: {
             'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, OPTIONS',
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type'
         }
     });
