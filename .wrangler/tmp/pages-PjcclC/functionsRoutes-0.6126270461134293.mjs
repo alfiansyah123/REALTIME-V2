@@ -9,6 +9,7 @@ import { onRequestOptions as __api_verify_password_js_onRequestOptions } from "C
 import { onRequest as __api_clicks_js_onRequest } from "C:\\project\\REALTIME - NGELID TEAM\\functions\\api\\clicks.js"
 import { onRequest as __api_conversions_js_onRequest } from "C:\\project\\REALTIME - NGELID TEAM\\functions\\api\\conversions.js"
 import { onRequest as __api_daily_reports_js_onRequest } from "C:\\project\\REALTIME - NGELID TEAM\\functions\\api\\daily-reports.js"
+import { onRequest as __api_debug_d1_js_onRequest } from "C:\\project\\REALTIME - NGELID TEAM\\functions\\api\\debug-d1.js"
 import { onRequest as __api_log_click_js_onRequest } from "C:\\project\\REALTIME - NGELID TEAM\\functions\\api\\log-click.js"
 import { onRequest as __api_report_countries_js_onRequest } from "C:\\project\\REALTIME - NGELID TEAM\\functions\\api\\report-countries.js"
 import { onRequest as __api_trafee_reports_js_onRequest } from "C:\\project\\REALTIME - NGELID TEAM\\functions\\api\\trafee-reports.js"
@@ -91,6 +92,13 @@ export const routes = [
       method: "",
       middlewares: [],
       modules: [__api_daily_reports_js_onRequest],
+    },
+  {
+      routePath: "/api/debug-d1",
+      mountPath: "/api",
+      method: "",
+      middlewares: [],
+      modules: [__api_debug_d1_js_onRequest],
     },
   {
       routePath: "/api/log-click",

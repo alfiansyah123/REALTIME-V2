@@ -448,6 +448,24 @@ __name(onRequest4, "onRequest4");
 __name2(onRequest4, "onRequest");
 async function onRequest5(context) {
   const db = context.env.DB;
+  const headers = { "Content-Type": "application/json" };
+  try {
+    const { results: count } = await db.prepare("SELECT COUNT(*) as total FROM clicks").all();
+    const { results: last10 } = await db.prepare("SELECT * FROM clicks ORDER BY id DESC LIMIT 10").all();
+    const { results: teamCount } = await db.prepare("SELECT COUNT(*) as total FROM team").all();
+    return new Response(JSON.stringify({
+      clicks_total: count[0].total,
+      team_total: teamCount[0].total,
+      last_10_clicks: last10
+    }), { status: 200, headers });
+  } catch (e) {
+    return new Response(JSON.stringify({ error: e.message }), { status: 500, headers });
+  }
+}
+__name(onRequest5, "onRequest5");
+__name2(onRequest5, "onRequest");
+async function onRequest6(context) {
+  const db = context.env.DB;
   const headers = {
     "Access-Control-Allow-Origin": "*",
     "Content-Type": "application/json"
@@ -488,9 +506,9 @@ async function onRequest5(context) {
     return new Response(JSON.stringify({ error: error.message }), { status: 500, headers });
   }
 }
-__name(onRequest5, "onRequest5");
-__name2(onRequest5, "onRequest");
-async function onRequest6(context) {
+__name(onRequest6, "onRequest6");
+__name2(onRequest6, "onRequest");
+async function onRequest7(context) {
   const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -596,9 +614,9 @@ async function onRequest6(context) {
     });
   }
 }
-__name(onRequest6, "onRequest6");
-__name2(onRequest6, "onRequest");
-async function onRequest7(context) {
+__name(onRequest7, "onRequest7");
+__name2(onRequest7, "onRequest");
+async function onRequest8(context) {
   const db = context.env.DB;
   const url = new URL(context.request.url);
   const startDate = url.searchParams.get("startDate") || (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
@@ -640,8 +658,8 @@ async function onRequest7(context) {
     return new Response(JSON.stringify({ error: error.message, data: [] }), { status: 500, headers });
   }
 }
-__name(onRequest7, "onRequest7");
-__name2(onRequest7, "onRequest");
+__name(onRequest8, "onRequest8");
+__name2(onRequest8, "onRequest");
 var routes = [
   {
     routePath: "/api/change-password",
@@ -721,25 +739,32 @@ var routes = [
     modules: [onRequest4]
   },
   {
-    routePath: "/api/log-click",
+    routePath: "/api/debug-d1",
     mountPath: "/api",
     method: "",
     middlewares: [],
     modules: [onRequest5]
   },
   {
-    routePath: "/api/report-countries",
+    routePath: "/api/log-click",
     mountPath: "/api",
     method: "",
     middlewares: [],
     modules: [onRequest6]
   },
   {
-    routePath: "/api/trafee-reports",
+    routePath: "/api/report-countries",
     mountPath: "/api",
     method: "",
     middlewares: [],
     modules: [onRequest7]
+  },
+  {
+    routePath: "/api/trafee-reports",
+    mountPath: "/api",
+    method: "",
+    middlewares: [],
+    modules: [onRequest8]
   },
   {
     routePath: "/api/verify-password",

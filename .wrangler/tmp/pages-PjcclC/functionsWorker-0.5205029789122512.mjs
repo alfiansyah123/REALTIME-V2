@@ -1,7 +1,7 @@
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
-// ../.wrangler/tmp/bundle-Bm4Xnj/checked-fetch.js
+// ../.wrangler/tmp/bundle-HZR9W4/checked-fetch.js
 var urls = /* @__PURE__ */ new Set();
 function checkURL(request, init) {
   const url = request instanceof URL ? request : new URL(
@@ -418,8 +418,27 @@ async function onRequest4(context) {
 }
 __name(onRequest4, "onRequest");
 
-// api/log-click.js
+// api/debug-d1.js
 async function onRequest5(context) {
+  const db = context.env.DB;
+  const headers = { "Content-Type": "application/json" };
+  try {
+    const { results: count } = await db.prepare("SELECT COUNT(*) as total FROM clicks").all();
+    const { results: last10 } = await db.prepare("SELECT * FROM clicks ORDER BY id DESC LIMIT 10").all();
+    const { results: teamCount } = await db.prepare("SELECT COUNT(*) as total FROM team").all();
+    return new Response(JSON.stringify({
+      clicks_total: count[0].total,
+      team_total: teamCount[0].total,
+      last_10_clicks: last10
+    }), { status: 200, headers });
+  } catch (e) {
+    return new Response(JSON.stringify({ error: e.message }), { status: 500, headers });
+  }
+}
+__name(onRequest5, "onRequest");
+
+// api/log-click.js
+async function onRequest6(context) {
   const db = context.env.DB;
   const headers = {
     "Access-Control-Allow-Origin": "*",
@@ -461,10 +480,10 @@ async function onRequest5(context) {
     return new Response(JSON.stringify({ error: error.message }), { status: 500, headers });
   }
 }
-__name(onRequest5, "onRequest");
+__name(onRequest6, "onRequest");
 
 // api/report-countries.js
-async function onRequest6(context) {
+async function onRequest7(context) {
   const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -568,10 +587,10 @@ async function onRequest6(context) {
     });
   }
 }
-__name(onRequest6, "onRequest");
+__name(onRequest7, "onRequest");
 
 // api/trafee-reports.js
-async function onRequest7(context) {
+async function onRequest8(context) {
   const db = context.env.DB;
   const url = new URL(context.request.url);
   const startDate = url.searchParams.get("startDate") || (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
@@ -613,7 +632,7 @@ async function onRequest7(context) {
     return new Response(JSON.stringify({ error: error.message, data: [] }), { status: 500, headers });
   }
 }
-__name(onRequest7, "onRequest");
+__name(onRequest8, "onRequest");
 
 // ../.wrangler/tmp/pages-PjcclC/functionsRoutes-0.6126270461134293.mjs
 var routes = [
@@ -695,25 +714,32 @@ var routes = [
     modules: [onRequest4]
   },
   {
-    routePath: "/api/log-click",
+    routePath: "/api/debug-d1",
     mountPath: "/api",
     method: "",
     middlewares: [],
     modules: [onRequest5]
   },
   {
-    routePath: "/api/report-countries",
+    routePath: "/api/log-click",
     mountPath: "/api",
     method: "",
     middlewares: [],
     modules: [onRequest6]
   },
   {
-    routePath: "/api/trafee-reports",
+    routePath: "/api/report-countries",
     mountPath: "/api",
     method: "",
     middlewares: [],
     modules: [onRequest7]
+  },
+  {
+    routePath: "/api/trafee-reports",
+    mountPath: "/api",
+    method: "",
+    middlewares: [],
+    modules: [onRequest8]
   },
   {
     routePath: "/api/verify-password",
@@ -1211,7 +1237,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// ../.wrangler/tmp/bundle-Bm4Xnj/middleware-insertion-facade.js
+// ../.wrangler/tmp/bundle-HZR9W4/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -1243,7 +1269,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// ../.wrangler/tmp/bundle-Bm4Xnj/middleware-loader.entry.ts
+// ../.wrangler/tmp/bundle-HZR9W4/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;
