@@ -1,0 +1,289 @@
+/* ========= Click Performance Page ========= */
+.click-perf-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 8px;
+}
+
+/* Header */
+.click-perf-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.click-perf-header h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+}
+
+.dark .click-perf-header h2 {
+    color: #f9fafb;
+}
+
+/* Period Filters */
+.click-perf-filters {
+    display: flex;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.5);
+    padding: 4px;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+}
+
+.dark .click-perf-filters {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.click-perf-filter-btn {
+    background: transparent;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #6b7280;
+    transition: all 0.3s ease;
+}
+
+.dark .click-perf-filter-btn {
+    color: #9ca3af;
+}
+
+.click-perf-filter-btn:hover {
+    background: rgba(255, 255, 255, 0.5);
+    color: #1f2937;
+}
+
+.dark .click-perf-filter-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #e5e7eb;
+}
+
+.click-perf-filter-btn.active {
+    background: #f97316;
+    color: white;
+    box-shadow: 0 2px 8px rgba(249, 115, 22, 0.4);
+}
+
+/* Stats Cards */
+.click-perf-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.click-perf-stat-card {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 16px;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.dark .click-perf-stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.click-perf-stat-value {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #f97316;
+}
+
+.click-perf-stat-label {
+    font-size: 0.75rem;
+    color: #6b7280;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.dark .click-perf-stat-label {
+    color: #9ca3af;
+}
+
+/* Main Table Card */
+.click-perf-card {
+    background: rgba(255, 255, 255, 0.45);
+    border-radius: 20px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow:
+        0 8px 32px 0 rgba(31, 38, 135, 0.05),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(20px) saturate(180%);
+    overflow: hidden;
+}
+
+.dark .click-perf-card {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.click-perf-table-wrap {
+    overflow-x: auto;
+}
+
+/* Table */
+.click-perf-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+}
+
+.click-perf-table th {
+    text-align: left;
+    padding: 12px 14px;
+    color: #6b7280;
+    font-weight: 700;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    white-space: nowrap;
+}
+
+.dark .click-perf-table th {
+    color: #9ca3af;
+    border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+.click-perf-table td {
+    padding: 10px 14px;
+    color: #374151;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+    vertical-align: middle;
+}
+
+.dark .click-perf-table td {
+    color: #d1d5db;
+    border-bottom-color: rgba(255, 255, 255, 0.04);
+}
+
+.click-perf-table tr:last-child td {
+    border-bottom: none;
+}
+
+.click-perf-table tr:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.dark .click-perf-table tr:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+/* Cell Styles */
+.click-perf-mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.75rem;
+    color: #4b5563;
+}
+
+.dark .click-perf-mono {
+    color: #9ca3af;
+}
+
+.click-perf-time {
+    white-space: nowrap;
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+.dark .click-perf-time {
+    color: #9ca3af;
+}
+
+.click-perf-url {
+    color: #f97316;
+    font-weight: 500;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.75rem;
+}
+
+.click-perf-referrer {
+    max-width: 140px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.75rem;
+}
+
+.click-perf-flex {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.click-perf-country-code {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.click-perf-os-name {
+    font-size: 0.75rem;
+}
+
+/* Loading / Empty */
+.click-perf-loading,
+.click-perf-empty {
+    text-align: center;
+    padding: 40px;
+    color: #6b7280;
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+.dark .click-perf-loading,
+.dark .click-perf-empty {
+    color: #9ca3af;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .click-perf-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .click-perf-filters {
+        width: 100%;
+    }
+
+    .click-perf-filter-btn {
+        flex: 1;
+        text-align: center;
+    }
+
+    .click-perf-stats {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+
+    .click-perf-stat-card {
+        padding: 12px;
+    }
+
+    .click-perf-stat-value {
+        font-size: 1.2rem;
+    }
+}

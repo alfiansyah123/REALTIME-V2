@@ -1,0 +1,217 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background-color: #4b5563;
+}
+
+/* Hide scrollbar utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari and Opera */
+}
+
+/* Base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+/* RGB Gradient Animation */
+.rgb-text {
+  background: linear-gradient(to right, #ef5350, #f48fb1, #7e57c2, #2196f3, #26c6da, #43a047, #eeff41, #f9a825, #ff5722);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: rainbow 6s ease-in-out infinite;
+  background-size: 400% 100%;
+}
+
+
+@keyframes rainbow {
+
+  0%,
+  100% {
+    background-position: 0 0;
+  }
+
+  50% {
+    background-position: 100% 0;
+  }
+}
+
+/* RGB Icon Animation (Hue Rotate) */
+.rgb-icon {
+  animation: hue-rotate 3s linear infinite;
+  display: inline-block;
+}
+
+@keyframes hue-rotate {
+  from {
+    filter: hue-rotate(0deg) drop-shadow(0 0 2px rgba(255, 215, 0, 0.5));
+  }
+
+  to {
+    filter: hue-rotate(360deg) drop-shadow(0 0 2px rgba(255, 215, 0, 0.5));
+  }
+}
+
+/* Global Transition REMOVED for Performance */
+
+/* Specific reset for animations to avoid jumpiness */
+.animate-spin,
+.animate-pulse,
+.animate-bounce,
+.transition-none {
+  transition: none !important;
+}
+
+/* 🔮 LIQUID GLASS SYSTEM (iOS 26 Inspired) 🔮 */
+
+/* Glass Panel Base */
+/* Glass Panel Base */
+.glass-panel {
+  @apply backdrop-blur-3xl bg-white/70 dark:bg-gray-900/40 border-2 border-white/60 dark:border-gray-700/50;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+  /* Stronger blue-ish shadow for "timbul" effect in light mode */
+}
+
+.glass-panel-deep {
+  @apply backdrop-blur-3xl bg-white/80 dark:bg-gray-900/60 border-2 border-white/70 dark:border-gray-700/60 shadow-2xl;
+}
+
+/* Frosted Input */
+/* Frosted Input */
+.glass-input {
+  @apply bg-white/10 dark:bg-white/5 border border-white/20 dark:border-white/10 backdrop-blur-xl text-text-main-light dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:bg-white/20 dark:focus:bg-white/10 focus:border-white/40 transition-all duration-300;
+}
+
+.glass-input:focus {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* White Liquid Glass Interactive (Buttons, Capsules) */
+.glass-interactive {
+  @apply bg-white/10 border border-white/20 backdrop-blur-xl hover:bg-white/20 hover:border-white/30 active:scale-95 transition-all duration-300 text-text-main-light dark:text-gray-100;
+  box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.05);
+}
+
+.glass-interactive:hover {
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+}
+
+/* Liquid Gradient Text */
+.liquid-text {
+  background: linear-gradient(45deg, #10b981, #3b82f6, #ec4899);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-size: 200% 200%;
+  animation: liquid-flow 4s ease infinite;
+}
+
+/* Animated Shimmer Overlay */
+.shimmer-overlay {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-overlay::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(to right,
+      transparent 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 100%);
+  transform: translateX(-100%);
+  animation: shimmer 3s infinite;
+}
+
+/* Floating Blobs Animation */
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+@keyframes liquid-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Selection Color for Glass Feel */
+::selection {
+  @apply bg-primary/30 text-primary-hover;
+}
