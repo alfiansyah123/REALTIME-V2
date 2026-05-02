@@ -2,6 +2,7 @@
 // This replaces direct Supabase calls
 
 const API_BASE = window.location.hostname === 'localhost' ? '' : ''; // Use relative paths for Pages Functions
+const GENERATOR_API = 'https://ngeteam-v2.pages.dev'; // Production Generator URL
 
 export const api = {
     async verifyPassword(password) {
@@ -26,7 +27,8 @@ export const api = {
     },
 
     async getClicks(limit = 200) {
-        const response = await fetch(`/api/clicks?limit=${limit}`);
+        // Fetch directly from the Generator Production API to ensure live data
+        const response = await fetch(`${GENERATOR_API}/api/get-recent-clicks?_t=${Date.now()}`);
         return await response.json();
     },
 

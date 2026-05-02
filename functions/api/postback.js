@@ -14,11 +14,11 @@ export async function onRequestGet(context) {
 
     try {
         // Extract & Normalize Parameters
-        const clickId = params.click_id || params.clickid || params.cid || null;
+        const clickId = params.click_id || params.clickid || params.cid || params.track || null;
         const payout = parseFloat(params.payout || params.sum || '0.00');
         const trafficType = (params.os || params.traffic || 'WEB').toUpperCase().substring(0, 5);
-        const subId = params.sub_id || params.subid || params.smartlink || params.click_id || 'Unknown';
-        const network = params.network || params.source || 'IMONETIZEIT';
+        let subId = params.sub_id || params.subid || params.smartlink || 'Unknown';
+        const network = (params.network || params.source || (params.track ? 'TRAFEE' : 'IMONETIZEIT')).toUpperCase();
         const countryCode = (params.country || params.geo || 'XX').toUpperCase().substring(0, 2);
         
         const ip = context.request.headers.get('cf-connecting-ip') || '0.0.0.0';
@@ -26,6 +26,17 @@ export async function onRequestGet(context) {
 
         if (!clickId && subId === 'Unknown') {
             return new Response(JSON.stringify({ error: 'Missing clickid or smartlink' }), { status: 400, headers });
+        }
+
+        // 0. Auto-Attribution: Look up the real Team Member (Slug) from D1 clicks table
+        if (clickId) {
+            const clickInfo = await db.prepare(`
+                SELECT slug FROM clicks WHERE click_id = ? OR id = ? LIMIT 1
+            `).bind(clickId, clickId).first();
+            
+            if (clickInfo && clickInfo.slug) {
+                subId = clickInfo.slug; // Found the real member!
+            }
         }
 
         const finalClickId = clickId || subId || `gen-${crypto.randomUUID()}`;
