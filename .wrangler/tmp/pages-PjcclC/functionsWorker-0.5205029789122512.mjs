@@ -1,7 +1,7 @@
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
-// ../.wrangler/tmp/bundle-NULcuo/checked-fetch.js
+// ../.wrangler/tmp/bundle-zyvB0z/checked-fetch.js
 var urls = /* @__PURE__ */ new Set();
 function checkURL(request, init) {
   const url = request instanceof URL ? request : new URL(
@@ -602,25 +602,23 @@ async function onRequest8(context) {
   try {
     const { results: d1Stats } = await db.prepare(`
             SELECT 
-                t.username as smartlink,
+                COALESCE(t.name, c.slug) as smartlink,
                 c.slug,
                 'TRAFEE' as network,
                 COUNT(c.id) as clicks,
                 SUM(CASE WHEN c.is_lead = 1 THEN 1 ELSE 0 END) as leads,
                 SUM(COALESCE(c.payout, 0)) as payouts
             FROM clicks c
-            LEFT JOIN team t ON c.slug = t.username
-            WHERE DATE(c.created_at) BETWEEN ? AND ?
+            LEFT JOIN team t ON c.slug = t.user_id
+            WHERE (c.s3 = 'TRAFEE' OR c.s3 IS NULL)
+              AND DATE(c.created_at) BETWEEN ? AND ?
             GROUP BY c.slug
             ORDER BY payouts DESC
         `).bind(startDate, endDate).all();
     const data = d1Stats.map((row) => ({
       ...row,
-      smartlink: row.smartlink || row.slug,
       visits: 0,
-      // Hidden in UI later
       unique: 0
-      // Hidden in UI later
     }));
     return new Response(JSON.stringify({ data }), { status: 200, headers });
   } catch (error) {
@@ -1232,7 +1230,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// ../.wrangler/tmp/bundle-NULcuo/middleware-insertion-facade.js
+// ../.wrangler/tmp/bundle-zyvB0z/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -1264,7 +1262,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// ../.wrangler/tmp/bundle-NULcuo/middleware-loader.entry.ts
+// ../.wrangler/tmp/bundle-zyvB0z/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;
