@@ -51,6 +51,11 @@ export const api = {
         return await response.json();
     },
 
+    async getTrafeeReports(startDate, endDate) {
+        const response = await fetch(`${API_BASE}/api/trafee-reports?startDate=${startDate}&endDate=${endDate}`);
+        return await response.json();
+    },
+
     async getReportCountries(startDate, endDate, smartlinkId) {
         const response = await fetch(`${API_BASE}/api/report-countries`, {
             method: 'POST',
