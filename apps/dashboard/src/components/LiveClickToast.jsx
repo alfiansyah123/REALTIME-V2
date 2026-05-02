@@ -114,7 +114,6 @@ const LiveClickToast = () => {
                     <span style={{ color: '#9ca3af', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                         {toast.clickId || toast.slug}
                     </span>
-                    <span style={{ color: '#6b7280' }}>{toast.ip}</span>
                 </div>
             ))}
 

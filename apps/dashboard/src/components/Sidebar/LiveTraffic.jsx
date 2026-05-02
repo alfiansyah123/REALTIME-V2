@@ -144,21 +144,15 @@ const LiveTraffic = () => {
                             key={click.id}
                             className="flex items-center gap-2 p-2 rounded bg-gray-50 dark:bg-gray-700/30 hover:bg-gray-100 dark:hover:bg-gray-700 border border-transparent hover:border-gray-200 dark:hover:border-gray-600 group"
                         >
-                            <div className="flex flex-col items-center gap-1 min-w-[20px]">
+                            <div className="flex items-center gap-2 min-w-0">
                                 {getCountryFlag(click.country)}
-                                <div className="flex gap-0.5 opacity-60 group-hover:opacity-100 transition-opacity">
+                                <span className="text-[11px] font-medium text-blue-600 dark:text-blue-400 truncate flex-1" title={click.clickId || click.slug}>
+                                    {click.clickId || click.slug}
+                                </span>
+                                <div className="flex gap-1 opacity-60 group-hover:opacity-100 transition-opacity flex-shrink-0">
                                     {getOSIcon(click.os)}
                                     {getBrowserIcon(click.browser)}
                                 </div>
-                            </div>
-
-                            <div className="flex-1 min-w-0 flex flex-col gap-0.5">
-                                <span className="text-[10px] font-medium text-blue-600 dark:text-blue-400 break-all leading-tight" title={click.clickId || click.slug}>
-                                    {click.clickId || `/${click.slug}`}
-                                </span>
-                                <span className="text-[9px] text-gray-400 dark:text-gray-500 font-mono truncate" title={click.ip}>
-                                    {click.ip}
-                                </span>
                             </div>
                         </div>
                     ))
