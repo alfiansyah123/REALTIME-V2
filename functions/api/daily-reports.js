@@ -6,12 +6,15 @@ export async function onRequest(context) {
     
     const headers = {
         'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
         'Content-Type': 'application/json'
     };
 
-    if (!db) return new Response(JSON.stringify({ error: 'DB connection failed' }), { status: 500, headers });
+    if (context.request.method === 'OPTIONS') {
+        return new Response(null, { headers });
+    }
 
-    // 1. Fetch from iMonetizeIt API
     const API_CREDENTIALS = [
         { clientId: 232922, apiKey: '0d92f1bfe4bc4aa894825a66db3aa1e8406eaa66cc084fd06c73f47287c20027' },
     ];
@@ -29,7 +32,8 @@ export async function onRequest(context) {
                 return data.access_token || null;
             } catch (e) { return null; }
         });
-        return (await Promise.all(tokenPromises)).filter(Boolean);
+        const results = await Promise.all(tokenPromises);
+        return results.filter(Boolean);
     }
 
     async function getIMonStats(tokens, start, end) {
@@ -49,6 +53,7 @@ export async function onRequest(context) {
                 if (!aggregated[name]) {
                     aggregated[name] = {
                         smartlink: name,
+                        slug: name,
                         smartlink_id: row.smartlink_id || null,
                         network: row.tracker || 'IMONETIZEIT',
                         visits: 0, unique: 0, clicks: 0, leads: 0, payouts: 0.0
@@ -65,94 +70,43 @@ export async function onRequest(context) {
     }
 
     try {
-        // Parallel fetching for performance
-        const tokensPromise = getTokens(API_CREDENTIALS);
+        const tokens = await getTokens(API_CREDENTIALS);
+        const imonData = await getIMonStats(tokens, startDate, endDate);
         
-        // 2. Fetch Click Stats from D1 'clicks' table (Realtime Traffic)
-        // Group by slug/smartlink
-        const localClicksPromise = db.prepare(`
-            SELECT slug, COUNT(*) as total_clicks, COUNT(DISTINCT ip_address) as unique_clicks
-            FROM clicks
-            WHERE created_at BETWEEN ? AND ?
-            GROUP BY slug
-        `).bind(startDate + 'T00:00:00Z', endDate + 'T23:59:59Z').all();
+        let finalData = Object.values(imonData);
+        
+        // Trafee (D1) integration
+        try {
+            const { results: d1Stats } = await db.prepare(`
+                SELECT 
+                    t.username as smartlink,
+                    c.slug,
+                    'TRAFEE' as network,
+                    COUNT(c.id) as clicks,
+                    SUM(CASE WHEN c.is_lead = 1 THEN 1 ELSE 0 END) as leads,
+                    SUM(COALESCE(c.payout, 0)) as payouts
+                FROM clicks c
+                LEFT JOIN team t ON c.slug = t.username
+                WHERE DATE(c.created_at) BETWEEN ? AND ?
+                GROUP BY c.slug
+            `).bind(startDate, endDate).all();
 
-        // 3. Fetch Lead Stats from D1 'daily_reports' (Postbacks)
-        const localLeadsPromise = db.prepare(`
-            SELECT smartlink, network, SUM(leads) as leads, SUM(payout) as payouts
-            FROM daily_reports
-            WHERE date BETWEEN ? AND ?
-            GROUP BY smartlink, network
-        `).bind(startDate, endDate).all();
-
-        const [tokens, localClicksResult, localLeadsResult] = await Promise.all([
-            tokensPromise, localClicksPromise, localLeadsPromise
-        ]);
-
-        const imonData = tokens.length > 0 ? await getIMonStats(tokens, startDate, endDate) : {};
-        const localClicks = localClicksResult.results || [];
-        const localLeads = localLeadsResult.results || [];
-
-        // Final Aggregation Map
-        const finalMap = imonData;
-
-        // Process Local Leads (Trafee, etc.)
-        for (const row of localLeads) {
-            const name = row.smartlink;
-            const network = row.network || 'UNKNOWN';
-            
-            if (network !== 'IMONETIZEIT' || !finalMap[name]) {
-                const key = network === 'IMONETIZEIT' ? name : `${name}_${network}`;
-                if (!finalMap[key]) {
-                    finalMap[key] = {
-                        smartlink: name,
-                        smartlink_id: null,
-                        network: network,
-                        visits: 0, unique: 0, clicks: 0, leads: 0, payouts: 0.0
-                    };
-                }
-                finalMap[key].leads += row.leads || 0;
-                finalMap[key].payouts += row.payouts || 0.0;
+            if (d1Stats && d1Stats.length > 0) {
+                d1Stats.forEach(row => {
+                    finalData.push({
+                        ...row,
+                        visits: row.clicks,
+                        unique: row.clicks,
+                        smartlink: row.smartlink || row.slug
+                    });
+                });
             }
-        }
+        } catch (e) { console.error('D1 Fetch Error:', e); }
 
-        // Process Local Clicks (Realtime Traffic Attribution)
-        for (const row of localClicks) {
-            const name = row.slug;
-            // Add these clicks to any entry with this smartlink name that doesn't have click data yet
-            // Or if it's a Trafee entry, we definitely want to show the clicks we tracked.
-            for (const key in finalMap) {
-                if (finalMap[key].smartlink === name) {
-                    // Only add if it's not iMonetizeIt (because iMonetizeIt has its own click data)
-                    // Or if iMonetizeIt data is 0 for some reason.
-                    if (finalMap[key].network !== 'IMONETIZEIT' || finalMap[key].clicks === 0) {
-                        finalMap[key].clicks = row.total_clicks;
-                        finalMap[key].unique = row.unique_clicks;
-                        finalMap[key].visits = row.total_clicks; // Proxy visits with clicks
-                    }
-                }
-            }
-            
-            // If the slug doesn't exist in the map at all (clicks with 0 leads), add it as UNKNOWN network
-            const slugExists = Object.values(finalMap).some(item => item.smartlink === name);
-            if (!slugExists) {
-                finalMap[name] = {
-                    smartlink: name,
-                    smartlink_id: null,
-                    network: 'TRAFFIC',
-                    visits: row.total_clicks,
-                    unique: row.unique_clicks,
-                    clicks: row.total_clicks,
-                    leads: 0,
-                    payouts: 0.0
-                };
-            }
-        }
-
-        const finalData = Object.values(finalMap).sort((a, b) => b.payouts - a.payouts || b.clicks - a.clicks);
+        finalData.sort((a, b) => b.payouts - a.payouts);
 
         return new Response(JSON.stringify({ data: finalData }), { status: 200, headers });
     } catch (error) {
-        return new Response(JSON.stringify({ error: error.message }), { status: 500, headers });
+        return new Response(JSON.stringify({ error: error.message, data: [] }), { status: 500, headers });
     }
 }

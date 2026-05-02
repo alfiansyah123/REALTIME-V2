@@ -1,12 +1,12 @@
 // API Utility for Cloudflare D1 Backend
 // This replaces direct Supabase calls
 
-const API_BASE = window.location.hostname === 'localhost' ? '' : ''; // Use relative paths for Pages Functions
+const API_BASE = window.location.hostname === 'localhost' ? 'https://realtime-v2.pages.dev' : ''; // Use production backend for local testing
 const GENERATOR_API = 'https://ngeteam-v2.pages.dev'; // Production Generator URL
 
 export const api = {
     async verifyPassword(password) {
-        const response = await fetch('/api/verify-password', {
+        const response = await fetch(`${API_BASE}/api/verify-password`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ input_password: password })
@@ -15,7 +15,7 @@ export const api = {
     },
 
     async getConversions(limit = 100, startDate = null, endDate = null, clickId = null) {
-        let url = `/api/conversions?limit=${limit}`;
+        let url = `${API_BASE}/api/conversions?limit=${limit}`;
         if (startDate && endDate) {
             url += `&startDate=${startDate}&endDate=${endDate}`;
         }
@@ -33,12 +33,12 @@ export const api = {
     },
 
     async getCountryLeads(date) {
-        const response = await fetch(`/api/country-leads?date=${date}`);
+        const response = await fetch(`${API_BASE}/api/country-leads?date=${date}`);
         return await response.json();
     },
 
     async changePassword(oldPassword, newPassword) {
-        const response = await fetch('/api/change-password', {
+        const response = await fetch(`${API_BASE}/api/change-password`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ old_password: oldPassword, new_password: newPassword })
@@ -47,7 +47,16 @@ export const api = {
     },
 
     async getDailyReports(startDate, endDate) {
-        const response = await fetch(`/api/daily-reports?startDate=${startDate}&endDate=${endDate}`);
+        const response = await fetch(`${API_BASE}/api/daily-reports?startDate=${startDate}&endDate=${endDate}`);
+        return await response.json();
+    },
+
+    async getReportCountries(startDate, endDate, smartlinkId) {
+        const response = await fetch(`${API_BASE}/api/report-countries`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ startDate, endDate, smartlinkId })
+        });
         return await response.json();
     }
 };
