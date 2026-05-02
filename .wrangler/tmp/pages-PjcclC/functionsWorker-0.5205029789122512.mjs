@@ -1,7 +1,7 @@
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
-// ../.wrangler/tmp/bundle-qkj46e/checked-fetch.js
+// ../.wrangler/tmp/bundle-NULcuo/checked-fetch.js
 var urls = /* @__PURE__ */ new Set();
 function checkURL(request, init) {
   const url = request instanceof URL ? request : new URL(
@@ -421,12 +421,13 @@ __name(onRequest4, "onRequest");
 // api/debug-d1.js
 async function onRequest5(context) {
   const db = context.env.DB;
+  if (!db) return new Response(JSON.stringify({ error: "DB binding 'DB' not found in context.env" }), { status: 500 });
   const headers = { "Content-Type": "application/json" };
   try {
-    const { results: teamSample } = await db.prepare("SELECT * FROM team LIMIT 1").all();
-    return new Response(JSON.stringify({ teamSample }), { status: 200, headers });
+    const { results: tables } = await db.prepare("SELECT name FROM sqlite_master WHERE type='table'").all();
+    return new Response(JSON.stringify({ tables }), { status: 200, headers });
   } catch (e) {
-    return new Response(JSON.stringify({ error: e.message }), { status: 500, headers });
+    return new Response(JSON.stringify({ error: e.message, stack: e.stack }), { status: 500, headers });
   }
 }
 __name(onRequest5, "onRequest");
@@ -1231,7 +1232,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// ../.wrangler/tmp/bundle-qkj46e/middleware-insertion-facade.js
+// ../.wrangler/tmp/bundle-NULcuo/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -1263,7 +1264,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// ../.wrangler/tmp/bundle-qkj46e/middleware-loader.entry.ts
+// ../.wrangler/tmp/bundle-NULcuo/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;
