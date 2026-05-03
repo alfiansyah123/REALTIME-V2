@@ -1,0 +1,5 @@
+{
+  "version": 1,
+  "include": ["/*"],
+  "exclude": ["/assets/*", "/networks/*", "/logo.png", "/logo1.png", "/vite.svg", "/notification.mp3"]
+}

@@ -24,12 +24,16 @@ export async function onRequestGet(context) {
         // Handle Full Country Names (iMonetizeIt fallback)
         let rawCountry = (params.country || params.geo || 'XX').toUpperCase();
         const countryMap = {
-            'USA': 'US', 'UK': 'GB', 'UN': 'US', 'EN': 'GB', 'GREAT BRITAIN': 'GB',
-            // Incorrect codes from networks
-            'UK': 'GB', 'UN': 'US', 'ME': 'MX', 'EN': 'GB',
+            // Priority Typos & Special mappings
+            'USA': 'US', 'U.S.A.': 'US', 'U.S.': 'US', 'AMERICA': 'US', 'UNITED STATES': 'US',
+            'UK': 'GB', 'GREAT BRITAIN': 'GB', 'ENGLAND': 'GB', 'UNITED KINGDOM': 'GB', 'SCOTLAND': 'GB', 'WALES': 'GB', 'NORTHERN IRELAND': 'GB',
+            'UN': 'US',  // Common typo for US
+            'ME': 'MX',  // Common typo for Mexico
+            'EN': 'GB',  // England
+            'ENGLAND': 'GB',
+            
             // Full country names
-            'UNITED STATES': 'US', 'UNITED KINGDOM': 'GB', 'GREAT BRITAIN': 'GB', 'ENGLAND': 'GB',
-            'UKRAINE': 'UA', 'UKR': 'UA', 'CANADA': 'CA', 'AUSTRALIA': 'AU',
+            'UKRAINE': 'UA', 'CANADA': 'CA', 'AUSTRALIA': 'AU',
             'GERMANY': 'DE', 'FRANCE': 'FR', 'SPAIN': 'ES', 'ITALY': 'IT',
             'BRAZIL': 'BR', 'MEXICO': 'MX', 'JAPAN': 'JP', 'CHINA': 'CN',
             'INDIA': 'IN', 'RUSSIA': 'RU', 'INDONESIA': 'ID', 'NETHERLANDS': 'NL',
@@ -46,7 +50,6 @@ export async function onRequestGet(context) {
             'HUNGARY': 'HU', 'ROMANIA': 'RO', 'BULGARIA': 'BG', 'URUGUAY': 'UY',
             'PARAGUAY': 'PY', 'JAMAICA': 'JM', 'PAKISTAN': 'PK',
             'COSTA RICA': 'CR', 'TANZANIA, UNITED REPUBLIC OF': 'TZ', 'TANZANIA': 'TZ',
-            // Europe
             'CROATIA': 'HR', 'SERBIA': 'RS', 'SLOVAKIA': 'SK', 'SLOVENIA': 'SI',
             'LATVIA': 'LV', 'LITHUANIA': 'LT', 'ESTONIA': 'EE', 'CYPRUS': 'CY',
             'LUXEMBOURG': 'LU', 'MALTA': 'MT', 'ICELAND': 'IS', 'BOSNIA': 'BA',
@@ -56,7 +59,6 @@ export async function onRequestGet(context) {
             'LIECHTENSTEIN': 'LI', 'VATICAN': 'VA', 'FAROE ISLANDS': 'FO',
             'GIBRALTAR': 'GI', 'ISLE OF MAN': 'IM', 'JERSEY': 'JE', 'GUERNSEY': 'GG',
             'KOSOVO': 'XK',
-            // Asia
             'TAIWAN': 'TW', 'HONG KONG': 'HK', 'BANGLADESH': 'BD', 'SRI LANKA': 'LK',
             'NEPAL': 'NP', 'CAMBODIA': 'KH', 'LAOS': 'LA', 'MYANMAR': 'MM',
             'KAZAKHSTAN': 'KZ', 'UZBEKISTAN': 'UZ', 'AZERBAIJAN': 'AZ', 'GEORGIA': 'GE',
@@ -64,7 +66,6 @@ export async function onRequestGet(context) {
             'MACAO': 'MO', 'MACAU': 'MO', 'MONGOLIA': 'MN', 'BRUNEI': 'BN',
             'TIMOR-LESTE': 'TL', 'EAST TIMOR': 'TL', 'MALDIVES': 'MV', 'BHUTAN': 'BT',
             'AFGHANISTAN': 'AF', 'TAJIKISTAN': 'TJ', 'NORTH KOREA': 'KP',
-            // Americas
             'VENEZUELA': 'VE', 'ECUADOR': 'EC', 'BOLIVIA': 'BO',
             'DOMINICAN REPUBLIC': 'DO', 'GUATEMALA': 'GT', 'HONDURAS': 'HN',
             'EL SALVADOR': 'SV', 'NICARAGUA': 'NI', 'PANAMA': 'PA',
@@ -77,7 +78,6 @@ export async function onRequestGet(context) {
             'BRITISH VIRGIN ISLANDS': 'VG', 'TURKS AND CAICOS': 'TC',
             'MARTINIQUE': 'MQ', 'GUADELOUPE': 'GP', 'SURINAME': 'SR',
             'GUYANA': 'GY', 'BELIZE': 'BZ',
-            // Africa
             'NIGERIA': 'NG', 'KENYA': 'KE', 'MOROCCO': 'MA', 'ALGERIA': 'DZ',
             'TUNISIA': 'TN', 'GHANA': 'GH', 'UGANDA': 'UG', 'ETHIOPIA': 'ET',
             'IVORY COAST': 'CI', "COTE D'IVOIRE": 'CI', 'COTE DIVOIRE': 'CI',
@@ -93,24 +93,20 @@ export async function onRequestGet(context) {
             'RWANDA': 'RW', 'SAO TOME AND PRINCIPE': 'ST', 'SIERRA LEONE': 'SL',
             'SOMALIA': 'SO', 'SOUTH SUDAN': 'SS', 'SEYCHELLES': 'SC',
             'TOGO': 'TG', 'ZAMBIA': 'ZM', 'ZIMBABWE': 'ZW', 'BOTSWANA': 'BW',
-            // Middle East
             'QATAR': 'QA', 'KUWAIT': 'KW', 'OMAN': 'OM', 'BAHRAIN': 'BH',
             'LEBANON': 'LB', 'JORDAN': 'JO', 'IRAQ': 'IQ',
             'SYRIA': 'SY', 'SYRIAN ARAB REPUBLIC': 'SY', 'YEMEN': 'YE',
             'PALESTINE': 'PS', 'IRAN': 'IR',
-            // Oceania & Pacific
             'FIJI': 'FJ', 'PAPUA NEW GUINEA': 'PG', 'SAMOA': 'WS', 'TONGA': 'TO',
             'VANUATU': 'VU', 'SOLOMON ISLANDS': 'SB', 'GUAM': 'GU',
             'FRENCH POLYNESIA': 'PF', 'NEW CALEDONIA': 'NC', 'MICRONESIA': 'FM',
             'PALAU': 'PW', 'MARSHALL ISLANDS': 'MH', 'KIRIBATI': 'KI',
             'NAURU': 'NR', 'TUVALU': 'TV',
-            // Common typos & variations
-            'USA': 'US', 'U.S.A.': 'US', 'U.S.': 'US', 'AMERICA': 'US',
             'RUSSIAN FEDERATION': 'RU', 'PEOPLES REPUBLIC OF CHINA': 'CN',
             'CHINA, PEOPLES REPUBLIC OF': 'CN', 'HOLLAND': 'NL', 'THE NETHERLANDS': 'NL',
-            'SCOTLAND': 'GB', 'WALES': 'GB', 'NORTHERN IRELAND': 'GB',
             'EIRE': 'IE', 'REPUBLIC OF IRELAND': 'IE', 'RSA': 'ZA',
-            // ISO 3-letter codes
+            
+            // ISO 3-letter codes fallback
             'UKR': 'UA', 'VNM': 'VN', 'IDN': 'ID', 'BRA': 'BR', 'THA': 'TH',
             'DEU': 'DE', 'FRA': 'FR', 'ESP': 'ES', 'ITA': 'IT', 'NLD': 'NL',
             'SGP': 'SG', 'MYS': 'MY', 'PHL': 'PH', 'KOR': 'KR', 'JPN': 'JP',
@@ -120,7 +116,6 @@ export async function onRequestGet(context) {
             'GHA': 'GH', 'MAR': 'MA', 'DZA': 'DZ', 'TUN': 'TN', 'PER': 'PE',
             'CHL': 'CL', 'VEN': 'VE', 'ECU': 'EC', 'DOM': 'DO', 'CUB': 'CU',
             'RUS': 'RU',
-            // Placeholder
             'COUNTRY': 'XX'
         };
         
