@@ -144,9 +144,19 @@ export async function onRequestGet(context) {
             if (clickInfo) {
                 subId = clickInfo.user_id || subId; // Use user_id from clicks table
                 
-                // Override OS and Browser for all networks because postback payload usually lacks them
-                if (clickInfo.os) finalTrafficType = clickInfo.os;
-                if (clickInfo.browser) userAgent = clickInfo.browser;
+                // Determine WAP/WEB based on original OS from clicks table
+                if (clickInfo.os) {
+                    const os = clickInfo.os.toLowerCase();
+                    if (os.includes('android') || os.includes('iphone') || os.includes('ipad') || os.includes('mobile')) {
+                        finalTrafficType = 'WAP';
+                    } else if (os.includes('windows') || os.includes('mac') || os.includes('linux')) {
+                        finalTrafficType = 'WEB';
+                    } else {
+                        finalTrafficType = 'WEB'; // Default fallback
+                    }
+                    // Keep original OS info in userAgent for full detail
+                    userAgent = `${clickInfo.os} | ${clickInfo.browser || 'Unknown'}`;
+                }
                 
                 // Use tracker country for ALL networks since it is always a valid ISO-2 code (Cloudflare cf.country)
                 if (clickInfo.country) {

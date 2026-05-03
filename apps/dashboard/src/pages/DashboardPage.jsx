@@ -41,24 +41,36 @@ const DashboardPage = ({ onLogout, currency, setCurrency, currencyRate, setCurre
     }, []);
 
     // Helper: Format row from Supabase to frontend format
-    const formatRow = useCallback((row) => ({
-        id: row.id,
-        subId: row.sub_id,
-        clickId: row.click_id,
-        network: row.network,
-        country: row.country,
-        flag: row.country && row.country !== 'XX'
-            ? `https://flagcdn.com/${String(row.country).toLowerCase()}.svg`
-            : null,
-        countryName: row.country_name,
-        traffic: row.traffic_type,
-        os: row.traffic_type,
-        browser: row.user_agent,
-        earning: parseFloat(row.earning) || 0,
-        ipAddress: row.ip_address,
-        created_at: row.created_at,
-        highlighted: parseFloat(row.earning) > 10
-    }), []);
+    const formatRow = useCallback((row) => {
+        let os = row.traffic_type;
+        let browser = row.user_agent;
+
+        // Parse "OS | Browser" format from user_agent column
+        if (row.user_agent && row.user_agent.includes(' | ')) {
+            const parts = row.user_agent.split(' | ');
+            os = parts[0];
+            browser = parts[1];
+        }
+
+        return {
+            id: row.id,
+            subId: row.sub_id,
+            clickId: row.click_id,
+            network: row.network,
+            country: row.country,
+            flag: row.country && row.country !== 'XX'
+                ? `https://flagcdn.com/${String(row.country).toLowerCase()}.svg`
+                : null,
+            countryName: row.country_name,
+            traffic: row.traffic_type,
+            os: os,
+            browser: browser,
+            earning: parseFloat(row.earning) || 0,
+            ipAddress: row.ip_address,
+            created_at: row.created_at,
+            highlighted: parseFloat(row.earning) > 10
+        };
+    }, []);
 
     // Show notification for new conversion
     const showNewConversionNotification = useCallback((newest) => {
