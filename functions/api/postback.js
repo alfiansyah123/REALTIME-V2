@@ -21,7 +21,8 @@ export async function onRequestGet(context) {
         const network = (params.network || params.source || (params.track ? 'TRAFEE' : 'IMONETIZEIT')).toUpperCase();
         const countryCode = (params.country || params.geo || 'XX').toUpperCase().substring(0, 2);
         
-        const ip = context.request.headers.get('cf-connecting-ip') || '0.0.0.0';
+        const paramIp = params.ip || params.ip_address || null;
+        const ip = paramIp || context.request.headers.get('cf-connecting-ip') || '0.0.0.0';
         const userAgent = context.request.headers.get('user-agent') || '';
 
         if (!clickId && subId === 'Unknown') {
@@ -40,9 +41,13 @@ export async function onRequestGet(context) {
             
             if (clickInfo) {
                 subId = clickInfo.user_id || clickInfo.slug || subId; // Use user_id if available
-                if (clickInfo.ip_address) finalIp = clickInfo.ip_address;
-                if (clickInfo.os) finalTrafficType = clickInfo.os.toUpperCase().substring(0, 5);
-                if (clickInfo.country) finalCountryCode = clickInfo.country.toUpperCase().substring(0, 2);
+                
+                // Only override IP/OS/Country from DB if network is Trafee
+                if (network === 'TRAFEE') {
+                    if (clickInfo.ip_address) finalIp = clickInfo.ip_address;
+                    if (clickInfo.os) finalTrafficType = clickInfo.os.toUpperCase().substring(0, 5);
+                    if (clickInfo.country) finalCountryCode = clickInfo.country.toUpperCase().substring(0, 2);
+                }
             }
         }
 

@@ -1,7 +1,7 @@
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
-// ../.wrangler/tmp/bundle-NPfk3S/checked-fetch.js
+// ../.wrangler/tmp/bundle-rPq9B0/checked-fetch.js
 var urls = /* @__PURE__ */ new Set();
 function checkURL(request, init) {
   const url = request instanceof URL ? request : new URL(
@@ -216,7 +216,8 @@ async function onRequestGet2(context) {
     let subId = params.sub_id || params.subid || params.smartlink || "Unknown";
     const network = (params.network || params.source || (params.track ? "TRAFEE" : "IMONETIZEIT")).toUpperCase();
     const countryCode = (params.country || params.geo || "XX").toUpperCase().substring(0, 2);
-    const ip = context.request.headers.get("cf-connecting-ip") || "0.0.0.0";
+    const paramIp = params.ip || params.ip_address || null;
+    const ip = paramIp || context.request.headers.get("cf-connecting-ip") || "0.0.0.0";
     const userAgent = context.request.headers.get("user-agent") || "";
     if (!clickId && subId === "Unknown") {
       return new Response(JSON.stringify({ error: "Missing clickid or smartlink" }), { status: 400, headers });
@@ -230,9 +231,11 @@ async function onRequestGet2(context) {
             `).bind(clickId, clickId).first();
       if (clickInfo) {
         subId = clickInfo.user_id || clickInfo.slug || subId;
-        if (clickInfo.ip_address) finalIp = clickInfo.ip_address;
-        if (clickInfo.os) finalTrafficType = clickInfo.os.toUpperCase().substring(0, 5);
-        if (clickInfo.country) finalCountryCode = clickInfo.country.toUpperCase().substring(0, 2);
+        if (network === "TRAFEE") {
+          if (clickInfo.ip_address) finalIp = clickInfo.ip_address;
+          if (clickInfo.os) finalTrafficType = clickInfo.os.toUpperCase().substring(0, 5);
+          if (clickInfo.country) finalCountryCode = clickInfo.country.toUpperCase().substring(0, 2);
+        }
       }
     }
     const finalClickId = clickId || subId || `gen-${crypto.randomUUID()}`;
@@ -1248,7 +1251,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// ../.wrangler/tmp/bundle-NPfk3S/middleware-insertion-facade.js
+// ../.wrangler/tmp/bundle-rPq9B0/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -1280,7 +1283,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// ../.wrangler/tmp/bundle-NPfk3S/middleware-loader.entry.ts
+// ../.wrangler/tmp/bundle-rPq9B0/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;
