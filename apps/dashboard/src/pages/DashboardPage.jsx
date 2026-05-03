@@ -52,6 +52,8 @@ const DashboardPage = ({ onLogout, currency, setCurrency, currencyRate, setCurre
             : null,
         countryName: row.country_name,
         traffic: row.traffic_type,
+        os: row.traffic_type,
+        browser: row.user_agent,
         earning: parseFloat(row.earning) || 0,
         ipAddress: row.ip_address,
         created_at: row.created_at,

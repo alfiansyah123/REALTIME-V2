@@ -37,16 +37,19 @@ export async function onRequestGet(context) {
         // 0. Auto-Attribution: Look up the real Team Member and User Details from D1 clicks table
         if (clickId) {
             const clickInfo = await db.prepare(`
-                SELECT slug, user_id, ip_address, os, country FROM clicks WHERE click_id = ? OR id = ? LIMIT 1
+                SELECT slug, user_id, ip_address, os, country, browser FROM clicks WHERE click_id = ? OR id = ? LIMIT 1
             `).bind(clickId, clickId).first();
             
             if (clickInfo) {
                 subId = clickInfo.user_id || clickInfo.slug || subId; // Use user_id if available
                 
-                // Only override IP/OS/Country from DB if network is Trafee
+                // Override OS and Browser for all networks because postback payload usually lacks them
+                if (clickInfo.os) finalTrafficType = clickInfo.os;
+                if (clickInfo.browser) userAgent = clickInfo.browser;
+                
+                // Only override IP/Country from DB if network is Trafee
                 if (network === 'TRAFEE') {
                     if (clickInfo.ip_address) finalIp = clickInfo.ip_address;
-                    if (clickInfo.os) finalTrafficType = clickInfo.os.toUpperCase().substring(0, 5);
                     if (clickInfo.country) finalCountryCode = clickInfo.country.toUpperCase().substring(0, 2);
                 }
             }
