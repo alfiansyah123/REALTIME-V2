@@ -234,6 +234,7 @@ async function onRequestGet2(context) {
   }
   try {
     await db.prepare("UPDATE conversions SET country = 'US' WHERE country = 'UN' OR country = 'JA'").run();
+    await db.prepare("UPDATE conversions SET country = 'MX' WHERE country = 'ME' AND (country_name = 'MEXICO' OR country_name = 'United States')").run();
     const mappings = {
       "US": "United States",
       "ID": "Indonesia",
@@ -263,7 +264,8 @@ async function onRequestGet2(context) {
       "MY": "Malaysia",
       "SG": "Singapore",
       "TH": "Thailand",
-      "VN": "Vietnam"
+      "VN": "Vietnam",
+      "MX": "Mexico"
     };
     let results = [];
     for (const [code, name] of Object.entries(mappings)) {
@@ -317,7 +319,8 @@ async function onRequestGet3(context) {
       "SPAIN": "ES",
       "CANADA": "CA",
       "AUSTRALIA": "AU",
-      "PHILIPPINES": "PH"
+      "PHILIPPINES": "PH",
+      "MEXICO": "MX"
     };
     let countryCode = countryMap[rawCountry] || rawCountry.substring(0, 2);
     let countryName = rawCountry.length > 2 ? rawCountry : null;

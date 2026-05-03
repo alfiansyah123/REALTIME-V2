@@ -7,8 +7,10 @@ export async function onRequestGet(context) {
 
     try {
         // 1. Fix 'UN' and 'JA' that are clearly meant to be 'US' (United States)
+        // Fix 'ME' that are clearly meant to be 'MX' (Mexico)
         // based on the user's report and screenshot
         await db.prepare("UPDATE conversions SET country = 'US' WHERE country = 'UN' OR country = 'JA'").run();
+        await db.prepare("UPDATE conversions SET country = 'MX' WHERE country = 'ME' AND (country_name = 'MEXICO' OR country_name = 'United States')").run();
 
         // 2. Comprehensive mapping for country names
         const mappings = {
@@ -40,7 +42,8 @@ export async function onRequestGet(context) {
             'MY': 'Malaysia',
             'SG': 'Singapore',
             'TH': 'Thailand',
-            'VN': 'Vietnam'
+            'VN': 'Vietnam',
+            'MX': 'Mexico'
         };
 
         let results = [];

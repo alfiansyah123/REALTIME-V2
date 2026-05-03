@@ -36,7 +36,8 @@ export async function onRequestGet(context) {
             'SPAIN': 'ES',
             'CANADA': 'CA',
             'AUSTRALIA': 'AU',
-            'PHILIPPINES': 'PH'
+            'PHILIPPINES': 'PH',
+            'MEXICO': 'MX'
         };
         
         let countryCode = countryMap[rawCountry] || rawCountry.substring(0, 2);

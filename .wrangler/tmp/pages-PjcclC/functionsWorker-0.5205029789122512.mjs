@@ -1,7 +1,7 @@
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
-// ../.wrangler/tmp/bundle-ppQUkW/checked-fetch.js
+// ../.wrangler/tmp/bundle-ZEhPDs/checked-fetch.js
 var urls = /* @__PURE__ */ new Set();
 function checkURL(request, init) {
   const url = request instanceof URL ? request : new URL(
@@ -207,6 +207,7 @@ async function onRequestGet2(context) {
   }
   try {
     await db.prepare("UPDATE conversions SET country = 'US' WHERE country = 'UN' OR country = 'JA'").run();
+    await db.prepare("UPDATE conversions SET country = 'MX' WHERE country = 'ME' AND (country_name = 'MEXICO' OR country_name = 'United States')").run();
     const mappings = {
       "US": "United States",
       "ID": "Indonesia",
@@ -236,7 +237,8 @@ async function onRequestGet2(context) {
       "MY": "Malaysia",
       "SG": "Singapore",
       "TH": "Thailand",
-      "VN": "Vietnam"
+      "VN": "Vietnam",
+      "MX": "Mexico"
     };
     let results = [];
     for (const [code, name] of Object.entries(mappings)) {
@@ -291,7 +293,8 @@ async function onRequestGet3(context) {
       "SPAIN": "ES",
       "CANADA": "CA",
       "AUSTRALIA": "AU",
-      "PHILIPPINES": "PH"
+      "PHILIPPINES": "PH",
+      "MEXICO": "MX"
     };
     let countryCode = countryMap[rawCountry] || rawCountry.substring(0, 2);
     let countryName = rawCountry.length > 2 ? rawCountry : null;
@@ -1342,7 +1345,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// ../.wrangler/tmp/bundle-ppQUkW/middleware-insertion-facade.js
+// ../.wrangler/tmp/bundle-ZEhPDs/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -1374,7 +1377,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// ../.wrangler/tmp/bundle-ppQUkW/middleware-loader.entry.ts
+// ../.wrangler/tmp/bundle-ZEhPDs/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;
