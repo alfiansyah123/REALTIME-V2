@@ -28,11 +28,11 @@ export default function ConversionTable({ searchQuery, currency = 'USD', currenc
         if (!searchQuery) return true;
         const query = searchQuery.toLowerCase();
         return (
-            item.subId.toLowerCase().includes(query) ||
+            (item.subId && item.subId.toLowerCase().includes(query)) ||
             (item.clickId && item.clickId.toLowerCase().includes(query)) ||
-            item.network.toLowerCase().includes(query) ||
-            item.country.toLowerCase().includes(query) ||
-            item.ipAddress.includes(query)
+            (item.network && item.network.toLowerCase().includes(query)) ||
+            (item.country && item.country.toLowerCase().includes(query)) ||
+            (item.ipAddress && item.ipAddress.includes(query))
         );
     });
 

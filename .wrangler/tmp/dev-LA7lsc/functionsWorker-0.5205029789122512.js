@@ -612,28 +612,60 @@ async function onRequest7(context) {
   if (context.request.method === "OPTIONS") {
     return new Response(null, { headers });
   }
+  if (!db) return new Response(JSON.stringify({ error: "DB not connected", data: [] }), { status: 500, headers });
   try {
-    const { results: d1Stats } = await db.prepare(`
+    const { results: clickStats } = await db.prepare(`
             SELECT 
-                COALESCE(t.name, l.user_id, c.slug) as smartlink,
-                c.slug,
+                COALESCE(t.name, c.user_id, c.slug) as smartlink,
+                c.user_id,
                 'TRAFEE' as network,
                 COUNT(c.id) as clicks,
-                SUM(CASE WHEN c.is_lead = 1 THEN 1 ELSE 0 END) as leads,
-                SUM(COALESCE(c.payout, 0)) as payouts
+                COUNT(DISTINCT c.ip_address) as unique_clicks
             FROM clicks c
-            LEFT JOIN links l ON c.slug = l.slug
-            LEFT JOIN team t ON (l.user_id = t.user_id OR c.slug = t.user_id OR c.slug = t.name)
-            WHERE (c.s3 = 'TRAFEE' OR c.s3 IS NULL)
-              AND DATE(c.created_at) BETWEEN ? AND ?
-            GROUP BY c.slug
-            ORDER BY payouts DESC
+            LEFT JOIN team t ON c.user_id = t.user_id
+            WHERE DATE(c.created_at) BETWEEN ? AND ?
+            GROUP BY c.user_id
+            ORDER BY clicks DESC
         `).bind(startDate, endDate).all();
-    const data = d1Stats.map((row) => ({
-      ...row,
-      visits: 0,
-      unique: 0
-    }));
+    const { results: leadStats } = await db.prepare(`
+            SELECT smartlink, network, SUM(leads) as leads, SUM(payout) as payouts
+            FROM daily_reports
+            WHERE date BETWEEN ? AND ?
+            GROUP BY smartlink, network
+        `).bind(startDate, endDate).all();
+    const dataMap = {};
+    for (const row of clickStats || []) {
+      const key = row.user_id || row.smartlink;
+      dataMap[key] = {
+        smartlink: row.smartlink,
+        user_id: row.user_id,
+        network: "TRAFEE",
+        visits: row.clicks,
+        unique: row.unique_clicks,
+        clicks: row.clicks,
+        leads: 0,
+        payouts: 0
+      };
+    }
+    for (const row of leadStats || []) {
+      const key = row.smartlink;
+      if (dataMap[key]) {
+        dataMap[key].leads += row.leads || 0;
+        dataMap[key].payouts += row.payouts || 0;
+      } else {
+        dataMap[key] = {
+          smartlink: key,
+          user_id: key,
+          network: (row.network || "TRAFEE").toUpperCase(),
+          visits: 0,
+          unique: 0,
+          clicks: 0,
+          leads: row.leads || 0,
+          payouts: row.payouts || 0
+        };
+      }
+    }
+    const data = Object.values(dataMap).sort((a, b) => b.payouts - a.payouts || b.clicks - a.clicks);
     return new Response(JSON.stringify({ data }), { status: 200, headers });
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message, data: [] }), { status: 500, headers });

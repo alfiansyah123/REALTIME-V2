@@ -150,9 +150,9 @@ const DashboardPage = ({ onLogout, currency, setCurrency, currencyRate, setCurre
         return data.filter(item =>
             (item.clickId && item.clickId.toLowerCase().includes(query)) ||
             (item.subId && item.subId.toLowerCase().includes(query)) ||
-            item.network.toLowerCase().includes(query) ||
-            item.country.toLowerCase().includes(query) ||
-            item.ipAddress.includes(query)
+            (item.network && item.network.toLowerCase().includes(query)) ||
+            (item.country && item.country.toLowerCase().includes(query)) ||
+            (item.ipAddress && item.ipAddress.includes(query))
         );
     }, [data, searchQuery]);
 
