@@ -75,7 +75,9 @@ export async function onRequest(context) {
             }
         }
 
-        const data = Object.values(dataMap).sort((a, b) => b.payouts - a.payouts || b.clicks - a.clicks);
+        const data = Object.values(dataMap)
+            .filter(row => row.smartlink && String(row.smartlink).toLowerCase() !== 'unknown')
+            .sort((a, b) => b.payouts - a.payouts || b.clicks - a.clicks);
 
         return new Response(JSON.stringify({ data }), { status: 200, headers });
     } catch (error) {

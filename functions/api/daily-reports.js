@@ -102,9 +102,12 @@ export async function onRequest(context) {
             }
         } catch (e) { console.error('D1 iMon Fetch Error:', e); }
 
-        finalData.sort((a, b) => b.payouts - a.payouts);
+        // Filter out 'Unknown' smartlinks as requested
+        const filteredData = finalData.filter(row => row.smartlink && String(row.smartlink).toLowerCase() !== 'unknown');
 
-        return new Response(JSON.stringify({ data: finalData }), { status: 200, headers });
+        filteredData.sort((a, b) => b.payouts - a.payouts);
+
+        return new Response(JSON.stringify({ data: filteredData }), { status: 200, headers });
     } catch (error) {
         return new Response(JSON.stringify({ error: error.message, data: [] }), { status: 500, headers });
     }
