@@ -157,8 +157,10 @@ export async function onRequestGet(context) {
                     }
                 }
                 
-                // Use IP from DB for ALL networks to ensure we show the visitor's IP, not the network's server IP
-                if (clickInfo.ip_address) finalIp = clickInfo.ip_address;
+                // Only override IP from DB if network is Trafee (Trafee doesn't send visitor IP in postback)
+                if (network === 'TRAFEE') {
+                    if (clickInfo.ip_address) finalIp = clickInfo.ip_address;
+                }
                 
                 // Set country name from DB if we don't have it
                 if (!finalCountryName && finalCountryCode === 'US') finalCountryName = 'United States';
