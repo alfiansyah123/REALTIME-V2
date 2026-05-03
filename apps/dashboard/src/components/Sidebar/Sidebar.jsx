@@ -138,16 +138,16 @@ export default function Sidebar({ currency, currencyRate, isOpen, onClose }) {
                 {/* Divider with gradient */}
                 <div className="h-px w-full bg-gradient-to-r from-transparent via-gray-300/30 dark:via-gray-600/30 to-transparent my-4"></div>
 
-                {/* Country Leads Summary */}
-                <CountryLeadsSummary />
-
-                {/* Divider with gradient */}
-                <div className="h-px w-full bg-gradient-to-r from-transparent via-gray-300/30 dark:via-gray-600/30 to-transparent my-4"></div>
-
                 {/* Live Traffic - Supabase Realtime */}
                 <div className="bg-white/5 dark:bg-black/20 backdrop-blur-sm rounded-xl p-1 border border-white/5">
                     <LiveTraffic />
                 </div>
+
+                {/* Divider with gradient */}
+                <div className="h-px w-full bg-gradient-to-r from-transparent via-gray-300/30 dark:via-gray-600/30 to-transparent my-4"></div>
+
+                {/* Country Leads Summary */}
+                <CountryLeadsSummary />
             </div>
 
             {/* Footer - Glass Effect */}
