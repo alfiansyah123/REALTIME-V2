@@ -26,8 +26,9 @@ const countryCodeMapping = {
 
 const getAlpha2Code = (alpha3Code) => {
     if (!alpha3Code) return 'xx';
-    if (alpha3Code.length === 2) return alpha3Code.toLowerCase();
-    return countryCodeMapping[alpha3Code.toUpperCase()] || alpha3Code.substring(0, 2).toLowerCase();
+    const strCode = String(alpha3Code);
+    if (strCode.length === 2) return strCode.toLowerCase();
+    return countryCodeMapping[strCode.toUpperCase()] || strCode.substring(0, 2).toLowerCase();
 };
 
 export default function CountryLeadsSummary() {

@@ -28,11 +28,11 @@ export default function ConversionTable({ searchQuery, currency = 'USD', currenc
         if (!searchQuery) return true;
         const query = searchQuery.toLowerCase();
         return (
-            (item.subId && item.subId.toLowerCase().includes(query)) ||
-            (item.clickId && item.clickId.toLowerCase().includes(query)) ||
-            (item.network && item.network.toLowerCase().includes(query)) ||
-            (item.country && item.country.toLowerCase().includes(query)) ||
-            (item.ipAddress && item.ipAddress.includes(query))
+            (item.subId && String(item.subId).toLowerCase().includes(query)) ||
+            (item.clickId && String(item.clickId).toLowerCase().includes(query)) ||
+            (item.network && String(item.network).toLowerCase().includes(query)) ||
+            (item.country && String(item.country).toLowerCase().includes(query)) ||
+            (item.ipAddress && String(item.ipAddress).includes(query))
         );
     });
 
@@ -132,7 +132,7 @@ export default function ConversionTable({ searchQuery, currency = 'USD', currenc
                                 <td className="px-2 py-2 text-center">
                                     {(() => {
                                         const network = row.network || '';
-                                        const lowerNet = network.toLowerCase().replace(/\s+/g, ''); // remove spaces for filename
+                                        const lowerNet = String(network).toLowerCase().replace(/\s+/g, ''); // remove spaces for filename
                                         const logoPath = `/networks/${lowerNet}.png`;
 
                                         return (

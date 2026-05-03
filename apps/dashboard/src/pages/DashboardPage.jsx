@@ -48,7 +48,7 @@ const DashboardPage = ({ onLogout, currency, setCurrency, currencyRate, setCurre
         network: row.network,
         country: row.country,
         flag: row.country && row.country !== 'XX'
-            ? `https://flagcdn.com/${row.country.toLowerCase()}.svg`
+            ? `https://flagcdn.com/${String(row.country).toLowerCase()}.svg`
             : null,
         countryName: row.country_name,
         traffic: row.traffic_type,
@@ -150,11 +150,11 @@ const DashboardPage = ({ onLogout, currency, setCurrency, currencyRate, setCurre
         if (!searchQuery) return data;
         const query = searchQuery.toLowerCase();
         return data.filter(item =>
-            (item.clickId && item.clickId.toLowerCase().includes(query)) ||
-            (item.subId && item.subId.toLowerCase().includes(query)) ||
-            (item.network && item.network.toLowerCase().includes(query)) ||
-            (item.country && item.country.toLowerCase().includes(query)) ||
-            (item.ipAddress && item.ipAddress.includes(query))
+            (item.clickId && String(item.clickId).toLowerCase().includes(query)) ||
+            (item.subId && String(item.subId).toLowerCase().includes(query)) ||
+            (item.network && String(item.network).toLowerCase().includes(query)) ||
+            (item.country && String(item.country).toLowerCase().includes(query)) ||
+            (item.ipAddress && String(item.ipAddress).includes(query))
         );
     }, [data, searchQuery]);
 
