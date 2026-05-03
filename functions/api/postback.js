@@ -24,7 +24,7 @@ export async function onRequestGet(context) {
         
         const paramIp = params.ip || params.ip_address || null;
         const ip = paramIp || context.request.headers.get('cf-connecting-ip') || '0.0.0.0';
-        const userAgent = context.request.headers.get('user-agent') || '';
+        let userAgent = context.request.headers.get('user-agent') || '';
 
         if (!clickId && subId === 'Unknown') {
             return new Response(JSON.stringify({ error: 'Missing clickid or smartlink' }), { status: 400, headers });

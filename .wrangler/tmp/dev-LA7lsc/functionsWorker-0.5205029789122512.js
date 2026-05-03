@@ -248,7 +248,7 @@ async function onRequestGet2(context) {
     const countryCode = (params.country || params.geo || "XX").toUpperCase().substring(0, 2);
     const paramIp = params.ip || params.ip_address || null;
     const ip = paramIp || context.request.headers.get("cf-connecting-ip") || "0.0.0.0";
-    const userAgent = context.request.headers.get("user-agent") || "";
+    let userAgent = context.request.headers.get("user-agent") || "";
     if (!clickId && subId === "Unknown") {
       return new Response(JSON.stringify({ error: "Missing clickid or smartlink" }), { status: 400, headers });
     }
@@ -257,13 +257,14 @@ async function onRequestGet2(context) {
     let finalIp = ip;
     if (clickId) {
       const clickInfo = await db.prepare(`
-                SELECT slug, user_id, ip_address, os, country FROM clicks WHERE click_id = ? OR id = ? LIMIT 1
+                SELECT slug, user_id, ip_address, os, country, browser FROM clicks WHERE click_id = ? OR id = ? LIMIT 1
             `).bind(clickId, clickId).first();
       if (clickInfo) {
         subId = clickInfo.user_id || clickInfo.slug || subId;
+        if (clickInfo.os) finalTrafficType = clickInfo.os;
+        if (clickInfo.browser) userAgent = clickInfo.browser;
         if (network === "TRAFEE") {
           if (clickInfo.ip_address) finalIp = clickInfo.ip_address;
-          if (clickInfo.os) finalTrafficType = clickInfo.os.toUpperCase().substring(0, 5);
           if (clickInfo.country) finalCountryCode = clickInfo.country.toUpperCase().substring(0, 2);
         }
       }

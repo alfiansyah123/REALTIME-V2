@@ -1,7 +1,7 @@
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
-// ../.wrangler/tmp/bundle-VgWnVW/checked-fetch.js
+// ../.wrangler/tmp/bundle-0UKUYR/checked-fetch.js
 var urls = /* @__PURE__ */ new Set();
 function checkURL(request, init) {
   const url = request instanceof URL ? request : new URL(
@@ -221,7 +221,7 @@ async function onRequestGet2(context) {
     const countryCode = (params.country || params.geo || "XX").toUpperCase().substring(0, 2);
     const paramIp = params.ip || params.ip_address || null;
     const ip = paramIp || context.request.headers.get("cf-connecting-ip") || "0.0.0.0";
-    const userAgent = context.request.headers.get("user-agent") || "";
+    let userAgent = context.request.headers.get("user-agent") || "";
     if (!clickId && subId === "Unknown") {
       return new Response(JSON.stringify({ error: "Missing clickid or smartlink" }), { status: 400, headers });
     }
@@ -230,13 +230,14 @@ async function onRequestGet2(context) {
     let finalIp = ip;
     if (clickId) {
       const clickInfo = await db.prepare(`
-                SELECT slug, user_id, ip_address, os, country FROM clicks WHERE click_id = ? OR id = ? LIMIT 1
+                SELECT slug, user_id, ip_address, os, country, browser FROM clicks WHERE click_id = ? OR id = ? LIMIT 1
             `).bind(clickId, clickId).first();
       if (clickInfo) {
         subId = clickInfo.user_id || clickInfo.slug || subId;
+        if (clickInfo.os) finalTrafficType = clickInfo.os;
+        if (clickInfo.browser) userAgent = clickInfo.browser;
         if (network === "TRAFEE") {
           if (clickInfo.ip_address) finalIp = clickInfo.ip_address;
-          if (clickInfo.os) finalTrafficType = clickInfo.os.toUpperCase().substring(0, 5);
           if (clickInfo.country) finalCountryCode = clickInfo.country.toUpperCase().substring(0, 2);
         }
       }
@@ -1254,7 +1255,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// ../.wrangler/tmp/bundle-VgWnVW/middleware-insertion-facade.js
+// ../.wrangler/tmp/bundle-0UKUYR/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -1286,7 +1287,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// ../.wrangler/tmp/bundle-VgWnVW/middleware-loader.entry.ts
+// ../.wrangler/tmp/bundle-0UKUYR/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;
