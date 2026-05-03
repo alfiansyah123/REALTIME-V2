@@ -248,12 +248,18 @@ async function onRequestGet2(context) {
     if (!clickId && subId === "Unknown") {
       return new Response(JSON.stringify({ error: "Missing clickid or smartlink" }), { status: 400, headers });
     }
+    let finalTrafficType = trafficType;
+    let finalCountryCode = countryCode;
+    let finalIp = ip;
     if (clickId) {
       const clickInfo = await db.prepare(`
-                SELECT slug FROM clicks WHERE click_id = ? OR id = ? LIMIT 1
+                SELECT slug, user_id, ip_address, os, country FROM clicks WHERE click_id = ? OR id = ? LIMIT 1
             `).bind(clickId, clickId).first();
-      if (clickInfo && clickInfo.slug) {
-        subId = clickInfo.slug;
+      if (clickInfo) {
+        subId = clickInfo.user_id || clickInfo.slug || subId;
+        if (clickInfo.ip_address) finalIp = clickInfo.ip_address;
+        if (clickInfo.os) finalTrafficType = clickInfo.os.toUpperCase().substring(0, 5);
+        if (clickInfo.country) finalCountryCode = clickInfo.country.toUpperCase().substring(0, 2);
       }
     }
     const finalClickId = clickId || subId || `gen-${crypto.randomUUID()}`;
@@ -264,10 +270,10 @@ async function onRequestGet2(context) {
       finalClickId,
       subId,
       network,
-      countryCode,
-      trafficType,
+      finalCountryCode,
+      finalTrafficType,
       payout,
-      ip,
+      finalIp,
       userAgent
     ).run();
     const today = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];

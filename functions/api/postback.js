@@ -28,14 +28,21 @@ export async function onRequestGet(context) {
             return new Response(JSON.stringify({ error: 'Missing clickid or smartlink' }), { status: 400, headers });
         }
 
-        // 0. Auto-Attribution: Look up the real Team Member (Slug) from D1 clicks table
+        let finalTrafficType = trafficType;
+        let finalCountryCode = countryCode;
+        let finalIp = ip;
+
+        // 0. Auto-Attribution: Look up the real Team Member and User Details from D1 clicks table
         if (clickId) {
             const clickInfo = await db.prepare(`
-                SELECT slug FROM clicks WHERE click_id = ? OR id = ? LIMIT 1
+                SELECT slug, user_id, ip_address, os, country FROM clicks WHERE click_id = ? OR id = ? LIMIT 1
             `).bind(clickId, clickId).first();
             
-            if (clickInfo && clickInfo.slug) {
-                subId = clickInfo.slug; // Found the real member!
+            if (clickInfo) {
+                subId = clickInfo.user_id || clickInfo.slug || subId; // Use user_id if available
+                if (clickInfo.ip_address) finalIp = clickInfo.ip_address;
+                if (clickInfo.os) finalTrafficType = clickInfo.os.toUpperCase().substring(0, 5);
+                if (clickInfo.country) finalCountryCode = clickInfo.country.toUpperCase().substring(0, 2);
             }
         }
 
@@ -49,10 +56,10 @@ export async function onRequestGet(context) {
             finalClickId,
             subId,
             network,
-            countryCode,
-            trafficType,
+            finalCountryCode,
+            finalTrafficType,
             payout,
-            ip,
+            finalIp,
             userAgent
         ).run();
 
