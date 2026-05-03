@@ -25,19 +25,23 @@ export async function onRequest(context) {
         // Skip if it's a bot (optional, based on your preference)
         if (is_bot) return new Response(JSON.stringify({ success: true, skipped: 'bot' }), { status: 200, headers });
 
+        const finalUserId = slug || body.user_id || '-';
+        const finalClickId = click_id || body.track || null;
+
         await db.prepare(`
             INSERT INTO clicks (
-                slug, country, ip_address, user_agent, browser, os, device, click_id, referer
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                slug, user_id, country, ip_address, user_agent, browser, os, device, click_id, referer
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).bind(
-            slug || '-', 
+            finalUserId,
+            finalUserId,
             country || 'XX', 
             ip_address || '0.0.0.0', 
             user_agent || '', 
             browser || '', 
             os || '', 
             device || '', 
-            click_id || null, 
+            finalClickId, 
             referer || ''
         ).run();
 
