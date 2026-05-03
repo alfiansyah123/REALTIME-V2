@@ -24,20 +24,28 @@ export async function onRequestGet(context) {
         // Handle Full Country Names (iMonetizeIt fallback)
         let rawCountry = (params.country || params.geo || 'XX').toUpperCase();
         const countryMap = {
-            'UNITED STATES': 'US',
-            'UNITED KINGDOM': 'GB',
-            'INDONESIA': 'ID',
-            'PAKISTAN': 'PK',
-            'INDIA': 'IN',
-            'BRAZIL': 'BR',
-            'GERMANY': 'DE',
-            'FRANCE': 'FR',
-            'ITALY': 'IT',
-            'SPAIN': 'ES',
-            'CANADA': 'CA',
-            'AUSTRALIA': 'AU',
-            'PHILIPPINES': 'PH',
-            'MEXICO': 'MX'
+            'USA': 'US', 'UK': 'GB', 'UN': 'US', 'EN': 'GB', 'GREAT BRITAIN': 'GB',
+            'UKR': 'UA', 'UKRAINE': 'UA', 'RUS': 'RU', 'RUSSIA': 'RU',
+            'VNM': 'VN', 'VIETNAM': 'VN', 'IDN': 'ID', 'INDONESIA': 'ID',
+            'BRA': 'BR', 'BRAZIL': 'BR', 'THA': 'TH', 'THAILAND': 'TH',
+            'DEU': 'DE', 'GERMANY': 'DE', 'FRA': 'FR', 'FRANCE': 'FR',
+            'ESP': 'ES', 'SPAIN': 'ES', 'ITA': 'IT', 'ITALY': 'IT',
+            'NLD': 'NL', 'HOLLAND': 'NL', 'NETHERLANDS': 'NL',
+            'SGP': 'SG', 'SINGAPORE': 'SG', 'MYS': 'MY', 'MALAYSIA': 'MY',
+            'PHL': 'PH', 'PHILIPPINES': 'PH', 'KOR': 'KR', 'SOUTH KOREA': 'KR',
+            'JPN': 'JP', 'JAPAN': 'JP', 'CHN': 'CN', 'CHINA': 'CN',
+            'IND': 'IN', 'INDIA': 'IN', 'CAN': 'CA', 'CANADA': 'CA',
+            'AUS': 'AU', 'AUSTRALIA': 'AU', 'MEX': 'MX', 'MEXICO': 'MX',
+            'ARG': 'AR', 'ARGENTINA': 'AR', 'COL': 'CO', 'COLOMBIA': 'CO',
+            'ZAF': 'ZA', 'SOUTH AFRICA': 'ZA', 'EGY': 'EG', 'EGYPT': 'EG',
+            'SAU': 'SA', 'SAUDI ARABIA': 'SA', 'ARE': 'AE', 'UAE': 'AE',
+            'TUR': 'TR', 'TURKEY': 'TR', 'PAK': 'PK', 'PAKISTAN': 'PK',
+            'NGA': 'NG', 'NIGERIA': 'NG', 'KEN': 'KE', 'KENYA': 'KE',
+            'GHA': 'GH', 'GHANA': 'GH', 'MAR': 'MA', 'MOROCCO': 'MA',
+            'DZA': 'DZ', 'ALGERIA': 'DZ', 'TUN': 'TN', 'TUNISIA': 'TN',
+            'PER': 'PE', 'PERU': 'PE', 'CHL': 'CL', 'CHILE': 'CL',
+            'VEN': 'VE', 'VENEZUELA': 'VE', 'ECU': 'EC', 'ECUADOR': 'EC',
+            'DOM': 'DO', 'DOMINICAN REPUBLIC': 'DO', 'CUB': 'CU', 'CUBA': 'CU'
         };
         
         let countryCode = countryMap[rawCountry] || rawCountry.substring(0, 2);
