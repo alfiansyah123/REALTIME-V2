@@ -37,7 +37,7 @@ export async function onRequest(context) {
         const { results: leadStats } = await db.prepare(`
             SELECT smartlink, network, SUM(leads) as leads, SUM(payout) as payouts
             FROM daily_reports
-            WHERE date BETWEEN ? AND ?
+            WHERE date BETWEEN ? AND ? AND network = 'TRAFEE'
             GROUP BY smartlink, network
         `).bind(startDate, endDate).all();
 

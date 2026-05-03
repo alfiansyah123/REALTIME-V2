@@ -75,33 +75,32 @@ export async function onRequest(context) {
         
         let finalData = Object.values(imonData);
         
-        // Trafee (D1) integration
+        // iMonetizeIt (D1 Postback) integration
         try {
             const { results: d1Stats } = await db.prepare(`
-                SELECT 
-                    t.username as smartlink,
-                    c.slug,
-                    'TRAFEE' as network,
-                    COUNT(c.id) as clicks,
-                    SUM(CASE WHEN c.is_lead = 1 THEN 1 ELSE 0 END) as leads,
-                    SUM(COALESCE(c.payout, 0)) as payouts
-                FROM clicks c
-                LEFT JOIN team t ON c.slug = t.username
-                WHERE DATE(c.created_at) BETWEEN ? AND ?
-                GROUP BY c.slug
+                SELECT smartlink, network, SUM(leads) as leads, SUM(payout) as payouts
+                FROM daily_reports
+                WHERE date BETWEEN ? AND ? AND network = 'IMONETIZEIT'
+                GROUP BY smartlink, network
             `).bind(startDate, endDate).all();
 
             if (d1Stats && d1Stats.length > 0) {
                 d1Stats.forEach(row => {
-                    finalData.push({
-                        ...row,
-                        visits: row.clicks,
-                        unique: row.clicks,
-                        smartlink: row.smartlink || row.slug
-                    });
+                    const existing = finalData.find(d => d.smartlink === row.smartlink);
+                    if (existing) {
+                        existing.leads += row.leads;
+                        existing.payouts += row.payouts;
+                    } else {
+                        finalData.push({
+                            ...row,
+                            visits: 0,
+                            unique: 0,
+                            clicks: 0
+                        });
+                    }
                 });
             }
-        } catch (e) { console.error('D1 Fetch Error:', e); }
+        } catch (e) { console.error('D1 iMon Fetch Error:', e); }
 
         finalData.sort((a, b) => b.payouts - a.payouts);
 
