@@ -13,21 +13,34 @@ export default function ConversionsPage() {
     const mountedRef = useRef(true);
 
     // Helper: Format row
-    const formatRow = useCallback((row) => ({
-        id: row.id,
-        subId: row.sub_id,
-        clickId: row.click_id,
-        network: row.network,
-        country: row.country,
-        flag: row.country && row.country !== 'XX' ? `https://flagcdn.com/${row.country.toLowerCase()}.svg` : null,
-        countryName: row.country_name,
-        traffic: row.traffic_type,
-        os: row.traffic_type,         // OS is stored in traffic_type column
-        browser: row.user_agent,      // Browser is stored in user_agent column
-        earning: parseFloat(row.earning) || 0,
-        ipAddress: row.ip_address,
-        created_at: row.created_at,
-        highlighted: parseFloat(row.earning) > 10
+    // Country code normalization for legacy/bad data in DB
+    const normalizeCountry = (code) => {
+        if (!code) return 'XX';
+        const map = {
+            'UN': 'US', 'EN': 'GB', 'ME': 'MX',  // common legacy mistakes
+            'UK': 'GB',
+        };
+        return map[code.toUpperCase()] || code.toUpperCase();
+    };
+
+    const formatRow = useCallback((row) => {
+        const country = normalizeCountry(row.country);
+        return {
+            id: row.id,
+            subId: row.sub_id,
+            clickId: row.click_id,
+            network: row.network,
+            country,
+            flag: country && country !== 'XX' ? `https://flagcdn.com/${country.toLowerCase()}.svg` : null,
+            countryName: row.country_name,
+            traffic: row.traffic_type,
+            os: row.traffic_type,         // OS is stored in traffic_type column
+            browser: row.user_agent,      // Browser is stored in user_agent column
+            earning: parseFloat(row.earning) || 0,
+            ipAddress: row.ip_address,
+            created_at: row.created_at,
+            highlighted: parseFloat(row.earning) > 10
+        };
     }), []);
 
     const fetchData = useCallback(async (isSilent = false) => {

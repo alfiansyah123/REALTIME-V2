@@ -78,7 +78,13 @@ export async function onRequestGet(context) {
                 if (clickInfo.browser) userAgent = clickInfo.browser;
                 
                 // Use tracker country for ALL networks since it is always a valid ISO-2 code (Cloudflare cf.country)
-                if (clickInfo.country) finalCountryCode = clickInfo.country.toUpperCase().substring(0, 2);
+                if (clickInfo.country) {
+                    const rawClickCountry = clickInfo.country.toUpperCase().trim();
+                    // ONLY use if it's already a valid 2-char ISO code — never truncate longer strings like 'UNKNOWN'
+                    if (rawClickCountry.length === 2 && rawClickCountry !== 'XX' && rawClickCountry !== 'UN') {
+                        finalCountryCode = rawClickCountry;
+                    }
+                }
                 
                 // Only override IP from DB if network is Trafee (because iMonetizeIt IP is already accurate)
                 if (network === 'TRAFEE') {
