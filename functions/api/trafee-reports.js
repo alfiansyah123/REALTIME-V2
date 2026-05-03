@@ -21,15 +21,15 @@ export async function onRequest(context) {
         // 1. Klik dari tabel clicks, JOIN ke team buat dapet nama asli member
         const { results: clickStats } = await db.prepare(`
             SELECT 
-                COALESCE(t.name, c.user_id, c.slug) as smartlink,
-                c.user_id,
+                COALESCE(t.name, c.slug) as smartlink,
+                c.slug,
                 'TRAFEE' as network,
                 COUNT(c.id) as clicks,
                 COUNT(DISTINCT c.ip_address) as unique_clicks
             FROM clicks c
-            LEFT JOIN team t ON c.user_id = t.user_id
+            LEFT JOIN team t ON c.slug = t.user_id
             WHERE DATE(c.created_at) BETWEEN ? AND ?
-            GROUP BY c.user_id
+            GROUP BY c.slug
             ORDER BY clicks DESC
         `).bind(startDate, endDate).all();
 
@@ -51,10 +51,10 @@ export async function onRequest(context) {
         const dataMap = {};
 
         for (const row of (clickStats || [])) {
-            const key = row.user_id || row.smartlink;
+            const key = row.slug;
             dataMap[key] = {
                 smartlink: row.smartlink,
-                user_id: row.user_id,
+                user_id: row.slug,
                 network: 'TRAFEE',
                 visits: row.clicks,
                 unique: row.unique_clicks,
