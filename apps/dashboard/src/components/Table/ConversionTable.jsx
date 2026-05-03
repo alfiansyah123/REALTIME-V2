@@ -166,20 +166,27 @@ export default function ConversionTable({ searchQuery, currency = 'USD', currenc
                                     })()}
                                 </td>
                                 <td className="px-2 py-2 text-center">
-                                    {row.flag && row.country && row.country !== 'XX' ? (
-                                        <img
-                                            alt={row.country}
-                                            className="w-5 h-3.5 object-cover rounded-sm inline-block"
-                                            src={row.flag}
-                                        />
-                                    ) : (
-                                        <span>
-                                            {row.country !== 'XX' ? row.country : (row.countryName || '🌐')}
-                                        </span>
-                                    )}
+                                    {(() => {
+                                        let displayCountry = row.country;
+                                        if (displayCountry === 'UN') displayCountry = 'US';
+                                        if (displayCountry === 'ME' && row.countryName === 'MEXICO') displayCountry = 'MX';
+
+                                        if (row.flag && displayCountry && displayCountry !== 'XX') {
+                                            // Ensure flag URL uses the corrected code if possible, but the DB 'flag' usually comes from postback
+                                            // We'll just trust the corrected code if we were to fetch it, but here we just show it
+                                            return <img
+                                                alt={displayCountry}
+                                                className="w-5 h-3.5 object-cover rounded-sm inline-block"
+                                                src={row.flag.replace(/\/un\.png/i, '/us.png')}
+                                            />;
+                                        }
+                                        return <span>
+                                            {displayCountry !== 'XX' ? displayCountry : (row.countryName || '🌐')}
+                                        </span>;
+                                    })()}
                                 </td>
                                 <td className="px-2 py-2 text-center whitespace-nowrap">
-                                    <div className="flex items-center justify-center gap-1.5">
+                                    <div className="flex items-center justify-center gap-1.5 opacity-80 hover:opacity-100 transition-opacity">
                                         {getOSIcon(row.os)}
                                         {getBrowserIcon(row.browser)}
                                     </div>
