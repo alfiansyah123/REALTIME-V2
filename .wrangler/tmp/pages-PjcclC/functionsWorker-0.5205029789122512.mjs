@@ -1,7 +1,7 @@
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
-// ../.wrangler/tmp/bundle-WirJ5H/checked-fetch.js
+// ../.wrangler/tmp/bundle-VgWnVW/checked-fetch.js
 var urls = /* @__PURE__ */ new Set();
 function checkURL(request, init) {
   const url = request instanceof URL ? request : new URL(
@@ -125,8 +125,10 @@ async function onRequest2(context) {
     let conditions = [];
     let params = [];
     if (startDate && endDate) {
+      const formattedStart = startDate.replace("T", " ").replace("Z", "");
+      const formattedEnd = endDate.replace("T", " ").replace("Z", "");
       conditions.push("created_at BETWEEN ? AND ?");
-      params.push(startDate, endDate);
+      params.push(formattedStart, formattedEnd);
     }
     if (clickId) {
       conditions.push("click_id = ?");
@@ -1252,7 +1254,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// ../.wrangler/tmp/bundle-WirJ5H/middleware-insertion-facade.js
+// ../.wrangler/tmp/bundle-VgWnVW/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -1284,7 +1286,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// ../.wrangler/tmp/bundle-WirJ5H/middleware-loader.entry.ts
+// ../.wrangler/tmp/bundle-VgWnVW/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;

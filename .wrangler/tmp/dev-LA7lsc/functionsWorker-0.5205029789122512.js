@@ -152,8 +152,10 @@ async function onRequest2(context) {
     let conditions = [];
     let params = [];
     if (startDate && endDate) {
+      const formattedStart = startDate.replace("T", " ").replace("Z", "");
+      const formattedEnd = endDate.replace("T", " ").replace("Z", "");
       conditions.push("created_at BETWEEN ? AND ?");
-      params.push(startDate, endDate);
+      params.push(formattedStart, formattedEnd);
     }
     if (clickId) {
       conditions.push("click_id = ?");
