@@ -130,17 +130,17 @@ export default function Sidebar({ currency, currencyRate, isOpen, onClose }) {
                     </NavLink>
                 </div>
 
-                {/* Daily Performance - Frosted Card */}
+                {/* Live Traffic - Supabase Realtime */}
                 <div className="bg-white/5 dark:bg-black/20 backdrop-blur-sm rounded-xl p-1 border border-white/5">
-                    <DailyPerformance currency={currency} currencyRate={currencyRate} />
+                    <LiveTraffic />
                 </div>
 
                 {/* Divider with gradient */}
                 <div className="h-px w-full bg-gradient-to-r from-transparent via-gray-300/30 dark:via-gray-600/30 to-transparent my-4"></div>
 
-                {/* Live Traffic - Supabase Realtime */}
+                {/* Daily Performance - Frosted Card */}
                 <div className="bg-white/5 dark:bg-black/20 backdrop-blur-sm rounded-xl p-1 border border-white/5">
-                    <LiveTraffic />
+                    <DailyPerformance currency={currency} currencyRate={currencyRate} />
                 </div>
 
                 {/* Divider with gradient */}
