@@ -152,12 +152,10 @@ const ClickPerformancePage = () => {
                                 <tr>
                                     <th>Time</th>
                                     <th>Click ID</th>
-                                    <th>Referrer</th>
                                     <th>Country</th>
                                     <th>OS</th>
                                     <th>Browser</th>
                                     <th>IP Address</th>
-                                    <th>Target URL</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -165,15 +163,6 @@ const ClickPerformancePage = () => {
                                     <tr key={click.id}>
                                         <td className="click-perf-time">{formatTime(click.time)}</td>
                                         <td className="click-perf-mono">{click.clickId || '-'}</td>
-                                        <td className="click-perf-referrer" title={click.referer}>
-                                            {click.referer ? (() => {
-                                                try {
-                                                    return new URL(click.referer).hostname;
-                                                } catch {
-                                                    return click.referer;
-                                                }
-                                            })() : '-'}
-                                        </td>
                                         <td>
                                             <div className="click-perf-flex">
                                                 {getCountryFlag(click.country)}
@@ -190,7 +179,6 @@ const ClickPerformancePage = () => {
                                             </div>
                                         </td>
                                         <td className="click-perf-mono">{click.ip}</td>
-                                        <td className="click-perf-url" title={click.originalUrl}>{click.originalUrl}</td>
                                     </tr>
                                 ))}
                             </tbody>
