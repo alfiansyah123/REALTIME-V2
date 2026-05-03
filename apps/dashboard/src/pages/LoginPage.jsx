@@ -53,7 +53,7 @@ export default function LoginPage({ onLogin }) {
                         />
                     </div>
                     <h1 className="text-3xl font-bold liquid-text text-center tracking-tighter">
-                        NGELID TEAM
+                        NGETEAM DASHBOARD
                     </h1>
                     <p className="text-sm text-text-muted-light dark:text-text-muted-dark text-center opacity-80">
                         Please enter the access password to continue to the dashboard.
