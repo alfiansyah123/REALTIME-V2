@@ -22,6 +22,8 @@ export default function ConversionsPage() {
         flag: row.country && row.country !== 'XX' ? `https://flagcdn.com/${row.country.toLowerCase()}.svg` : null,
         countryName: row.country_name,
         traffic: row.traffic_type,
+        os: row.traffic_type,         // OS is stored in traffic_type column
+        browser: row.user_agent,      // Browser is stored in user_agent column
         earning: parseFloat(row.earning) || 0,
         ipAddress: row.ip_address,
         created_at: row.created_at,

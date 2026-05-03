@@ -37,22 +37,24 @@ export default function ConversionTable({ searchQuery, currency = 'USD', currenc
     });
 
     const getOSIcon = (os) => {
-        const iconStyle = { width: '16px', height: '16px', opacity: 0.9 };
+        const iconStyle = { width: '14px', height: '14px', opacity: 0.9 };
         const androidSvg = <svg viewBox="0 0 24 24" fill="#3DDC84" style={iconStyle}><path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993.0001.5511-.4482.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l-1.997-3.4592c-.3087-.5346-.9858-.7181-1.5208-.4094-.535.3087-.7189.9854-.4098 1.5204l1.9168 3.3204c-1.8946-.8626-4.0494-.8626-5.9439 0l1.9168-3.3204c.3079-.535.1252-1.2117-.4098-1.5204-.5361-.3087-1.2121-.1252-1.5208.4094l-1.9969 3.4592c-2.9103 1.5879-4.7003 4.549-4.9082 7.7788h18.8213c-.2083-3.2298-1.9983-6.1909-4.9086-7.7788" /></svg>;
         const appleSvg = <svg viewBox="0 0 384 512" fill="#A2AAAD" style={iconStyle}><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 52.3-11.4 69.5-34.3z" /></svg>;
         const windowsSvg = <svg viewBox="0 0 448 512" fill="#0078D7" style={iconStyle}><path d="M0 93.7l183.6-25.3v177.4H0V93.7zm0 324.6l183.6 25.3V268.4H0v149.9zm203.8 28L448 480V268.4H203.8v177.9zm0-380.6v180.1H448V32L203.8 65.7z" /></svg>;
         const linuxSvg = <svg viewBox="0 0 448 512" fill="#FCC624" style={iconStyle}><path d="M220.6 65.3c2.9-2.2 4.6-5.9 4.3-9.6-1.5-16.7 3.9-39 20-53 2.1-1.9 5.2-2.3 7.7-1.1 25.1 12.1 43.8 48 44.5 90.7.1 2.9-1.3 5.7-3.6 7.4-16.7 11.9-45.3 19.7-72.9-34.4zM448 296c0 66.3-53.7 120-120 120h-8c-17.7 0-32 14.3-32 32s14.3 32 32 32c53 0 96-43 96-96 0-8.8 7.2-16 16-16s16 7.2 16 16c0 70.7-57.3 128-128 128-35.3 0-67.3-14.3-90.5-37.5-6.1-6.1-17.5-6.1-23.6-.1-23.1 23-55 37.6-90.3 37.6-70.7 0-128-57.3-128-128 0-8.8 7.2-16 16-16s-16-7.2-16-16z" /></svg>;
-        const defaultOsIcon = <div className="flex items-center text-cyan-500"><span className="material-icons-round text-sm">desktop_windows</span></div>;
-        const defaultWapIcon = <div className="flex items-center text-orange-500"><span className="material-icons-round text-sm">smartphone</span></div>;
+        const phoneSvg = <svg viewBox="0 0 24 24" fill="#F97316" style={iconStyle}><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>;
+        const desktopSvg = <svg viewBox="0 0 24 24" fill="#06B6D4" style={iconStyle}><path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7l-2 3v1h8v-1l-2-3h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 12H3V4h18v10z"/></svg>;
 
-        if (!os) return defaultOsIcon;
+        if (!os) return desktopSvg;
         const lowerOs = String(os).toLowerCase();
-        if (lowerOs.includes('android')) return androidSvg;
-        if (lowerOs.includes('ios') || lowerOs.includes('mac') || lowerOs.includes('iphone')) return appleSvg;
-        if (lowerOs.includes('windows')) return windowsSvg;
-        if (lowerOs.includes('linux')) return linuxSvg;
-        if (lowerOs === 'wap') return defaultWapIcon;
-        return defaultOsIcon;
+        // Support both full names and truncated (substring 5) values from DB
+        if (lowerOs.startsWith('andr')) return androidSvg;          // android, andro
+        if (lowerOs === 'ios' || lowerOs.startsWith('mac') || lowerOs.startsWith('ipho') || lowerOs.startsWith('ipa')) return appleSvg; // ios, mac, iphone, ipad
+        if (lowerOs.startsWith('win')) return windowsSvg;           // windows, windo
+        if (lowerOs.startsWith('linux') || lowerOs.startsWith('ubun')) return linuxSvg;
+        if (lowerOs === 'wap') return phoneSvg;
+        if (lowerOs === 'web') return desktopSvg;
+        return desktopSvg;
     };
 
     const getBrowserIcon = (browser) => {

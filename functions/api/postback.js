@@ -17,7 +17,7 @@ export async function onRequestGet(context) {
         const clickId = params.click_id || params.clickid || params.cid || params.track || null;
         let payout = parseFloat(params.payout || params.sum || '0.00');
         if (isNaN(payout)) payout = 0;
-        const trafficType = (params.os || params.traffic || 'WEB').toUpperCase().substring(0, 5);
+        const trafficType = (params.os || params.traffic || 'WEB').toUpperCase();
         let subId = params.sub_id || params.subid || params.smartlink || 'Unknown';
         const network = (params.network || params.source || (params.track ? 'TRAFEE' : 'IMONETIZEIT')).toUpperCase();
         
