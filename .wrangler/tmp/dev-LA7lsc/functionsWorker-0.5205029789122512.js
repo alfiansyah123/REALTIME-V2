@@ -263,9 +263,9 @@ async function onRequestGet2(context) {
         subId = clickInfo.user_id || clickInfo.slug || subId;
         if (clickInfo.os) finalTrafficType = clickInfo.os;
         if (clickInfo.browser) userAgent = clickInfo.browser;
+        if (clickInfo.country) finalCountryCode = clickInfo.country.toUpperCase().substring(0, 2);
         if (network === "TRAFEE") {
           if (clickInfo.ip_address) finalIp = clickInfo.ip_address;
-          if (clickInfo.country) finalCountryCode = clickInfo.country.toUpperCase().substring(0, 2);
         }
       }
     }

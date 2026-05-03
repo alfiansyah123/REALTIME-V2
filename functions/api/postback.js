@@ -47,10 +47,12 @@ export async function onRequestGet(context) {
                 if (clickInfo.os) finalTrafficType = clickInfo.os;
                 if (clickInfo.browser) userAgent = clickInfo.browser;
                 
-                // Only override IP/Country from DB if network is Trafee
+                // Use tracker country for ALL networks since it is always a valid ISO-2 code (Cloudflare cf.country)
+                if (clickInfo.country) finalCountryCode = clickInfo.country.toUpperCase().substring(0, 2);
+                
+                // Only override IP from DB if network is Trafee (because iMonetizeIt IP is already accurate)
                 if (network === 'TRAFEE') {
                     if (clickInfo.ip_address) finalIp = clickInfo.ip_address;
-                    if (clickInfo.country) finalCountryCode = clickInfo.country.toUpperCase().substring(0, 2);
                 }
             }
         }
