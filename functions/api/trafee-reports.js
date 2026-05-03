@@ -35,10 +35,16 @@ export async function onRequest(context) {
 
         // 2. Leads dari tabel daily_reports (postback Trafee)
         const { results: leadStats } = await db.prepare(`
-            SELECT smartlink, network, SUM(leads) as leads, SUM(payout) as payouts
-            FROM daily_reports
-            WHERE date BETWEEN ? AND ? AND network = 'TRAFEE'
-            GROUP BY smartlink, network
+            SELECT 
+                COALESCE(t.name, dr.smartlink) as smartlink,
+                dr.smartlink as user_id,
+                dr.network, 
+                SUM(dr.leads) as leads, 
+                SUM(dr.payout) as payouts
+            FROM daily_reports dr
+            LEFT JOIN team t ON dr.smartlink = t.user_id
+            WHERE dr.date BETWEEN ? AND ? AND dr.network = 'TRAFEE'
+            GROUP BY dr.smartlink
         `).bind(startDate, endDate).all();
 
         // 3. Gabungin Klik + Leads
@@ -59,14 +65,16 @@ export async function onRequest(context) {
         }
 
         for (const row of (leadStats || [])) {
-            const key = row.smartlink;
+            const key = row.user_id;
             if (dataMap[key]) {
                 dataMap[key].leads += row.leads || 0;
                 dataMap[key].payouts += row.payouts || 0.0;
+                // Pastikan smartlink pake nama tim kalo ada
+                dataMap[key].smartlink = row.smartlink;
             } else {
                 dataMap[key] = {
-                    smartlink: key,
-                    user_id: key,
+                    smartlink: row.smartlink,
+                    user_id: row.user_id,
                     network: (row.network || 'TRAFEE').toUpperCase(),
                     visits: 0, unique: 0, clicks: 0,
                     leads: row.leads || 0,
