@@ -245,7 +245,24 @@ async function onRequestGet2(context) {
     const trafficType = (params.os || params.traffic || "WEB").toUpperCase().substring(0, 5);
     let subId = params.sub_id || params.subid || params.smartlink || "Unknown";
     const network = (params.network || params.source || (params.track ? "TRAFEE" : "IMONETIZEIT")).toUpperCase();
-    const countryCode = (params.country || params.geo || "XX").toUpperCase().substring(0, 2);
+    let rawCountry = (params.country || params.geo || "XX").toUpperCase();
+    const countryMap = {
+      "UNITED STATES": "US",
+      "UNITED KINGDOM": "GB",
+      "INDONESIA": "ID",
+      "PAKISTAN": "PK",
+      "INDIA": "IN",
+      "BRAZIL": "BR",
+      "GERMANY": "DE",
+      "FRANCE": "FR",
+      "ITALY": "IT",
+      "SPAIN": "ES",
+      "CANADA": "CA",
+      "AUSTRALIA": "AU",
+      "PHILIPPINES": "PH"
+    };
+    let countryCode = countryMap[rawCountry] || rawCountry.substring(0, 2);
+    let countryName = rawCountry.length > 2 ? rawCountry : null;
     const paramIp = params.ip || params.ip_address || null;
     const ip = paramIp || context.request.headers.get("cf-connecting-ip") || "0.0.0.0";
     let userAgent = context.request.headers.get("user-agent") || "";
@@ -254,6 +271,7 @@ async function onRequestGet2(context) {
     }
     let finalTrafficType = trafficType;
     let finalCountryCode = countryCode;
+    let finalCountryName = countryName;
     let finalIp = ip;
     if (clickId) {
       const clickInfo = await db.prepare(`
@@ -267,17 +285,20 @@ async function onRequestGet2(context) {
         if (network === "TRAFEE") {
           if (clickInfo.ip_address) finalIp = clickInfo.ip_address;
         }
+        if (!finalCountryName && finalCountryCode === "US") finalCountryName = "United States";
+        if (!finalCountryName && finalCountryCode === "ID") finalCountryName = "Indonesia";
       }
     }
     const finalClickId = clickId || subId || `gen-${crypto.randomUUID()}`;
     await db.prepare(`
-            INSERT INTO conversions (click_id, sub_id, network, country, traffic_type, earning, ip_address, user_agent)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO conversions (click_id, sub_id, network, country, country_name, traffic_type, earning, ip_address, user_agent)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).bind(
       finalClickId,
       subId,
       network,
       finalCountryCode,
+      finalCountryName,
       finalTrafficType,
       payout,
       finalIp,

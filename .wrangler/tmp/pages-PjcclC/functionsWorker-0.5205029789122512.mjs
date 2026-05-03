@@ -1,7 +1,7 @@
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
-// ../.wrangler/tmp/bundle-7MglkE/checked-fetch.js
+// ../.wrangler/tmp/bundle-xqwFkG/checked-fetch.js
 var urls = /* @__PURE__ */ new Set();
 function checkURL(request, init) {
   const url = request instanceof URL ? request : new URL(
@@ -218,7 +218,24 @@ async function onRequestGet2(context) {
     const trafficType = (params.os || params.traffic || "WEB").toUpperCase().substring(0, 5);
     let subId = params.sub_id || params.subid || params.smartlink || "Unknown";
     const network = (params.network || params.source || (params.track ? "TRAFEE" : "IMONETIZEIT")).toUpperCase();
-    const countryCode = (params.country || params.geo || "XX").toUpperCase().substring(0, 2);
+    let rawCountry = (params.country || params.geo || "XX").toUpperCase();
+    const countryMap = {
+      "UNITED STATES": "US",
+      "UNITED KINGDOM": "GB",
+      "INDONESIA": "ID",
+      "PAKISTAN": "PK",
+      "INDIA": "IN",
+      "BRAZIL": "BR",
+      "GERMANY": "DE",
+      "FRANCE": "FR",
+      "ITALY": "IT",
+      "SPAIN": "ES",
+      "CANADA": "CA",
+      "AUSTRALIA": "AU",
+      "PHILIPPINES": "PH"
+    };
+    let countryCode = countryMap[rawCountry] || rawCountry.substring(0, 2);
+    let countryName = rawCountry.length > 2 ? rawCountry : null;
     const paramIp = params.ip || params.ip_address || null;
     const ip = paramIp || context.request.headers.get("cf-connecting-ip") || "0.0.0.0";
     let userAgent = context.request.headers.get("user-agent") || "";
@@ -227,6 +244,7 @@ async function onRequestGet2(context) {
     }
     let finalTrafficType = trafficType;
     let finalCountryCode = countryCode;
+    let finalCountryName = countryName;
     let finalIp = ip;
     if (clickId) {
       const clickInfo = await db.prepare(`
@@ -240,17 +258,20 @@ async function onRequestGet2(context) {
         if (network === "TRAFEE") {
           if (clickInfo.ip_address) finalIp = clickInfo.ip_address;
         }
+        if (!finalCountryName && finalCountryCode === "US") finalCountryName = "United States";
+        if (!finalCountryName && finalCountryCode === "ID") finalCountryName = "Indonesia";
       }
     }
     const finalClickId = clickId || subId || `gen-${crypto.randomUUID()}`;
     await db.prepare(`
-            INSERT INTO conversions (click_id, sub_id, network, country, traffic_type, earning, ip_address, user_agent)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO conversions (click_id, sub_id, network, country, country_name, traffic_type, earning, ip_address, user_agent)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).bind(
       finalClickId,
       subId,
       network,
       finalCountryCode,
+      finalCountryName,
       finalTrafficType,
       payout,
       finalIp,
@@ -1255,7 +1276,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// ../.wrangler/tmp/bundle-7MglkE/middleware-insertion-facade.js
+// ../.wrangler/tmp/bundle-xqwFkG/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -1287,7 +1308,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// ../.wrangler/tmp/bundle-7MglkE/middleware-loader.entry.ts
+// ../.wrangler/tmp/bundle-xqwFkG/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;
