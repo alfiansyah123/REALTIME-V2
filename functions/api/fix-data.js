@@ -1,4 +1,4 @@
-export async function onRequest(context) {
+export async function onRequestGet(context) {
     const db = context.env.DB;
     
     if (!db) {

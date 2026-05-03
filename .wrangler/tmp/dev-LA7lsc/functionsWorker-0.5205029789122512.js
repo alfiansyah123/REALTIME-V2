@@ -229,6 +229,64 @@ __name(onRequestOptions4, "onRequestOptions4");
 __name2(onRequestOptions4, "onRequestOptions");
 async function onRequestGet2(context) {
   const db = context.env.DB;
+  if (!db) {
+    return new Response("Database not found", { status: 500 });
+  }
+  try {
+    await db.prepare("UPDATE conversions SET country = 'US' WHERE country = 'UN' OR country = 'JA'").run();
+    const mappings = {
+      "US": "United States",
+      "ID": "Indonesia",
+      "PK": "Pakistan",
+      "BR": "Brazil",
+      "EG": "Egypt",
+      "LT": "Lithuania",
+      "HU": "Hungary",
+      "PH": "Philippines",
+      "IN": "India",
+      "PA": "Panama",
+      "CO": "Colombia",
+      "RO": "Romania",
+      "GR": "Greece",
+      "IS": "Iceland",
+      "GB": "United Kingdom",
+      "FR": "France",
+      "DE": "Germany",
+      "IT": "Italy",
+      "ES": "Spain",
+      "CA": "Canada",
+      "AU": "Australia",
+      "JP": "Japan",
+      "KR": "South Korea",
+      "CN": "China",
+      "TR": "Turkey",
+      "MY": "Malaysia",
+      "SG": "Singapore",
+      "TH": "Thailand",
+      "VN": "Vietnam"
+    };
+    let results = [];
+    for (const [code, name] of Object.entries(mappings)) {
+      const res = await db.prepare("UPDATE conversions SET country_name = ? WHERE country = ?").bind(name, code).run();
+      if (res.meta.changes > 0) {
+        results.push(`${code}: ${res.meta.changes} rows updated`);
+      }
+    }
+    return new Response(JSON.stringify({
+      success: true,
+      message: "Database cleanup completed",
+      details: results
+    }), {
+      headers: { "Content-Type": "application/json" }
+    });
+  } catch (error) {
+    return new Response(error.message, { status: 500 });
+  }
+}
+__name(onRequestGet2, "onRequestGet2");
+__name2(onRequestGet2, "onRequestGet");
+async function onRequestGet3(context) {
+  const db = context.env.DB;
   const url = new URL(context.request.url);
   const params = Object.fromEntries(url.searchParams.entries());
   const headers = {
@@ -319,8 +377,8 @@ async function onRequestGet2(context) {
     return new Response(JSON.stringify({ error: error.message }), { status: 500, headers });
   }
 }
-__name(onRequestGet2, "onRequestGet2");
-__name2(onRequestGet2, "onRequestGet");
+__name(onRequestGet3, "onRequestGet3");
+__name2(onRequestGet3, "onRequestGet");
 async function onRequest3(context) {
   const db = context.env.DB;
   const headers = {
@@ -482,64 +540,6 @@ __name(onRequest4, "onRequest4");
 __name2(onRequest4, "onRequest");
 async function onRequest5(context) {
   const db = context.env.DB;
-  if (!db) {
-    return new Response("Database not found", { status: 500 });
-  }
-  try {
-    await db.prepare("UPDATE conversions SET country = 'US' WHERE country = 'UN' OR country = 'JA'").run();
-    const mappings = {
-      "US": "United States",
-      "ID": "Indonesia",
-      "PK": "Pakistan",
-      "BR": "Brazil",
-      "EG": "Egypt",
-      "LT": "Lithuania",
-      "HU": "Hungary",
-      "PH": "Philippines",
-      "IN": "India",
-      "PA": "Panama",
-      "CO": "Colombia",
-      "RO": "Romania",
-      "GR": "Greece",
-      "IS": "Iceland",
-      "GB": "United Kingdom",
-      "FR": "France",
-      "DE": "Germany",
-      "IT": "Italy",
-      "ES": "Spain",
-      "CA": "Canada",
-      "AU": "Australia",
-      "JP": "Japan",
-      "KR": "South Korea",
-      "CN": "China",
-      "TR": "Turkey",
-      "MY": "Malaysia",
-      "SG": "Singapore",
-      "TH": "Thailand",
-      "VN": "Vietnam"
-    };
-    let results = [];
-    for (const [code, name] of Object.entries(mappings)) {
-      const res = await db.prepare("UPDATE conversions SET country_name = ? WHERE country = ?").bind(name, code).run();
-      if (res.meta.changes > 0) {
-        results.push(`${code}: ${res.meta.changes} rows updated`);
-      }
-    }
-    return new Response(JSON.stringify({
-      success: true,
-      message: "Database cleanup completed",
-      details: results
-    }), {
-      headers: { "Content-Type": "application/json" }
-    });
-  } catch (error) {
-    return new Response(error.message, { status: 500 });
-  }
-}
-__name(onRequest5, "onRequest5");
-__name2(onRequest5, "onRequest");
-async function onRequest6(context) {
-  const db = context.env.DB;
   const headers = {
     "Access-Control-Allow-Origin": "*",
     "Content-Type": "application/json"
@@ -580,9 +580,9 @@ async function onRequest6(context) {
     return new Response(JSON.stringify({ error: error.message }), { status: 500, headers });
   }
 }
-__name(onRequest6, "onRequest6");
-__name2(onRequest6, "onRequest");
-async function onRequest7(context) {
+__name(onRequest5, "onRequest5");
+__name2(onRequest5, "onRequest");
+async function onRequest6(context) {
   const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -688,9 +688,9 @@ async function onRequest7(context) {
     });
   }
 }
-__name(onRequest7, "onRequest7");
-__name2(onRequest7, "onRequest");
-async function onRequest8(context) {
+__name(onRequest6, "onRequest6");
+__name2(onRequest6, "onRequest");
+async function onRequest7(context) {
   const db = context.env.DB;
   const url = new URL(context.request.url);
   const startDate = url.searchParams.get("startDate") || (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
@@ -763,8 +763,8 @@ async function onRequest8(context) {
     return new Response(JSON.stringify({ error: error.message, data: [] }), { status: 500, headers });
   }
 }
-__name(onRequest8, "onRequest8");
-__name2(onRequest8, "onRequest");
+__name(onRequest7, "onRequest7");
+__name2(onRequest7, "onRequest");
 var routes = [
   {
     routePath: "/api/change-password",
@@ -809,11 +809,18 @@ var routes = [
     modules: [onRequestOptions4]
   },
   {
-    routePath: "/api/postback",
+    routePath: "/api/fix-data",
     mountPath: "/api",
     method: "GET",
     middlewares: [],
     modules: [onRequestGet2]
+  },
+  {
+    routePath: "/api/postback",
+    mountPath: "/api",
+    method: "GET",
+    middlewares: [],
+    modules: [onRequestGet3]
   },
   {
     routePath: "/api/verify-password",
@@ -844,32 +851,25 @@ var routes = [
     modules: [onRequest4]
   },
   {
-    routePath: "/api/fix-data",
+    routePath: "/api/log-click",
     mountPath: "/api",
     method: "",
     middlewares: [],
     modules: [onRequest5]
   },
   {
-    routePath: "/api/log-click",
+    routePath: "/api/report-countries",
     mountPath: "/api",
     method: "",
     middlewares: [],
     modules: [onRequest6]
   },
   {
-    routePath: "/api/report-countries",
-    mountPath: "/api",
-    method: "",
-    middlewares: [],
-    modules: [onRequest7]
-  },
-  {
     routePath: "/api/trafee-reports",
     mountPath: "/api",
     method: "",
     middlewares: [],
-    modules: [onRequest8]
+    modules: [onRequest7]
   },
   {
     routePath: "/api/verify-password",
