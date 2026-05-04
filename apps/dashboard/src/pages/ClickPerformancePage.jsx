@@ -23,7 +23,7 @@ const ClickPerformancePage = () => {
                     os: row.os || 'Unknown',
                     browser: row.browser || parseUserAgent(row.user_agent),
                     clickId: row.click_id,
-                    network: row.network || row.s3 || 'Unknown',
+                    network: (row.network && row.network !== 'UNKNOWN' && row.network !== 'NETWORK') ? row.network : (row.s3 && row.s3 !== 'UNKNOWN' && row.s3 !== 'NETWORK' ? row.s3 : 'Unknown'),
                     referer: row.referer,
                     originalUrl: row.slug || '-'
                 }));
