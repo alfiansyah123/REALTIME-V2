@@ -95,40 +95,54 @@ export async function onRequestGet(context) {
 
         const finalClickId = clickId || subId || `gen-${crypto.randomUUID()}`;
 
-        // 1. Insert into conversions (Now with os and browser columns)
-        await db.prepare(`
-            INSERT INTO conversions (click_id, sub_id, network, country, country_name, traffic_type, earning, ip_address, user_agent, os, browser)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `).bind(
-            finalClickId,
-            subId,
-            network,
-            finalCountryCode,
-            finalCountryName,
-            finalTrafficType,
-            payout,
-            finalIp,
-            userAgent,
-            finalOs,
-            finalBrowser
-        ).run();
+        // 1. Insert into conversions (Resilient)
+        try {
+            await db.prepare(`
+                INSERT OR IGNORE INTO conversions (click_id, sub_id, network, country, country_name, traffic_type, earning, ip_address, user_agent, os, browser)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `).bind(
+                finalClickId,
+                subId,
+                network,
+                finalCountryCode,
+                finalCountryName,
+                finalTrafficType,
+                payout,
+                finalIp,
+                userAgent,
+                finalOs,
+                finalBrowser
+            ).run();
+        } catch (e) {
+            console.error('Conversions Insert Error:', e.message);
+            // Fallback for older schema if os/browser columns are missing
+            try {
+                await db.prepare(`
+                    INSERT OR IGNORE INTO conversions (click_id, sub_id, network, country, country_name, traffic_type, earning, ip_address, user_agent)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                `).bind(finalClickId, subId, network, finalCountryCode, finalCountryName, finalTrafficType, payout, finalIp, userAgent).run();
+            } catch (e2) {}
+        }
 
         // 2. Atomic Upsert into daily_reports
         const today = new Date().toISOString().split('T')[0];
-        
-        await db.prepare(`
-            INSERT INTO daily_reports (date, smartlink, network, leads, payout)
-            VALUES (?, ?, ?, 1, ?)
-            ON CONFLICT(date, smartlink, network) DO UPDATE SET
-            leads = leads + 1,
-            payout = payout + EXCLUDED.payout,
-            updated_at = CURRENT_TIMESTAMP
-        `).bind(today, subId, network, payout).run();
+        try {
+            await db.prepare(`
+                INSERT INTO daily_reports (date, smartlink, network, leads, payout)
+                VALUES (?, ?, ?, 1, ?)
+                ON CONFLICT(date, smartlink, network) DO UPDATE SET
+                leads = leads + 1,
+                payout = payout + EXCLUDED.payout,
+                updated_at = CURRENT_TIMESTAMP
+            `).bind(today, subId, network, payout).run();
+        } catch (e) {
+            console.error('Daily Reports Error:', e.message);
+        }
 
-        return new Response(JSON.stringify({ success: true, message: 'Conversion recorded', id: finalClickId }), { status: 200, headers });
+        return new Response('OK', { status: 200, headers });
 
     } catch (error) {
-        console.error('Postback Error:', error);
-        return new Response(JSON.stringify({ error: error.message }), { status: 500, headers });
+        console.error('Global Postback Error:', error);
+        return new Response('ERROR', { status: 500, headers });
     }
 }
