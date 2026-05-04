@@ -147,8 +147,8 @@ const LiveTraffic = () => {
                         >
                             <div className="flex items-center gap-2 min-w-0">
                                 {getCountryFlag(click.country)}
-                                <span className="text-[11px] font-medium text-blue-600 dark:text-blue-400 truncate flex-1" title={click.clickId || click.title}>
-                                    {click.title}
+                                <span className="text-[11px] font-medium text-blue-600 dark:text-blue-400 truncate flex-1" title={click.title}>
+                                    {click.clickId || click.title}
                                     {click.network && (
                                         <span className="ml-1 text-[9px] text-gray-500 dark:text-gray-400 font-bold uppercase">
                                             ({click.network})
