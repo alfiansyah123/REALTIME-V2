@@ -23,6 +23,7 @@ const ClickPerformancePage = () => {
                     os: row.os || 'Unknown',
                     browser: row.browser || parseUserAgent(row.user_agent),
                     clickId: row.click_id,
+                    network: row.s3 || 'Unknown',
                     referer: row.referer,
                     originalUrl: row.slug || '-'
                 }));
@@ -152,6 +153,7 @@ const ClickPerformancePage = () => {
                                 <tr>
                                     <th>Time</th>
                                     <th>Click ID</th>
+                                    <th>Network</th>
                                     <th>Country</th>
                                     <th>OS</th>
                                     <th>Browser</th>
@@ -163,6 +165,15 @@ const ClickPerformancePage = () => {
                                     <tr key={click.id}>
                                         <td className="click-perf-time">{formatTime(click.time)}</td>
                                         <td className="click-perf-mono">{click.clickId || '-'}</td>
+                                        <td>
+                                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                                                click.network === 'TRAFEE' ? 'bg-orange-100 text-orange-600' : 
+                                                click.network === 'IMONETIZEIT' ? 'bg-blue-100 text-blue-600' : 
+                                                'bg-gray-100 text-gray-600'
+                                            }`}>
+                                                {click.network}
+                                            </span>
+                                        </td>
                                         <td>
                                             <div className="click-perf-flex">
                                                 {getCountryFlag(click.country)}

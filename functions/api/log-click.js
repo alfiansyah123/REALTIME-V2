@@ -19,6 +19,7 @@ export async function onRequest(context) {
             device, 
             click_id, 
             referer,
+            network,
             is_bot 
         } = body;
 
@@ -27,11 +28,12 @@ export async function onRequest(context) {
 
         const finalUserId = slug || body.user_id || '-';
         const finalClickId = click_id || body.track || null;
+        const finalNetwork = network || (finalClickId ? (finalClickId.startsWith('gen-') ? 'TRACKER' : 'NETWORK') : 'UNKNOWN');
 
         await db.prepare(`
             INSERT INTO clicks (
-                slug, user_id, country, ip_address, user_agent, browser, os, device, click_id, referer
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                slug, user_id, country, ip_address, user_agent, browser, os, device, click_id, referer, network
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).bind(
             finalUserId,
             finalUserId,
@@ -42,7 +44,8 @@ export async function onRequest(context) {
             os || '', 
             device || '', 
             finalClickId, 
-            referer || ''
+            referer || '',
+            finalNetwork
         ).run();
 
         return new Response(JSON.stringify({ success: true }), { status: 200, headers });
