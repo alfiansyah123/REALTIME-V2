@@ -149,9 +149,17 @@ const LiveTraffic = () => {
                                 {getCountryFlag(click.country)}
                                 <span className="text-[11px] font-medium text-blue-600 dark:text-blue-400 truncate flex-1" title={click.title}>
                                     {click.clickId || click.title}
-                                    {click.network && (
-                                        <span className="ml-1 text-[9px] text-gray-500 dark:text-gray-400 font-bold uppercase">
-                                            ({click.network})
+                                    {click.network && click.network !== 'Unknown' && click.network !== 'UNKNOWN' && (
+                                        <span className="ml-1 flex items-center gap-1 inline-flex align-middle">
+                                            <img 
+                                                src={`/networks/${click.network.toLowerCase()}.png`} 
+                                                alt={click.network}
+                                                className="h-2.5 object-contain"
+                                                onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'inline'; }}
+                                            />
+                                            <span className="text-[9px] text-gray-500 dark:text-gray-400 font-bold uppercase" style={{ display: 'none' }}>
+                                                ({click.network})
+                                            </span>
                                         </span>
                                     )}
                                 </span>

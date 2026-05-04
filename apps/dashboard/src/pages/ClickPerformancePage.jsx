@@ -166,13 +166,27 @@ const ClickPerformancePage = () => {
                                         <td className="click-perf-time">{formatTime(click.time)}</td>
                                         <td className="click-perf-mono">{click.clickId || '-'}</td>
                                         <td>
-                                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                                                click.network === 'TRAFEE' ? 'bg-orange-100 text-orange-600' : 
-                                                click.network === 'IMONETIZEIT' ? 'bg-blue-100 text-blue-600' : 
-                                                'bg-gray-100 text-gray-600'
-                                            }`}>
-                                                {click.network}
-                                            </span>
+                                            <div className="flex items-center gap-2">
+                                                {click.network && click.network !== 'Unknown' && click.network !== 'UNKNOWN' ? (
+                                                    <img 
+                                                        src={`/networks/${click.network.toLowerCase()}.png`} 
+                                                        alt={click.network}
+                                                        className="h-5 object-contain"
+                                                        style={{ minWidth: '20px' }}
+                                                        onError={(e) => { 
+                                                            e.target.style.display = 'none';
+                                                            e.target.nextSibling.style.display = 'block';
+                                                        }}
+                                                    />
+                                                ) : null}
+                                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                                                    click.network === 'TRAFEE' ? 'bg-orange-100 text-orange-600' : 
+                                                    click.network === 'IMONETIZEIT' ? 'bg-blue-100 text-blue-600' : 
+                                                    'bg-gray-100 text-gray-600'
+                                                }`} style={{ display: click.network && click.network !== 'Unknown' && click.network !== 'UNKNOWN' ? 'none' : 'inline-block' }}>
+                                                    {click.network}
+                                                </span>
+                                            </div>
                                         </td>
                                         <td>
                                             <div className="click-perf-flex">
