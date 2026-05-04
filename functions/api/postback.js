@@ -22,104 +22,16 @@ export async function onRequestGet(context) {
         const network = (params.network || params.source || (params.track ? 'TRAFEE' : 'IMONETIZEIT')).toUpperCase();
         
         // Handle Full Country Names (iMonetizeIt fallback)
-        let rawCountry = (params.country || params.geo || 'XX').toUpperCase();
+        let rawCountry = (params.country || params.geo || 'XX').toUpperCase().trim();
         const countryMap = {
-            // Priority Typos & Special mappings
-            'USA': 'US', 'U.S.A.': 'US', 'U.S.': 'US', 'AMERICA': 'US', 'UNITED STATES': 'US',
-            'UK': 'GB', 'GREAT BRITAIN': 'GB', 'ENGLAND': 'GB', 'UNITED KINGDOM': 'GB', 'SCOTLAND': 'GB', 'WALES': 'GB', 'NORTHERN IRELAND': 'GB',
-            'UN': 'US',  // Common typo for US
-            'ME': 'MX',  // Common typo for Mexico
-            'EN': 'GB',  // England
-            'ENGLAND': 'GB',
-            
-            // Full country names
-            'UKRAINE': 'UA', 'CANADA': 'CA', 'AUSTRALIA': 'AU',
-            'GERMANY': 'DE', 'FRANCE': 'FR', 'SPAIN': 'ES', 'ITALY': 'IT',
-            'BRAZIL': 'BR', 'MEXICO': 'MX', 'JAPAN': 'JP', 'CHINA': 'CN',
-            'INDIA': 'IN', 'RUSSIA': 'RU', 'INDONESIA': 'ID', 'NETHERLANDS': 'NL',
-            'POLAND': 'PL', 'SWEDEN': 'SE', 'NORWAY': 'NO', 'DENMARK': 'DK',
-            'FINLAND': 'FI', 'SWITZERLAND': 'CH', 'AUSTRIA': 'AT', 'BELGIUM': 'BE',
-            'IRELAND': 'IE', 'PORTUGAL': 'PT', 'ARGENTINA': 'AR', 'CHILE': 'CL',
-            'COLOMBIA': 'CO', 'PERU': 'PE', 'PHILIPPINES': 'PH', 'THAILAND': 'TH',
-            'MALAYSIA': 'MY', 'SINGAPORE': 'SG', 'VIETNAM': 'VN', 'VIET NAM': 'VN',
-            'SOUTH KOREA': 'KR', 'KOREA': 'KR', 'REPUBLIC OF KOREA': 'KR',
-            'KOREA, REPUBLIC OF': 'KR', 'KOREA, SOUTH': 'KR', 'KOREA, NORTH': 'KP',
-            'NEW ZEALAND': 'NZ', 'SOUTH AFRICA': 'ZA', 'EGYPT': 'EG', 'TURKEY': 'TR',
-            'SAUDI ARABIA': 'SA', 'UAE': 'AE', 'UNITED ARAB EMIRATES': 'AE',
-            'ISRAEL': 'IL', 'GREECE': 'GR', 'CZECH REPUBLIC': 'CZ', 'CZECHIA': 'CZ',
-            'HUNGARY': 'HU', 'ROMANIA': 'RO', 'BULGARIA': 'BG', 'URUGUAY': 'UY',
-            'PARAGUAY': 'PY', 'JAMAICA': 'JM', 'PAKISTAN': 'PK',
-            'COSTA RICA': 'CR', 'TANZANIA, UNITED REPUBLIC OF': 'TZ', 'TANZANIA': 'TZ',
-            'CROATIA': 'HR', 'SERBIA': 'RS', 'SLOVAKIA': 'SK', 'SLOVENIA': 'SI',
-            'LATVIA': 'LV', 'LITHUANIA': 'LT', 'ESTONIA': 'EE', 'CYPRUS': 'CY',
-            'LUXEMBOURG': 'LU', 'MALTA': 'MT', 'ICELAND': 'IS', 'BOSNIA': 'BA',
-            'BOSNIA AND HERZEGOVINA': 'BA', 'MOLDOVA': 'MD', 'ALBANIA': 'AL',
-            'MACEDONIA': 'MK', 'NORTH MACEDONIA': 'MK', 'MONTENEGRO': 'ME',
-            'BELARUS': 'BY', 'ANDORRA': 'AD', 'MONACO': 'MC', 'SAN MARINO': 'SM',
-            'LIECHTENSTEIN': 'LI', 'VATICAN': 'VA', 'FAROE ISLANDS': 'FO',
-            'GIBRALTAR': 'GI', 'ISLE OF MAN': 'IM', 'JERSEY': 'JE', 'GUERNSEY': 'GG',
-            'KOSOVO': 'XK',
-            'TAIWAN': 'TW', 'HONG KONG': 'HK', 'BANGLADESH': 'BD', 'SRI LANKA': 'LK',
-            'NEPAL': 'NP', 'CAMBODIA': 'KH', 'LAOS': 'LA', 'MYANMAR': 'MM',
-            'KAZAKHSTAN': 'KZ', 'UZBEKISTAN': 'UZ', 'AZERBAIJAN': 'AZ', 'GEORGIA': 'GE',
-            'ARMENIA': 'AM', 'KYRGYZSTAN': 'KG', 'TURKMENISTAN': 'TM',
-            'MACAO': 'MO', 'MACAU': 'MO', 'MONGOLIA': 'MN', 'BRUNEI': 'BN',
-            'TIMOR-LESTE': 'TL', 'EAST TIMOR': 'TL', 'MALDIVES': 'MV', 'BHUTAN': 'BT',
-            'AFGHANISTAN': 'AF', 'TAJIKISTAN': 'TJ', 'NORTH KOREA': 'KP',
-            'VENEZUELA': 'VE', 'ECUADOR': 'EC', 'BOLIVIA': 'BO',
-            'DOMINICAN REPUBLIC': 'DO', 'GUATEMALA': 'GT', 'HONDURAS': 'HN',
-            'EL SALVADOR': 'SV', 'NICARAGUA': 'NI', 'PANAMA': 'PA',
-            'PUERTO RICO': 'PR', 'TRINIDAD AND TOBAGO': 'TT', 'TRINIDAD and TOBAGO': 'TT',
-            'BAHAMAS': 'BS', 'BARBADOS': 'BB', 'CUBA': 'CU', 'HAITI': 'HT',
-            'DOMINICA': 'DM', 'GRENADA': 'GD', 'SAINT LUCIA': 'LC',
-            'SAINT VINCENT AND THE GRENADINES': 'VC', 'ANTIGUA AND BARBUDA': 'AG',
-            'SAINT KITTS AND NEVIS': 'KN', 'ARUBA': 'AW', 'CURACAO': 'CW',
-            'CAYMAN ISLANDS': 'KY', 'BERMUDA': 'BM', 'VIRGIN ISLANDS': 'VI',
-            'BRITISH VIRGIN ISLANDS': 'VG', 'TURKS AND CAICOS': 'TC',
-            'MARTINIQUE': 'MQ', 'GUADELOUPE': 'GP', 'SURINAME': 'SR',
-            'GUYANA': 'GY', 'BELIZE': 'BZ',
-            'NIGERIA': 'NG', 'KENYA': 'KE', 'MOROCCO': 'MA', 'ALGERIA': 'DZ',
-            'TUNISIA': 'TN', 'GHANA': 'GH', 'UGANDA': 'UG', 'ETHIOPIA': 'ET',
-            'IVORY COAST': 'CI', "COTE D'IVOIRE": 'CI', 'COTE DIVOIRE': 'CI',
-            'CAMEROON': 'CM', 'SENEGAL': 'SN', 'CAPE VERDE': 'CV',
-            'ANGOLA': 'AO', 'BENIN': 'BJ', 'BURKINA FASO': 'BF', 'BURUNDI': 'BI',
-            'CENTRAL AFRICAN REPUBLIC': 'CF', 'CHAD': 'TD', 'COMOROS': 'KM',
-            'CONGO': 'CG', 'DEMOCRATIC REPUBLIC OF THE CONGO': 'CD', 'DJIBOUTI': 'DJ',
-            'EQUATORIAL GUINEA': 'GQ', 'ERITREA': 'ER', 'ESWATINI': 'SZ', 'SWAZILAND': 'SZ',
-            'GABON': 'GA', 'GAMBIA': 'GM', 'GUINEA': 'GN', 'GUINEA-BISSAU': 'GW',
-            'LESOTHO': 'LS', 'LIBERIA': 'LR', 'LIBYA': 'LY', 'MADAGASCAR': 'MG',
-            'MALAWI': 'MW', 'MALI': 'ML', 'MAURITANIA': 'MR', 'MAURITIUS': 'MU',
-            'MOZAMBIQUE': 'MZ', 'NAMIBIA': 'NA', 'NIGER': 'NE', 'REUNION': 'RE',
-            'RWANDA': 'RW', 'SAO TOME AND PRINCIPE': 'ST', 'SIERRA LEONE': 'SL',
-            'SOMALIA': 'SO', 'SOUTH SUDAN': 'SS', 'SEYCHELLES': 'SC',
-            'TOGO': 'TG', 'ZAMBIA': 'ZM', 'ZIMBABWE': 'ZW', 'BOTSWANA': 'BW',
-            'QATAR': 'QA', 'KUWAIT': 'KW', 'OMAN': 'OM', 'BAHRAIN': 'BH',
-            'LEBANON': 'LB', 'JORDAN': 'JO', 'IRAQ': 'IQ',
-            'SYRIA': 'SY', 'SYRIAN ARAB REPUBLIC': 'SY', 'YEMEN': 'YE',
-            'PALESTINE': 'PS', 'IRAN': 'IR',
-            'FIJI': 'FJ', 'PAPUA NEW GUINEA': 'PG', 'SAMOA': 'WS', 'TONGA': 'TO',
-            'VANUATU': 'VU', 'SOLOMON ISLANDS': 'SB', 'GUAM': 'GU',
-            'FRENCH POLYNESIA': 'PF', 'NEW CALEDONIA': 'NC', 'MICRONESIA': 'FM',
-            'PALAU': 'PW', 'MARSHALL ISLANDS': 'MH', 'KIRIBATI': 'KI',
-            'NAURU': 'NR', 'TUVALU': 'TV',
-            'RUSSIAN FEDERATION': 'RU', 'PEOPLES REPUBLIC OF CHINA': 'CN',
-            'CHINA, PEOPLES REPUBLIC OF': 'CN', 'HOLLAND': 'NL', 'THE NETHERLANDS': 'NL',
-            'EIRE': 'IE', 'REPUBLIC OF IRELAND': 'IE', 'RSA': 'ZA',
-            
-            // ISO 3-letter codes fallback
-            'UKR': 'UA', 'VNM': 'VN', 'IDN': 'ID', 'BRA': 'BR', 'THA': 'TH',
-            'DEU': 'DE', 'FRA': 'FR', 'ESP': 'ES', 'ITA': 'IT', 'NLD': 'NL',
-            'SGP': 'SG', 'MYS': 'MY', 'PHL': 'PH', 'KOR': 'KR', 'JPN': 'JP',
-            'CHN': 'CN', 'IND': 'IN', 'CAN': 'CA', 'AUS': 'AU', 'MEX': 'MX',
-            'ARG': 'AR', 'COL': 'CO', 'ZAF': 'ZA', 'EGY': 'EG', 'SAU': 'SA',
-            'ARE': 'AE', 'TUR': 'TR', 'PAK': 'PK', 'NGA': 'NG', 'KEN': 'KE',
-            'GHA': 'GH', 'MAR': 'MA', 'DZA': 'DZ', 'TUN': 'TN', 'PER': 'PE',
-            'CHL': 'CL', 'VEN': 'VE', 'ECU': 'EC', 'DOM': 'DO', 'CUB': 'CU',
-            'RUS': 'RU',
-            'COUNTRY': 'XX'
+            'USA': 'US', 'U.S.A.': 'US', 'UNITED STATES': 'US',
+            'UK': 'GB', 'GREAT BRITAIN': 'GB', 'UNITED KINGDOM': 'GB',
+            'MEXICO': 'MX', 'GERMANY': 'DE', 'FRANCE': 'FR', 'SPAIN': 'ES', 'ITALY': 'IT',
+            'BRAZIL': 'BR', 'JAPAN': 'JP', 'CHINA': 'CN', 'INDIA': 'IN', 'RUSSIA': 'RU',
+            'INDONESIA': 'ID', 'NETHERLANDS': 'NL', 'TURKEY': 'TR', 'UKRAINE': 'UA'
         };
         
-        let countryCode = countryMap[rawCountry] || rawCountry.substring(0, 2);
+        let countryCode = countryMap[rawCountry] || (rawCountry.length === 2 ? rawCountry : 'XX');
         let countryName = rawCountry.length > 2 ? rawCountry : null;
         
         const paramIp = params.ip || params.ip_address || null;
@@ -127,63 +39,57 @@ export async function onRequestGet(context) {
         let userAgent = context.request.headers.get('user-agent') || '';
 
         if (!clickId && subId === 'Unknown') {
-            return new Response(JSON.stringify({ error: 'Missing clickid or smartlink' }), { status: 400, headers });
+            return new Response(JSON.stringify({ error: 'Missing clickid' }), { status: 400, headers });
         }
 
         let finalTrafficType = trafficType;
         let finalCountryCode = countryCode;
         let finalCountryName = countryName;
         let finalIp = ip;
+        let finalOs = 'Unknown';
+        let finalBrowser = 'Unknown';
 
         // 0. Auto-Attribution: Look up the real Team Member and User Details from D1 clicks table
         if (clickId) {
+            // Try lookup by click_id first
             const clickInfo = await db.prepare(`
-                SELECT user_id, ip_address, os, country, browser FROM clicks WHERE click_id = ? OR id = ? LIMIT 1
-            `).bind(clickId, clickId).first();
+                SELECT user_id, ip_address, os, country, browser FROM clicks 
+                WHERE click_id = ? OR slug = ? OR id = ? 
+                LIMIT 1
+            `).bind(clickId, clickId, clickId).first();
             
             if (clickInfo) {
-                subId = clickInfo.user_id || subId; // Use user_id from clicks table
+                subId = clickInfo.user_id || subId;
+                finalOs = clickInfo.os || 'Unknown';
+                finalBrowser = clickInfo.browser || 'Unknown';
                 
-                // Determine WAP/WEB based on original OS from clicks table
-                if (clickInfo.os) {
-                    const os = clickInfo.os.toLowerCase();
-                    if (os.includes('android') || os.includes('iphone') || os.includes('ipad') || os.includes('mobile')) {
+                // Determine WAP/WEB based on original OS
+                if (finalOs !== 'Unknown') {
+                    const osLow = finalOs.toLowerCase();
+                    if (osLow.includes('android') || osLow.includes('iphone') || osLow.includes('ipad') || osLow.includes('mobile')) {
                         finalTrafficType = 'WAP';
-                    } else if (os.includes('windows') || os.includes('mac') || os.includes('linux')) {
-                        finalTrafficType = 'WEB';
                     } else {
-                        finalTrafficType = 'WEB'; // Default fallback
+                        finalTrafficType = 'WEB';
                     }
-                    // Keep original OS info in userAgent for full detail
-                    userAgent = `${clickInfo.os} | ${clickInfo.browser || 'Unknown'}`;
+                    userAgent = `${finalOs} | ${finalBrowser}`;
                 }
                 
-                // Use tracker country for ALL networks since it is always a valid ISO-2 code (Cloudflare cf.country)
-                if (clickInfo.country) {
-                    const rawClickCountry = clickInfo.country.toUpperCase().trim();
-                    // ONLY use if it's already a valid 2-char ISO code — never truncate longer strings like 'UNKNOWN'
-                    if (rawClickCountry.length === 2 && rawClickCountry !== 'XX' && rawClickCountry !== 'UN') {
-                        finalCountryCode = rawClickCountry;
-                    }
+                if (clickInfo.country && clickInfo.country.length === 2) {
+                    finalCountryCode = clickInfo.country.toUpperCase();
                 }
                 
-                // Only override IP from DB if network is Trafee (Trafee doesn't send visitor IP in postback)
-                if (network === 'TRAFEE') {
-                    if (clickInfo.ip_address) finalIp = clickInfo.ip_address;
+                if (network === 'TRAFEE' && clickInfo.ip_address) {
+                    finalIp = clickInfo.ip_address;
                 }
-                
-                // Set country name from DB if we don't have it
-                if (!finalCountryName && finalCountryCode === 'US') finalCountryName = 'United States';
-                if (!finalCountryName && finalCountryCode === 'ID') finalCountryName = 'Indonesia';
             }
         }
 
         const finalClickId = clickId || subId || `gen-${crypto.randomUUID()}`;
 
-        // 1. Insert into conversions
+        // 1. Insert into conversions (Now with os and browser columns)
         await db.prepare(`
-            INSERT INTO conversions (click_id, sub_id, network, country, country_name, traffic_type, earning, ip_address, user_agent)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO conversions (click_id, sub_id, network, country, country_name, traffic_type, earning, ip_address, user_agent, os, browser)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).bind(
             finalClickId,
             subId,
@@ -193,7 +99,9 @@ export async function onRequestGet(context) {
             finalTrafficType,
             payout,
             finalIp,
-            userAgent
+            userAgent,
+            finalOs,
+            finalBrowser
         ).run();
 
         // 2. Atomic Upsert into daily_reports

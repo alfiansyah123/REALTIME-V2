@@ -53,55 +53,72 @@ serve(async (req) => {
         const supabase = createClient(supabaseUrl, supabaseKey)
 
         // 2. Extract & Normalize Parameters
-        // Pattern: click_id, payout, country, os, ip, network
         const clickId = params.click_id || params.clickid || params.cid || null
         const payout = parseFloat(params.payout || params.sum || '0.00')
-
-        // Map 'os' to traffic_type (user template uses os=<traffic_type>)
-        let rawTraffic = params.os || params.traffic || params.traffic_type || 'WEB'
-        const trafficType = rawTraffic.toUpperCase().substring(0, 5)
-
-        // Smartlink/SubID logic (using click_id as sub_id if missing)
-        let subId = params.sub_id || params.subid || params.smartlink || params.click_id || 'Unknown'
         const network = params.network || params.source || 'iMonetizeit'
+        let subId = params.sub_id || params.subid || params.smartlink || params.click_id || 'Unknown'
 
-        // Click ID / SubID fallback logic
         if (!clickId && subId === 'Unknown') {
-            return new Response(JSON.stringify({ error: 'Missing clickid or smartlink' }), {
+            return new Response(JSON.stringify({ error: 'Missing clickid' }), {
                 status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
             })
         }
 
-        // If clickId is missing, generate one or use subId
-        const finalClickId = clickId || subId || `gen-${crypto.randomUUID()}`
+        const finalClickId = clickId || subId
 
-        // IP Address
-        let ip = params.ip || params.user_ip || params.uip || req.headers.get('x-forwarded-for') || '0.0.0.0'
-        if (ip.includes(',')) ip = ip.split(',')[0].trim()
+        // 3. LOOKUP ORIGINAL CLICK DATA (CRITICAL FOR ACCURACY)
+        // Get original country, os, browser from the initial click
+        let countryCode = 'XX'
+        let trafficType = 'WEB'
+        let userAgent = params.ua || params.user_agent || req.headers.get('user-agent') || ''
+        let ip = params.ip || params.user_ip || params.uip || '0.0.0.0'
 
-        // User Agent
-        const userAgent = params.ua || params.user_agent || req.headers.get('user-agent') || ''
+        const { data: clickData } = await supabase
+            .from('clicks')
+            .select('country, os, browser, user_agent, ip_address')
+            .eq('click_id', finalClickId)
+            .single()
 
-        // Country Logic
-        let countryParam = (params.country || params.geo || params.cc || 'XX').toUpperCase()
-        let countryCode = COUNTRY_MAPPING[countryParam] || (countryParam.length === 2 ? countryParam : 'XX')
+        if (clickData) {
+            console.log(`Found original click for ${finalClickId}: ${clickData.country}`)
+            countryCode = clickData.country || 'XX'
+            trafficType = (clickData.os || 'WEB').toUpperCase()
+            // Combine OS and Browser for user_agent column in conversions if available
+            if (clickData.os && clickData.browser) {
+                userAgent = `${clickData.os} | ${clickData.browser}`
+            } else if (clickData.user_agent) {
+                userAgent = clickData.user_agent
+            }
+            if (clickData.ip_address) ip = clickData.ip_address
+        } else {
+            // Fallback to params if click record not found
+            console.warn(`No click record found for ${finalClickId}, using params fallback`)
+            
+            // Normalize Country from Params
+            let countryParam = (params.country || params.geo || params.cc || 'XX').toUpperCase()
+            countryCode = COUNTRY_MAPPING[countryParam] || (countryParam.length === 2 ? countryParam : 'XX')
 
-        // GeoIP Fallback
-        if (countryCode === 'XX' && ip !== '0.0.0.0') {
-            try {
-                const geoResp = await fetch(`http://ip-api.com/json/${ip}?fields=countryCode`)
-                const geoData = await geoResp.json()
-                if (geoData && geoData.countryCode) {
-                    countryCode = geoData.countryCode
+            // Normalize Traffic Type
+            let rawTraffic = params.os || params.traffic || params.traffic_type || 'WEB'
+            trafficType = rawTraffic.toUpperCase().substring(0, 5)
+
+            // GeoIP Fallback (Only if IP is provided and not the Trafee server IP)
+            if (countryCode === 'XX' && ip !== '0.0.0.0' && !ip.startsWith('10.') && !ip.startsWith('172.')) {
+                try {
+                    const geoResp = await fetch(`http://ip-api.com/json/${ip}?fields=countryCode`)
+                    const geoData = await geoResp.json()
+                    if (geoData && geoData.countryCode) {
+                        countryCode = geoData.countryCode
+                    }
+                } catch (e) {
+                    console.error('GeoIP lookup failed:', e)
                 }
-            } catch (e) {
-                console.error('GeoIP lookup failed:', e)
             }
         }
 
         const countryName = countryCode !== 'XX' ? countryCode : 'Unknown'
 
-        // 3. Insert into 'conversions' table
+        // 4. Insert into 'conversions' table
         const conversionData = {
             click_id: finalClickId,
             sub_id: subId,
