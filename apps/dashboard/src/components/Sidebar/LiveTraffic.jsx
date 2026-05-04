@@ -21,7 +21,7 @@ const LiveTraffic = () => {
                     os: row.os,
                     browser: row.browser,
                     clickId: row.click_id,
-                    network: row.s3 || row.network || 'Unknown',
+                    network: row.network || row.s3 || 'Unknown',
                     url: '',
                     title: row.user_id || row.slug
                 }));

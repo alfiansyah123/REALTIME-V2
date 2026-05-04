@@ -33,7 +33,7 @@ export async function onRequest(context) {
 
         await db.prepare(`
             INSERT INTO clicks (
-                slug, user_id, country, ip_address, user_agent, browser, os, device, click_id, referer, s3
+                slug, user_id, country, ip_address, user_agent, browser, os, device, click_id, referer, network
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).bind(
             linkSlug,
