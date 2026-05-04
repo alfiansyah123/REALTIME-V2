@@ -26,26 +26,22 @@ export async function onRequest(context) {
         // Skip if it's a bot (optional, based on your preference)
         if (is_bot) return new Response(JSON.stringify({ success: true, skipped: 'bot' }), { status: 200, headers });
 
-        const finalUserId = slug || body.user_id || '-';
-        const finalClickId = click_id || body.track || null;
-        const finalNetwork = network || (finalClickId ? (finalClickId.startsWith('gen-') ? 'TRACKER' : 'NETWORK') : 'UNKNOWN');
-
         await db.prepare(`
             INSERT INTO clicks (
-                slug, user_id, country, ip_address, user_agent, browser, os, device, click_id, referer, network
+                slug, user_id, country, ip_address, user_agent, browser, os, device, click_id, referer, s3
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).bind(
-            finalUserId,
-            finalUserId,
+            slug,
+            slug,
             country || 'XX', 
             ip_address || '0.0.0.0', 
             user_agent || '', 
             browser || '', 
             os || '', 
             device || '', 
-            finalClickId, 
+            click_id, 
             referer || '',
-            finalNetwork
+            network
         ).run();
 
         return new Response(JSON.stringify({ success: true }), { status: 200, headers });
