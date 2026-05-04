@@ -42,11 +42,12 @@ const DashboardPage = ({ onLogout, currency, setCurrency, currencyRate, setCurre
 
     // Helper: Format row from Supabase to frontend format
     const formatRow = useCallback((row) => {
-        let os = row.traffic_type;
-        let browser = row.user_agent;
+        // Use dedicated columns if available, otherwise fallback to old parsing logic
+        let os = row.os || row.traffic_type || 'Unknown';
+        let browser = row.browser || row.user_agent || 'Unknown';
 
-        // Parse "OS | Browser" format from user_agent column
-        if (row.user_agent && row.user_agent.includes(' | ')) {
+        // Legacy Fallback: Parse "OS | Browser" format if it was saved in user_agent column
+        if (!row.os && row.user_agent && row.user_agent.includes(' | ')) {
             const parts = row.user_agent.split(' | ');
             os = parts[0];
             browser = parts[1];

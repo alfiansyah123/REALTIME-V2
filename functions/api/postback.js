@@ -58,13 +58,37 @@ export async function onRequestGet(context) {
         let finalOs = 'Unknown';
         let finalBrowser = 'Unknown';
 
+        // --- DETEKSI FALLBACK (Jika lookup gagal) ---
+        function detectUA(uaString) {
+            const ua = (uaString || '').toLowerCase();
+            let browser = 'Other';
+            let os = 'Other';
+
+            if (ua.includes('fbav') || ua.includes('fban') || ua.includes('fbiab')) browser = 'Facebook';
+            else if (ua.includes('instagram')) browser = 'Instagram';
+            else if (ua.includes('tiktok')) browser = 'TikTok';
+            else if (ua.includes('whatsapp')) browser = 'WhatsApp';
+            else if (ua.includes('chrome')) browser = 'Chrome';
+            else if (ua.includes('safari') && !ua.includes('chrome')) browser = 'Safari';
+            else if (ua.includes('firefox')) browser = 'Firefox';
+
+            if (ua.includes('iphone') || ua.includes('ipad')) os = 'iOS';
+            else if (ua.includes('android')) os = 'Android';
+            else if (ua.includes('windows')) os = 'Windows';
+            else if (ua.includes('mac os')) os = 'macOS';
+            else if (ua.includes('linux')) os = 'Linux';
+
+            return { browser, os };
+        }
+
         // 0. Auto-Attribution: Look up the real Team Member and User Details from D1 clicks table
         if (clickId) {
-            // Try lookup by click_id first
+            // Try lookup by multiple fields to be resilient
             const clickInfo = await db.prepare(`
-                SELECT user_id, ip_address, os, country, browser FROM clicks 
+                SELECT user_id, ip_address, os, country, browser, user_agent 
+                FROM clicks 
                 WHERE click_id = ? OR slug = ? OR id = ? 
-                LIMIT 1
+                ORDER BY created_at DESC LIMIT 1
             `).bind(clickId, clickId, clickId).first();
             
             if (clickInfo) {
@@ -72,24 +96,28 @@ export async function onRequestGet(context) {
                 finalOs = clickInfo.os || 'Unknown';
                 finalBrowser = clickInfo.browser || 'Unknown';
                 
-                // Determine WAP/WEB based on original OS
-                if (finalOs !== 'Unknown') {
-                    const osLow = finalOs.toLowerCase();
-                    if (osLow.includes('android') || osLow.includes('iphone') || osLow.includes('ipad') || osLow.includes('mobile')) {
-                        finalTrafficType = 'WAP';
-                    } else {
-                        finalTrafficType = 'WEB';
-                    }
-                    userAgent = `${finalOs} | ${finalBrowser}`;
-                }
-                
-                if (clickInfo.country && clickInfo.country.length === 2) {
-                    finalCountryCode = clickInfo.country.toUpperCase();
-                }
+                // Gunakan User Agent ASLI dari klik, bukan dari server postback
+                userAgent = clickInfo.user_agent || userAgent;
                 
                 if (network === 'TRAFEE' && clickInfo.ip_address) {
                     finalIp = clickInfo.ip_address;
                 }
+            } else {
+                // FALLBACK: If click not found, try to detect from current headers (though likely server UA)
+                // but at least we don't leave it NULL
+                const detected = detectUA(userAgent);
+                finalBrowser = detected.browser;
+                finalOs = detected.os;
+            }
+        }
+
+        // Final sanity check for Traffic Type
+        if (finalOs !== 'Unknown') {
+            const osLow = finalOs.toLowerCase();
+            if (osLow.includes('android') || osLow.includes('ios') || osLow.includes('iphone') || osLow.includes('mobile')) {
+                finalTrafficType = 'WAP';
+            } else {
+                finalTrafficType = 'WEB';
             }
         }
 
