@@ -37,7 +37,8 @@ export async function onRequest(context) {
     }
 
     async function getIMonStats(tokens, start, end) {
-        const baseUrl = `https://api.imonetizeit.com/v1/statistics/sm?start_date=${start}&end_date=${end}&segments[]=smartlink&timezone=%2B00%3A00&include_archived=1&limit=1000`;
+        // Ganti timezone jadi UTC+7 (%2B07%3A00) menyesuaikan WIB
+        const baseUrl = `https://api.imonetizeit.com/v1/statistics/sm?start_date=${start}&end_date=${end}&segments[]=smartlink&timezone=%2B07%3A00&include_archived=1&limit=1000`;
         const statsPromises = tokens.map(async (token) => {
             try {
                 const resp = await fetch(baseUrl, { headers: { 'Authorization': `Bearer ${token}` } });
@@ -74,33 +75,6 @@ export async function onRequest(context) {
         const imonData = await getIMonStats(tokens, startDate, endDate);
         
         let finalData = Object.values(imonData);
-        
-        // iMonetizeIt (D1 Postback) integration
-        try {
-            const { results: d1Stats } = await db.prepare(`
-                SELECT smartlink, network, SUM(leads) as leads, SUM(payout) as payouts
-                FROM daily_reports
-                WHERE date BETWEEN ? AND ? AND network = 'IMONETIZEIT'
-                GROUP BY smartlink, network
-            `).bind(startDate, endDate).all();
-
-            if (d1Stats && d1Stats.length > 0) {
-                d1Stats.forEach(row => {
-                    const existing = finalData.find(d => d.smartlink === row.smartlink);
-                    if (existing) {
-                        existing.leads += row.leads;
-                        existing.payouts += row.payouts;
-                    } else {
-                        finalData.push({
-                            ...row,
-                            visits: 0,
-                            unique: 0,
-                            clicks: 0
-                        });
-                    }
-                });
-            }
-        } catch (e) { console.error('D1 iMon Fetch Error:', e); }
 
         // Filter out 'Unknown' smartlinks as requested
         const filteredData = finalData.filter(row => row.smartlink && String(row.smartlink).toLowerCase() !== 'unknown');
