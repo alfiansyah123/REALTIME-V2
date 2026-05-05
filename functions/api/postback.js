@@ -38,7 +38,14 @@ export async function onRequestGet(context) {
             'CHILE': 'CL', 'CHL': 'CL', 'COLOMBIA': 'CO', 'COL': 'CO', 'PERU': 'PE', 'PER': 'PE',
             'SOUTH AFRICA': 'ZA', 'ZAF': 'ZA', 'EGYPT': 'EG', 'EGY': 'EG', 'UAE': 'AE', 'ARE': 'AE',
             'SAUDI ARABIA': 'SA', 'SAU': 'SA', 'POLAND': 'PL', 'POL': 'PL', 'SWEDEN': 'SE', 'SWE': 'SE',
-            'HAITI': 'HT', 'HTI': 'HT', 'JAMAICA': 'JM', 'JAM': 'JM', 'NIGERIA': 'NG', 'NGA': 'NG'
+            'HAITI': 'HT', 'HTI': 'HT', 'JAMAICA': 'JM', 'JAM': 'JM', 'NIGERIA': 'NG', 'NGA': 'NG',
+            'AUSTRIA': 'AT', 'AUT': 'AT', 'BELGIUM': 'BE', 'BEL': 'BE', 'SWITZERLAND': 'CH', 'CHE': 'CH',
+            'CZECH REPUBLIC': 'CZ', 'CZE': 'CZ', 'DENMARK': 'DK', 'DNK': 'DK', 'FINLAND': 'FI', 'FIN': 'FI',
+            'GREECE': 'GR', 'GRC': 'GR', 'HUNGARY': 'HU', 'HUN': 'HU', 'IRELAND': 'IE', 'IRL': 'IE',
+            'NORWAY': 'NO', 'NOR': 'NO', 'PORTUGAL': 'PT', 'PRT': 'PT', 'ROMANIA': 'RO', 'ROU': 'RO',
+            'ISRAEL': 'IL', 'ISR': 'IL', 'NEW ZEALAND': 'NZ', 'NZL': 'NZ', 'MOROCCO': 'MA', 'MAR': 'MA',
+            'ALGERIA': 'DZ', 'DZA': 'DZ', 'TUNISIA': 'TN', 'TUN': 'TN', 'KENYA': 'KE', 'KEN': 'KE',
+            'GHANA': 'GH', 'GHA': 'GH', 'CAMEROON': 'CM', 'CMR': 'CM', 'IVORY COAST': 'CI', 'CIV': 'CI'
         };
         
         let countryCode = countryMap[rawCountry] || (rawCountry.length === 2 ? rawCountry : 'XX');
@@ -46,7 +53,7 @@ export async function onRequestGet(context) {
         let countryName = countryCode !== 'XX' ? countryCode : rawCountry;
         
         const paramIp = params.ip || params.ip_address || null;
-        const ip = paramIp || context.request.headers.get('cf-connecting-ip') || '0.0.0.0';
+        let finalIp = paramIp || context.request.headers.get('cf-connecting-ip') || '0.0.0.0';
         let userAgent = context.request.headers.get('user-agent') || '';
 
         if (!clickId && subId === 'Unknown') {
@@ -56,7 +63,6 @@ export async function onRequestGet(context) {
         let finalTrafficType = trafficType;
         let finalCountryCode = countryCode;
         let finalCountryName = countryName;
-        let finalIp = ip;
         let finalOs = 'Unknown';
         let finalBrowser = 'Unknown';
 
@@ -100,8 +106,8 @@ export async function onRequestGet(context) {
                 
                 // BOM! Senjata Rahasia: Timpa country abal-abal dari iMonetizeIt dengan country ASLI dari Cloudflare
                 if (clickInfo.country && clickInfo.country !== 'XX') {
-                    countryCode = clickInfo.country;
-                    countryName = clickInfo.country;
+                    finalCountryCode = clickInfo.country;
+                    finalCountryName = clickInfo.country;
                 }
                 
                 // Gunakan User Agent ASLI dari klik, bukan dari server postback
