@@ -37,7 +37,7 @@ export async function onRequest(context) {
             + `?start_date=${startDate}`
             + `&end_date=${endDate}`
             + `&segments[]=country`
-            + `&timezone=%2B07%3A00`
+            + `&timezone=%2B00%3A00`
             + `&include_archived=1`
             + `&limit=1000`
 
