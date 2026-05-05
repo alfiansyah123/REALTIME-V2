@@ -42,8 +42,8 @@ export async function onRequestGet(context) {
         };
         
         let countryCode = countryMap[rawCountry] || (rawCountry.length === 2 ? rawCountry : 'XX');
-        // Sesuai request user: country_name sama dengan countryCode aja (2 huruf)
-        let countryName = countryCode;
+        // Fallback: Jika dapet dari map/2 huruf, pakai itu. Kalau enggak, munculin aslinya aja daripada XX
+        let countryName = countryCode !== 'XX' ? countryCode : rawCountry;
         
         const paramIp = params.ip || params.ip_address || null;
         const ip = paramIp || context.request.headers.get('cf-connecting-ip') || '0.0.0.0';
@@ -97,6 +97,12 @@ export async function onRequestGet(context) {
                 subId = clickInfo.user_id || subId;
                 finalOs = clickInfo.os || 'Unknown';
                 finalBrowser = clickInfo.browser || 'Unknown';
+                
+                // BOM! Senjata Rahasia: Timpa country abal-abal dari iMonetizeIt dengan country ASLI dari Cloudflare
+                if (clickInfo.country && clickInfo.country !== 'XX') {
+                    countryCode = clickInfo.country;
+                    countryName = clickInfo.country;
+                }
                 
                 // Gunakan User Agent ASLI dari klik, bukan dari server postback
                 userAgent = clickInfo.user_agent || userAgent;
