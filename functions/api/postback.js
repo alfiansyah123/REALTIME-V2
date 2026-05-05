@@ -37,11 +37,13 @@ export async function onRequestGet(context) {
             'VIETNAM': 'VN', 'VNM': 'VN', 'SOUTH KOREA': 'KR', 'KOR': 'KR', 'ARGENTINA': 'AR', 'ARG': 'AR',
             'CHILE': 'CL', 'CHL': 'CL', 'COLOMBIA': 'CO', 'COL': 'CO', 'PERU': 'PE', 'PER': 'PE',
             'SOUTH AFRICA': 'ZA', 'ZAF': 'ZA', 'EGYPT': 'EG', 'EGY': 'EG', 'UAE': 'AE', 'ARE': 'AE',
-            'SAUDI ARABIA': 'SA', 'SAU': 'SA', 'POLAND': 'PL', 'POL': 'PL', 'SWEDEN': 'SE', 'SWE': 'SE'
+            'SAUDI ARABIA': 'SA', 'SAU': 'SA', 'POLAND': 'PL', 'POL': 'PL', 'SWEDEN': 'SE', 'SWE': 'SE',
+            'HAITI': 'HT', 'HTI': 'HT', 'JAMAICA': 'JM', 'JAM': 'JM', 'NIGERIA': 'NG', 'NGA': 'NG'
         };
         
         let countryCode = countryMap[rawCountry] || (rawCountry.length === 2 ? rawCountry : 'XX');
-        let countryName = rawCountry.length > 2 ? rawCountry : (countryCode !== 'XX' ? rawCountry : null);
+        // Sesuai request user: country_name sama dengan countryCode aja (2 huruf)
+        let countryName = countryCode;
         
         const paramIp = params.ip || params.ip_address || null;
         const ip = paramIp || context.request.headers.get('cf-connecting-ip') || '0.0.0.0';
