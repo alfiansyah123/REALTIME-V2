@@ -40,11 +40,42 @@ const DashboardPage = ({ onLogout, currency, setCurrency, currencyRate, setCurre
         }
     }, []);
 
+    const parseOS = (ua) => {
+        if (!ua) return null;
+        const lowerUA = ua.toLowerCase();
+        if (lowerUA.includes('android')) return 'Android';
+        if (lowerUA.includes('iphone') || lowerUA.includes('ipad') || lowerUA.includes('ios')) return 'iOS';
+        if (lowerUA.includes('windows')) return 'Windows';
+        if (lowerUA.includes('mac os') || lowerUA.includes('macintosh')) return 'macOS';
+        if (lowerUA.includes('linux')) return 'Linux';
+        return null;
+    };
+
+    const parseBrowser = (ua) => {
+        if (!ua) return null;
+        const lowerUA = ua.toLowerCase();
+        if (lowerUA.includes('fbav') || lowerUA.includes('fban') || lowerUA.includes('fbiab')) return 'Facebook';
+        if (lowerUA.includes('instagram')) return 'Instagram';
+        if (lowerUA.includes('tiktok')) return 'TikTok';
+        if (lowerUA.includes('whatsapp')) return 'WhatsApp';
+        if (lowerUA.includes('chrome')) return 'Chrome';
+        if (lowerUA.includes('safari') && !lowerUA.includes('chrome')) return 'Safari';
+        if (lowerUA.includes('firefox')) return 'Firefox';
+        return null;
+    };
+
     // Helper: Format row from Supabase to frontend format
     const formatRow = useCallback((row) => {
         // Use dedicated columns if available, otherwise fallback to old parsing logic
-        let os = row.os || row.traffic_type || 'Unknown';
-        let browser = row.browser || row.user_agent || 'Unknown';
+        let os = row.os;
+        if (!os || os === 'Unknown' || os === 'WAP' || os === 'WEB') {
+            os = parseOS(row.user_agent) || row.traffic_type || 'Unknown';
+        }
+
+        let browser = row.browser;
+        if (!browser || browser === 'Unknown' || browser === row.user_agent) {
+            browser = parseBrowser(row.user_agent) || 'Unknown';
+        }
 
         // Legacy Fallback: Parse "OS | Browser" format if it was saved in user_agent column
         if (!row.os && row.user_agent && row.user_agent.includes(' | ')) {
