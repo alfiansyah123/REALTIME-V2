@@ -13,8 +13,8 @@ export async function onRequestGet(context) {
     }
 
     try {
-        const startOfDay = `${targetDate}T00:00:00.000Z`;
-        const endOfDay = `${targetDate}T23:59:59.999Z`;
+        const startOfDay = `${targetDate} 00:00:00`;
+        const endOfDay = `${targetDate} 23:59:59`;
 
         const { results } = await db.prepare(`
             SELECT 
