@@ -38,8 +38,8 @@ export async function onRequest(context) {
         `).bind(
             linkSlug,
             memberName,
-            country || 'XX', 
-            ip_address || '0.0.0.0', 
+            country || context.request.cf?.country || 'XX', 
+            ip_address || context.request.headers.get('cf-connecting-ip') || '0.0.0.0', 
             user_agent || '', 
             browser || '', 
             os || '', 

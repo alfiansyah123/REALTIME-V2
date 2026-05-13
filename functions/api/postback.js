@@ -37,6 +37,11 @@ export async function onRequestGet(context) {
         
         // Handle Full Country Names (iMonetizeIt fallback)
         let rawCountry = (params.country || params.geo || 'XX').toUpperCase().trim();
+        
+        // Clean up placeholders like <country> or {country}
+        if (rawCountry.includes('<') || rawCountry.includes('{') || rawCountry.includes('COUNTRY')) {
+            rawCountry = 'XX';
+        }
         const countryMap = {
             'USA': 'US', 'U.S.A.': 'US', 'U.S.': 'US', 'AMERICA': 'US', 'UNITED STATES': 'US',
             'UK': 'GB', 'GREAT BRITAIN': 'GB', 'ENGLAND': 'GB', 'UNITED KINGDOM': 'GB',
