@@ -14,11 +14,25 @@ export async function onRequestGet(context) {
 
     try {
         // Extract & Normalize Parameters
-        const clickId = params.click_id || params.clickid || params.cid || params.track || null;
+        let clickId = params.click_id || params.clickid || params.cid || params.track || null;
+        
+        // Clean up placeholders if they weren't replaced by the network
+        if (clickId && (clickId.includes('<') || clickId.includes('{') || clickId === 'click_id')) {
+            clickId = null;
+        }
+
         let payout = parseFloat(params.payout || params.sum || '0.00');
         if (isNaN(payout)) payout = 0;
         const trafficType = (params.os || params.traffic || 'WEB').toUpperCase();
-        let subId = params.sub_id || params.subid || params.smartlink || 'Unknown';
+        
+        let subId = params.sub_id || params.subid || 'Unknown';
+        
+        // Use smartlink name as subId only if it's a valid ID (not a long country list)
+        const smartName = params.smartlink || '';
+        if (subId === 'Unknown' && smartName && smartName.length < 50 && !smartName.includes(',')) {
+            subId = smartName;
+        }
+
         const network = (params.network || params.source || (params.track ? 'TRAFEE' : 'IMONETIZEIT')).toUpperCase();
         
         // Handle Full Country Names (iMonetizeIt fallback)
@@ -135,7 +149,8 @@ export async function onRequestGet(context) {
             }
         }
 
-        const finalClickId = clickId || subId || `gen-${crypto.randomUUID()}`;
+        // Use clickId if available, otherwise generate a unique but clean fallback
+        const finalClickId = clickId || `gen-${crypto.randomUUID().split('-')[0]}`;
 
         // 1. Insert into conversions (Resilient)
         try {

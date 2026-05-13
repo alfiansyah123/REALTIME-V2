@@ -1,6 +1,54 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { api } from '../../utils/api';
 
+const getNetworkIcon = (network) => {
+    const iconStyle = { width: '12px', height: '12px', display: 'inline-block' };
+    const net = String(network || '').toLowerCase();
+    
+    if (net.includes('imonetizeit')) {
+        return (
+            <svg viewBox="0 0 100 100" style={iconStyle} fill="#4ADE80" className="opacity-80">
+                <circle cx="50" cy="50" r="48" fillOpacity="0.1" stroke="currentColor" strokeWidth="4" />
+                <path d="M25 70V30L50 55L75 30V70" stroke="currentColor" strokeWidth="8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+        );
+    }
+    if (net.includes('trafee')) {
+        return (
+            <svg viewBox="0 0 100 100" style={iconStyle} fill="#6366F1" className="opacity-80">
+                <rect x="10" y="10" width="80" height="80" rx="20" fillOpacity="0.1" stroke="currentColor" strokeWidth="4" />
+                <path d="M30 35H70M50 35V75" stroke="currentColor" strokeWidth="10" fill="none" strokeLinecap="round" />
+            </svg>
+        );
+    }
+    return null;
+};
+
+const TrafficItem = React.memo(({ click, getCountryFlag, getOSIcon, getBrowserIcon }) => (
+    <div className="flex items-center gap-2 p-2 rounded bg-gray-50/50 dark:bg-gray-700/20 hover:bg-white dark:hover:bg-gray-700 border border-transparent hover:border-gray-100 dark:hover:border-gray-600 group transition-all duration-200">
+        <div className="flex items-center gap-2 min-w-0 w-full">
+            <div className="flex-shrink-0 w-5 flex justify-center">
+                {getCountryFlag(click.country)}
+            </div>
+            <div className="flex flex-col min-w-0 flex-1">
+                <div className="flex items-center gap-1.5">
+                    <span className="text-[10px] font-bold text-gray-700 dark:text-gray-200 truncate" title={click.clickId || click.title}>
+                        {click.clickId || click.title}
+                    </span>
+                    {getNetworkIcon(click.network)}
+                </div>
+                <div className="flex items-center gap-2">
+                    <span className="text-[9px] text-gray-400 font-mono truncate">{click.ip}</span>
+                </div>
+            </div>
+            <div className="flex gap-1 flex-shrink-0">
+                {getOSIcon(click.os)}
+                {getBrowserIcon(click.browser)}
+            </div>
+        </div>
+    </div>
+));
+
 const LiveTraffic = () => {
     const [clicks, setClicks] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -38,16 +86,13 @@ const LiveTraffic = () => {
 
     useEffect(() => {
         mountedRef.current = true;
-        
-        // Fetch initial data
         fetchClicks();
 
-        // Polling (2s for sidebar is enough)
         const intervalId = setInterval(() => {
             if (mountedRef.current && document.visibilityState === 'visible') {
                 fetchClicks();
             }
-        }, 2000);
+        }, 5000); // Polling reduced to 5s for better performance
 
         return () => {
             mountedRef.current = false;
@@ -92,7 +137,7 @@ const LiveTraffic = () => {
         const lowerBrowser = String(browser).toLowerCase();
 
         const facebookSvg = <svg style={{ ...iconStyle, color: '#1877F2' }} viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>;
-        const instagramSvg = <svg style={{ ...iconStyle, color: '#E1306C' }} viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.072 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" /></svg>;
+        const instagramSvg = <svg style={{ ...iconStyle, color: '#E1306C' }} viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.072 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" /></svg>;
         const chromeSvg = <svg style={{ ...iconStyle, color: '#4285F4' }} viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.372 0 0 5.373 0 12s5.372 12 12 12 12-5.373 12-12S18.628 0 12 0zm0 4.154c1.927 0 3.692.68 5.097 1.82L15.355 9.17c-.85-.596-1.875-.95-2.986-.95-2.9 0-5.32 1.99-6.077 4.708H2.435C3.39 7.426 7.338 4.154 12 4.154zm0 15.692c-2.368 0-4.47-1.054-5.922-2.73l3.65-6.32c.22.89.87 1.62 1.72 2.05l-3.33 5.772c1.17.78 2.56 1.228 4.052 1.228 4.23 0 7.747-3.13 8.355-7.23h3.81c-.69 6.27-6.02 11.23-12.335 11.23zm7.077-8.308c-.225 3.32-2.26 6.088-5.077 7.45l-3.65-6.32c.596-.34 1.085-.83 1.425-1.425l6.73 3.882c.35-1.14.572-2.35.572-3.587 0-1.87-.52-3.63-1.42-5.17l-3.75 6.49c.65 1.135 1.05 2.457 1.05 3.86z" /></svg>;
         const safariSvg = <svg style={{ ...iconStyle, color: '#00A4E4' }} viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 21.6c-5.302 0-9.6-4.298-9.6-9.6s4.298-9.6 9.6-9.6 9.6 4.298 9.6 9.6-4.298 9.6-9.6 9.6zm1.146-13.854l-5.694 10.392 10.392-5.694-4.698-4.698zm-1.05 6.648l-1.698 3.102 3.102-1.698-1.404-1.404z" /></svg>;
         const firefoxSvg = <svg style={{ ...iconStyle, color: '#FF7139' }} viewBox="0 0 24 24" fill="currentColor"><path d="M22.42 8.78c-1.55-2.304-4.05-3.32-6.525-2.65-.632-1.291-1.611-2.903-3.081-3.682 3.067-.552 4.417 2.025 4.305 2.502 0 0 .19-1.252-1.294-3.483-2.613-3.68-7.781-1.077-7.781-1.077s.824 1.166.529 3.968c-4.212 1.458-5.319 5.867-5.39 6.208 0 0-.27 2.148 1.442 3.904.582.597 1.637.896 1.637.896s-.686-.427-1.396-1.574c-.71-1.149-.661-2.9.229-4.265.89-1.365 3.321-2.228 4.226-2.073-.787 2.721 1.264 4.544 2.809 6.376-2.193.364-4.133 1.815-4.496 4.771-.069.566.216.732.216.732s.672-2.363 3.652-1.841c.205 1.503 2.1 3.208 4.881 2.457 2.783-.751 3.238-2.67 3.238-2.67s1.396.223 1.936-.884c.54-1.107-.638-1.574-.638-1.574s2.449-2.126 1.101-5.716z" /></svg>;
@@ -136,39 +181,18 @@ const LiveTraffic = () => {
                 </span>
             </div>
 
-            <div className="flex flex-col gap-1 max-h-[300px] overflow-y-auto pr-1">
+            <div className="flex flex-col gap-1.5 max-h-[400px] overflow-y-auto pr-1">
                 {clicks.length === 0 ? (
                     <div className="text-center py-8 text-gray-400 text-xs italic">Waiting for clicks...</div>
                 ) : (
-                    clicks.map((click, index) => (
-                        <div
-                            key={click.id}
-                            className="flex items-center gap-2 p-2 rounded bg-gray-50 dark:bg-gray-700/30 hover:bg-gray-100 dark:hover:bg-gray-700 border border-transparent hover:border-gray-200 dark:hover:border-gray-600 group"
-                        >
-                            <div className="flex items-center gap-2 min-w-0">
-                                {getCountryFlag(click.country)}
-                                <span className="text-[11px] font-medium text-blue-600 dark:text-blue-400 truncate flex-1" title={click.title}>
-                                    {click.clickId || click.title}
-                                    {click.network && click.network !== 'Unknown' && click.network !== 'UNKNOWN' && (
-                                        <span className="ml-1 flex items-center gap-1 inline-flex align-middle">
-                                            <img 
-                                                src={`/networks/${click.network.toLowerCase()}.png`} 
-                                                alt={click.network}
-                                                className="h-2.5 object-contain"
-                                                onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'inline'; }}
-                                            />
-                                            <span className="text-[9px] text-gray-500 dark:text-gray-400 font-bold uppercase" style={{ display: 'none' }}>
-                                                ({click.network})
-                                            </span>
-                                        </span>
-                                    )}
-                                </span>
-                                <div className="flex gap-1 opacity-60 group-hover:opacity-100 transition-opacity flex-shrink-0">
-                                    {getOSIcon(click.os)}
-                                    {getBrowserIcon(click.browser)}
-                                </div>
-                            </div>
-                        </div>
+                    clicks.map((click) => (
+                        <TrafficItem 
+                            key={click.id} 
+                            click={click} 
+                            getCountryFlag={getCountryFlag}
+                            getOSIcon={getOSIcon}
+                            getBrowserIcon={getBrowserIcon}
+                        />
                     ))
                 )}
             </div>
