@@ -23,7 +23,7 @@ const ClickPerformancePage = () => {
                     os: row.os || 'Unknown',
                     browser: row.browser || parseUserAgent(row.user_agent),
                     clickId: row.click_id,
-                    network: (row.network && row.network !== 'UNKNOWN' && row.network !== 'NETWORK') ? row.network : (row.s3 && row.s3 !== 'UNKNOWN' && row.s3 !== 'NETWORK' ? row.s3 : 'Unknown'),
+                    network: row.s3 || row.network || 'Unknown',
                     referer: row.referer,
                     originalUrl: row.slug || '-'
                 }));
@@ -116,6 +116,14 @@ const ClickPerformancePage = () => {
         return <span style={{ fontSize: '14px' }}>🌐</span>;
     };
 
+    const stats = useMemo(() => {
+        return {
+            totalClicks: clicks.length,
+            countries: [...new Set(clicks.map(c => c.country).filter(Boolean))].length,
+            uniqueIps: [...new Set(clicks.map(c => c.ip).filter(Boolean))].length
+        };
+    }, [clicks]);
+
     return (
         <div className="flex flex-col gap-4 relative min-h-screen">
             <div className="click-perf-header">
@@ -124,18 +132,18 @@ const ClickPerformancePage = () => {
 
             <div className="click-perf-stats">
                 <div className="click-perf-stat-card">
-                    <span className="click-perf-stat-value">{clicks.length}</span>
+                    <span className="click-perf-stat-value">{stats.totalClicks}</span>
                     <span className="click-perf-stat-label">Total Clicks</span>
                 </div>
                 <div className="click-perf-stat-card">
                     <span className="click-perf-stat-value">
-                        {[...new Set(clicks.map(c => c.country).filter(Boolean))].length}
+                        {stats.countries}
                     </span>
                     <span className="click-perf-stat-label">Countries</span>
                 </div>
                 <div className="click-perf-stat-card">
                     <span className="click-perf-stat-value">
-                        {[...new Set(clicks.map(c => c.ip).filter(Boolean))].length}
+                        {stats.uniqueIps}
                     </span>
                     <span className="click-perf-stat-label">Unique IPs</span>
                 </div>
@@ -168,22 +176,21 @@ const ClickPerformancePage = () => {
                                         <td>
                                             <div className="flex items-center gap-2">
                                                 {click.network && click.network !== 'Unknown' && click.network !== 'UNKNOWN' ? (
-                                                    <img 
-                                                        src={`/networks/${click.network.toLowerCase()}.png`} 
+                                                    <img
+                                                        src={`/networks/${click.network.toLowerCase()}.png`}
                                                         alt={click.network}
                                                         className="h-5 object-contain"
                                                         style={{ minWidth: '20px' }}
-                                                        onError={(e) => { 
+                                                        onError={(e) => {
                                                             e.target.style.display = 'none';
                                                             e.target.nextSibling.style.display = 'block';
                                                         }}
                                                     />
                                                 ) : null}
-                                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                                                    click.network === 'TRAFEE' ? 'bg-orange-100 text-orange-600' : 
-                                                    click.network === 'IMONETIZEIT' ? 'bg-blue-100 text-blue-600' : 
-                                                    'bg-gray-100 text-gray-600'
-                                                }`} style={{ display: click.network && click.network !== 'Unknown' && click.network !== 'UNKNOWN' ? 'none' : 'inline-block' }}>
+                                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${click.network === 'TRAFEE' ? 'bg-orange-100 text-orange-600' :
+                                                        click.network === 'IMONETIZEIT' ? 'bg-blue-100 text-blue-600' :
+                                                            'bg-gray-100 text-gray-600'
+                                                    }`} style={{ display: click.network && click.network !== 'Unknown' && click.network !== 'UNKNOWN' ? 'none' : 'inline-block' }}>
                                                     {click.network}
                                                 </span>
                                             </div>

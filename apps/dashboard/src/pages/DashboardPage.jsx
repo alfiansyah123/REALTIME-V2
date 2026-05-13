@@ -162,8 +162,19 @@ const DashboardPage = ({ onLogout, currency, setCurrency, currencyRate, setCurre
 
                 // OPTIMIZATION: Only update if data actually changed
                 setData(prev => {
-                    const isSame = JSON.stringify(prev) === JSON.stringify(formatted);
-                    return isSame ? prev : formatted;
+                    // Quick check: if lengths are different, it's definitely different
+                    if (prev.length !== formatted.length) return formatted;
+                    
+                    // Check if the first and last IDs are the same (covers most cases for conversion logs)
+                    if (prev.length > 0 && formatted.length > 0) {
+                        if (prev[0].id !== formatted[0].id || prev[prev.length - 1].id !== formatted[formatted.length - 1].id) {
+                            return formatted;
+                        }
+                    } else if (prev.length === 0 && formatted.length > 0) {
+                        return formatted;
+                    }
+                    
+                    return prev;
                 });
             }
         } catch (err) {
@@ -178,12 +189,12 @@ const DashboardPage = ({ onLogout, currency, setCurrency, currencyRate, setCurre
         // Initial Fetch
         fetchData();
 
-        // Polling (1s)
+        // Polling (5s) - Increased from 1s to reduce CPU load and battery usage
         const interval = setInterval(() => {
             if (document.visibilityState === 'visible') {
                 fetchData(true);
             }
-        }, 1000);
+        }, 5000);
 
         return () => {
             clearInterval(interval);

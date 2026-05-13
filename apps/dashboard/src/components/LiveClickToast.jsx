@@ -111,7 +111,7 @@ const LiveClickToast = () => {
             if (document.visibilityState === 'visible') {
                 fetchNewClicks();
             }
-        }, 1000);
+        }, 10000); // Reduced frequency for performance
 
         return () => clearInterval(interval);
     }, [removeToast]);

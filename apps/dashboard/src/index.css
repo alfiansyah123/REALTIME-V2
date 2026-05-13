@@ -69,20 +69,15 @@ body {
   }
 }
 
-/* RGB Icon Animation (Hue Rotate) */
+/* RGB Icon Animation (Hue Rotate) - SIMPLIFIED for performance */
 .rgb-icon {
-  animation: hue-rotate 3s linear infinite;
+  animation: subtle-pulse 3s ease-in-out infinite;
   display: inline-block;
 }
 
-@keyframes hue-rotate {
-  from {
-    filter: hue-rotate(0deg) drop-shadow(0 0 2px rgba(255, 215, 0, 0.5));
-  }
-
-  to {
-    filter: hue-rotate(360deg) drop-shadow(0 0 2px rgba(255, 215, 0, 0.5));
-  }
+@keyframes subtle-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.1); opacity: 1; }
 }
 
 /* Global Transition REMOVED for Performance */
@@ -98,15 +93,14 @@ body {
 /* 🔮 LIQUID GLASS SYSTEM (iOS 26 Inspired) 🔮 */
 
 /* Glass Panel Base */
-/* Glass Panel Base */
+/* Glass Panel Base - Reduced blur depth for performance */
 .glass-panel {
-  @apply backdrop-blur-3xl bg-white/70 dark:bg-gray-900/40 border-2 border-white/60 dark:border-gray-700/50;
+  @apply backdrop-blur-xl bg-white/70 dark:bg-gray-900/40 border-2 border-white/60 dark:border-gray-700/50;
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-  /* Stronger blue-ish shadow for "timbul" effect in light mode */
 }
 
 .glass-panel-deep {
-  @apply backdrop-blur-3xl bg-white/80 dark:bg-gray-900/60 border-2 border-white/70 dark:border-gray-700/60 shadow-2xl;
+  @apply backdrop-blur-2xl bg-white/80 dark:bg-gray-900/60 border-2 border-white/70 dark:border-gray-700/60 shadow-2xl;
 }
 
 /* Frosted Input */
@@ -160,34 +154,23 @@ body {
   animation: shimmer 3s infinite;
 }
 
-/* Floating Blobs Animation */
+/* Floating Blobs Animation - Optimized with will-change and transform only */
 .animate-blob {
-  animation: blob 7s infinite;
-}
-
-.animation-delay-2000 {
-  animation-delay: 2s;
-}
-
-.animation-delay-4000 {
-  animation-delay: 4s;
+  animation: blob 15s infinite ease-in-out;
+  will-change: transform;
 }
 
 @keyframes blob {
-  0% {
+  0%, 100% {
     transform: translate(0px, 0px) scale(1);
   }
 
   33% {
-    transform: translate(30px, -50px) scale(1.1);
+    transform: translate(20px, -30px) scale(1.05);
   }
 
   66% {
-    transform: translate(-20px, 20px) scale(0.9);
-  }
-
-  100% {
-    transform: translate(0px, 0px) scale(1);
+    transform: translate(-15px, 15px) scale(0.95);
   }
 }
 

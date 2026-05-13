@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 
 export default function Header({
     selectedView,
@@ -23,14 +23,16 @@ export default function Header({
 }) {
     const [searchValue, setSearchValue] = useState('');
     const [isPaused, setIsPaused] = useState(false);
-    const [currentTime, setCurrentTime] = useState(new Date());
 
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setCurrentTime(new Date());
-        }, 1000);
-        return () => clearInterval(timer);
-    }, []);
+    // Isolated Clock Component to prevent Header re-renders every second
+    const Clock = memo(() => {
+        const [time, setTime] = useState(new Date());
+        useEffect(() => {
+            const timer = setInterval(() => setTime(new Date()), 1000);
+            return () => clearInterval(timer);
+        }, []);
+        return <span>{time.toLocaleTimeString('en-US', { timeZone: 'UTC' })}</span>;
+    });
 
     const handleSearch = (e) => {
         setSearchValue(e.target.value);
@@ -116,7 +118,7 @@ export default function Header({
                 {/* Status Box - Glass Card */}
                 <div className="flex items-center gap-2 sm:gap-4 text-xs font-mono glass-interactive px-2 sm:px-4 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl">
                     <span className="hidden sm:inline opacity-60">
-                        {currentTime.toLocaleTimeString('en-US', { timeZone: 'UTC' })}
+                        <Clock />
                     </span>
                     <div className="h-3 w-[1px] bg-gray-300 dark:bg-gray-700 hidden sm:block"></div>
 

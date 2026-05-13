@@ -13,26 +13,30 @@ export default function ConversionTable({ searchQuery, currency = 'USD', currenc
         setSortConfig({ key, direction });
     };
 
-    const sortedData = [...data].sort((a, b) => {
-        if (!sortConfig.key) return 0;
-        const aValue = a[sortConfig.key];
-        const bValue = b[sortConfig.key];
-        if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
-        if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
-        return 0;
-    });
+    const sortedData = useMemo(() => {
+        if (!sortConfig.key) return data;
+        return [...data].sort((a, b) => {
+            const aValue = a[sortConfig.key];
+            const bValue = b[sortConfig.key];
+            if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+            if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+    }, [data, sortConfig]);
 
-    const filteredData = sortedData.filter((item) => {
-        if (!searchQuery) return true;
+    const filteredData = useMemo(() => {
+        if (!searchQuery) return sortedData;
         const query = searchQuery.toLowerCase();
-        return (
-            (item.subId && String(item.subId).toLowerCase().includes(query)) ||
-            (item.clickId && String(item.clickId).toLowerCase().includes(query)) ||
-            (item.network && String(item.network).toLowerCase().includes(query)) ||
-            (item.country && String(item.country).toLowerCase().includes(query)) ||
-            (item.ipAddress && String(item.ipAddress).includes(query))
-        );
-    });
+        return sortedData.filter((item) => {
+            return (
+                (item.subId && String(item.subId).toLowerCase().includes(query)) ||
+                (item.clickId && String(item.clickId).toLowerCase().includes(query)) ||
+                (item.network && String(item.network).toLowerCase().includes(query)) ||
+                (item.country && String(item.country).toLowerCase().includes(query)) ||
+                (item.ipAddress && String(item.ipAddress).includes(query))
+            );
+        });
+    }, [sortedData, searchQuery]);
 
     const getOSIcon = (os, browser) => {
         const iconStyle = { width: '16px', height: '16px', verticalAlign: 'middle', opacity: 0.9 };
