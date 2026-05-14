@@ -172,7 +172,9 @@ const ClickPerformancePage = () => {
                                 {clicks.map((click) => (
                                     <tr key={click.id}>
                                         <td className="click-perf-time">{formatTime(click.time)}</td>
-                                        <td className="click-perf-mono">{click.clickId || '-'}</td>
+                                        <td className="click-perf-mono">
+                                            {click.clickId ? (click.clickId.length > 20 ? click.clickId.substring(0, 15) + '...' : click.clickId) : '-'}
+                                        </td>
                                         <td>
                                             <div className="flex items-center gap-2">
                                                 {click.network && click.network !== 'Unknown' && click.network !== 'UNKNOWN' ? (
