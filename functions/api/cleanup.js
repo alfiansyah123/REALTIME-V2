@@ -42,7 +42,10 @@ export async function onRequestGet(context) {
             reports_fixed: res2.meta.changes,
             clicks_fixed: res3.meta.changes
         }), { 
-            headers: { 'Content-Type': 'application/json' } 
+            headers: { 
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            } 
         });
     } catch (error) {
         return new Response(JSON.stringify({ error: error.message }), { 
