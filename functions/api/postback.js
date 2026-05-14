@@ -85,7 +85,16 @@ export async function onRequestGet(context) {
             'NIGERIA': 'NG', 'AUSTRIA': 'AT', 'BELGIUM': 'BE', 'SWITZERLAND': 'CH', 'GREECE': 'GR', 'NORWAY': 'NO', 'PORTUGAL': 'PT',
             'ISRAEL': 'IL', 'MOROCCO': 'MA', 'ALGERIA': 'DZ', 'TUNISIA': 'TN', 'KENYA': 'KE', 'GUATEMALA': 'GT', 'HONDURAS': 'HN',
             'EL SALVADOR': 'SV', 'NICARAGUA': 'NI', 'COSTA RICA': 'CR', 'PANAMA': 'PA', 'PERU': 'PE', 'ECUADOR': 'EC', 'BOLIVIA': 'BO',
-            'PARAGUAY': 'PY', 'URUGUAY': 'UY', 'DOMINICAN REPUBLIC': 'DO'
+            'PARAGUAY': 'PY', 'URUGUAY': 'UY', 'DOMINICAN REPUBLIC': 'DO', 'DOMINICANA': 'DO', 'AZERBAIJAN': 'AZ', 'GAMBIA': 'GM',
+            'GUYANA': 'GY', 'LIBERIA': 'LR', 'LEBANON': 'LB', 'SENEGAL': 'SN', 'GHANA': 'GH', 'CAMEROON': 'CM', 'COTE D\'IVOIRE': 'CI',
+            'IVORY COAST': 'CI', 'UZBEKISTAN': 'UZ', 'KAZAKHSTAN': 'KZ', 'KYRGYZSTAN': 'KG', 'TAJIKISTAN': 'TJ', 'TURKMENISTAN': 'TM',
+            'GEORGIA': 'GE', 'ARMENIA': 'AM', 'BELARUS': 'BY', 'MOLDOVA': 'MD', 'LITHUANIA': 'LT', 'LATVIA': 'LV', 'ESTONIA': 'EE',
+            'ROMANIA': 'RO', 'BULGARIA': 'BG', 'HUNGARY': 'HU', 'CZECH REPUBLIC': 'CZ', 'SLOVAKIA': 'SK', 'SLOVENIA': 'SI', 'CROATIA': 'HR',
+            'SERBIA': 'RS', 'MONTENEGRO': 'ME', 'ALBANIA': 'AL', 'MACEDONIA': 'MK', 'BOSNIA': 'BA', 'PORTUGAL': 'PT', 'FINLAND': 'FI',
+            'IRELAND': 'IE', 'DENMARK': 'DK', 'NORWAY': 'NO', 'SWEDEN': 'SE', 'PHILIPPINES': 'PH', 'CAMBODIA': 'KH', 'LAOS': 'LA',
+            'MYANMAR': 'MM', 'BANGLADESH': 'BD', 'SRI LANKA': 'LK', 'NEPAL': 'NP', 'MONGOLIA': 'MN', 'ZAMBIA': 'ZM', 'ZIMBABWE': 'ZW',
+            'UGANDA': 'UG', 'TANZANIA': 'TZ', 'ETHIOPIA': 'ET', 'EGYPT': 'EG', 'LIBYA': 'LY', 'SUDAN': 'SD', 'IRAQ': 'IQ', 'IRAN': 'IR',
+            'SYRIA': 'SY', 'JORDAN': 'JO', 'LEBANON': 'LB', 'KUWAIT': 'KW', 'QATAR': 'QA', 'BAHRAIN': 'BH', 'OMAN': 'OM', 'YEMEN': 'YE'
         };
         
         let countryCode = countryMap[rawCountry] || (rawCountry.length === 2 ? rawCountry : 'XX');
