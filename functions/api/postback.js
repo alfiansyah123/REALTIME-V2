@@ -64,6 +64,8 @@ export async function onRequestGet(context) {
             'KIR': 'KI', 'PRK': 'KP', 'KOR': 'KR', 'KWT': 'KW', 'KGZ': 'KG', 'LAO': 'LA', 'LVA': 'LV', 'LBN': 'LB', 'LSO': 'LS', 'LBR': 'LR',
             'LBY': 'LY', 'LIE': 'LI', 'LTU': 'LT', 'LUX': 'LU', 'MAC': 'MO', 'MKD': 'MK', 'MDG': 'MG', 'MWI': 'MW', 'MYS': 'MY', 'MDV': 'MV',
             'MLI': 'ML', 'MLT': 'MT', 'MHL': 'MH', 'MTQ': 'MQ', 'MRT': 'MR', 'MUS': 'MU', 'MYT': 'YT', 'MEX': 'MX', 'FSM': 'FM', 'MDA': 'MD',
+            'LBY': 'LY', 'LIE': 'LI', 'LTU': 'LT', 'LUX': 'LU', 'MAC': 'MO', 'MKD': 'MK', 'MDG': 'MG', 'MWI': 'MW', 'MYS': 'MY', 'MDV': 'MV',
+            'MLI': 'ML', 'MLT': 'MT', 'MHL': 'MH', 'MTQ': 'MQ', 'MRT': 'MR', 'MUS': 'MU', 'MYT': 'YT', 'MEX': 'MX', 'FSM': 'FM', 'MDA': 'MD',
             'MCO': 'MC', 'MNG': 'MN', 'MSR': 'MS', 'MAR': 'MA', 'MOZ': 'MZ', 'MMR': 'MM', 'NAM': 'NA', 'NRU': 'NR', 'NPL': 'NP', 'NLD': 'NL',
             'ANT': 'AN', 'NCL': 'NC', 'NZL': 'NZ', 'NIC': 'NI', 'NER': 'NE', 'NGA': 'NG', 'NIU': 'NU', 'NFK': 'NF', 'MNP': 'MP', 'NOR': 'NO',
             'OMN': 'OM', 'PAK': 'PK', 'PLW': 'PW', 'PSE': 'PS', 'PAN': 'PA', 'PNG': 'PG', 'PRY': 'PY', 'PER': 'PE', 'PHL': 'PH', 'PCN': 'PN',
@@ -81,7 +83,9 @@ export async function onRequestGet(context) {
             'MALAYSIA': 'MY', 'SINGAPORE': 'SG', 'VIETNAM': 'VN', 'SOUTH KOREA': 'KR', 'ARGENTINA': 'AR', 'CHILE': 'CL', 'COLOMBIA': 'CO',
             'SOUTH AFRICA': 'ZA', 'UAE': 'AE', 'SAUDI ARABIA': 'SA', 'POLAND': 'PL', 'SWEDEN': 'SE', 'HAITI': 'HT', 'JAMAICA': 'JM',
             'NIGERIA': 'NG', 'AUSTRIA': 'AT', 'BELGIUM': 'BE', 'SWITZERLAND': 'CH', 'GREECE': 'GR', 'NORWAY': 'NO', 'PORTUGAL': 'PT',
-            'ISRAEL': 'IL', 'MOROCCO': 'MA', 'ALGERIA': 'DZ', 'TUNISIA': 'TN', 'KENYA': 'KE'
+            'ISRAEL': 'IL', 'MOROCCO': 'MA', 'ALGERIA': 'DZ', 'TUNISIA': 'TN', 'KENYA': 'KE', 'GUATEMALA': 'GT', 'HONDURAS': 'HN',
+            'EL SALVADOR': 'SV', 'NICARAGUA': 'NI', 'COSTA RICA': 'CR', 'PANAMA': 'PA', 'PERU': 'PE', 'ECUADOR': 'EC', 'BOLIVIA': 'BO',
+            'PARAGUAY': 'PY', 'URUGUAY': 'UY', 'DOMINICAN REPUBLIC': 'DO'
         };
         
         let countryCode = countryMap[rawCountry] || (rawCountry.length === 2 ? rawCountry : 'XX');
