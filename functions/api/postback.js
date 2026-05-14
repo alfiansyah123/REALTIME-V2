@@ -133,9 +133,13 @@ export async function onRequestGet(context) {
                 finalOs = clickInfo.os || 'Unknown';
                 finalBrowser = clickInfo.browser || 'Unknown';
                 
-                if (clickInfo.country && clickInfo.country !== 'XX') {
-                    finalCountryCode = clickInfo.country;
-                    finalCountryName = clickInfo.country;
+                // PRIORITAS: Selalu percaya data negara dari Network (Trafee/iMonetizeIt)
+                // Cuma pake data klik awal kalau network kirim "XX" atau kosong.
+                if (finalCountryCode === 'XX' || !finalCountryCode) {
+                    if (clickInfo.country && clickInfo.country !== 'XX') {
+                        finalCountryCode = clickInfo.country;
+                        finalCountryName = clickInfo.country;
+                    }
                 }
                 
                 userAgent = clickInfo.user_agent || userAgent;
