@@ -26,9 +26,20 @@ export async function onRequest(context) {
         // Skip if it's a bot (optional, based on your preference)
         if (is_bot) return new Response(JSON.stringify({ success: true, skipped: 'bot' }), { status: 200, headers });
 
-        const memberName = body.user_id || body.username || body.member_name || 'Unknown';
+        let memberName = body.user_id || body.username || body.member_name || 'Unknown';
         const linkSlug = slug || body.slug || 'Unknown';
-        const finalClickId = click_id || body.track || null;
+        let finalClickId = click_id || body.track || null;
+
+        // --- ANTI-JUNK FILTER ---
+        // Jika clickId atau memberName mengandung daftar negara (koma) atau kepanjangan, bersihkan.
+        if (finalClickId && (finalClickId.includes(',') || finalClickId.includes('%2C') || finalClickId.length > 50)) {
+            finalClickId = null; 
+        }
+        if (memberName && (memberName.includes(',') || memberName.includes('%2C') || memberName.length > 50)) {
+            memberName = 'Unknown';
+        }
+        // -------------------------
+
         const finalNetwork = network || (finalClickId ? (finalClickId.startsWith('gen-') ? 'TRACKER' : 'NETWORK') : 'UNKNOWN');
 
         await db.prepare(`

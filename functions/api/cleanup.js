@@ -24,11 +24,23 @@ export async function onRequestGet(context) {
                OR length(smartlink) > 50
         `).run();
 
+        // 3. Bersihkan tabel clicks dari click_id dan user_id sampah
+        const res3 = await db.prepare(`
+            UPDATE clicks 
+            SET click_id = NULL, user_id = 'Unknown'
+            WHERE click_id LIKE '%,%' 
+               OR click_id LIKE '%2C%' 
+               OR length(click_id) > 50
+               OR user_id LIKE '%,%'
+               OR length(user_id) > 50
+        `).run();
+
         return new Response(JSON.stringify({ 
             success: true, 
             message: 'Database cleaned successfully!',
             conversions_fixed: res1.meta.changes,
-            reports_fixed: res2.meta.changes
+            reports_fixed: res2.meta.changes,
+            clicks_fixed: res3.meta.changes
         }), { 
             headers: { 'Content-Type': 'application/json' } 
         });
