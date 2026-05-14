@@ -27,9 +27,14 @@ export async function onRequestGet(context) {
         
         let subId = params.sub_id || params.subid || 'Unknown';
         
+        // --- FILTER SAMPAH: Buang sub_id kalau isinya list negara atau kepanjangan ---
+        if (subId.length > 50 || subId.includes(',') || subId.includes('%2C')) {
+            subId = 'Unknown';
+        }
+        
         // Use smartlink name as subId only if it's a valid ID (not a long country list)
         const smartName = params.smartlink || '';
-        if (subId === 'Unknown' && smartName && smartName.length < 50 && !smartName.includes(',')) {
+        if (subId === 'Unknown' && smartName && smartName.length < 50 && !smartName.includes(',') && !smartName.includes('%2C')) {
             subId = smartName;
         }
 
