@@ -90,11 +90,24 @@ export async function onRequestGet(context) {
             'IVORY COAST': 'CI', 'UZBEKISTAN': 'UZ', 'KAZAKHSTAN': 'KZ', 'KYRGYZSTAN': 'KG', 'TAJIKISTAN': 'TJ', 'TURKMENISTAN': 'TM',
             'GEORGIA': 'GE', 'ARMENIA': 'AM', 'BELARUS': 'BY', 'MOLDOVA': 'MD', 'LITHUANIA': 'LT', 'LATVIA': 'LV', 'ESTONIA': 'EE',
             'ROMANIA': 'RO', 'BULGARIA': 'BG', 'HUNGARY': 'HU', 'CZECH REPUBLIC': 'CZ', 'SLOVAKIA': 'SK', 'SLOVENIA': 'SI', 'CROATIA': 'HR',
-            'SERBIA': 'RS', 'MONTENEGRO': 'ME', 'ALBANIA': 'AL', 'MACEDONIA': 'MK', 'BOSNIA': 'BA', 'PORTUGAL': 'PT', 'FINLAND': 'FI',
-            'IRELAND': 'IE', 'DENMARK': 'DK', 'NORWAY': 'NO', 'SWEDEN': 'SE', 'PHILIPPINES': 'PH', 'CAMBODIA': 'KH', 'LAOS': 'LA',
-            'MYANMAR': 'MM', 'BANGLADESH': 'BD', 'SRI LANKA': 'LK', 'NEPAL': 'NP', 'MONGOLIA': 'MN', 'ZAMBIA': 'ZM', 'ZIMBABWE': 'ZW',
-            'UGANDA': 'UG', 'TANZANIA': 'TZ', 'ETHIOPIA': 'ET', 'EGYPT': 'EG', 'LIBYA': 'LY', 'SUDAN': 'SD', 'IRAQ': 'IQ', 'IRAN': 'IR',
-            'SYRIA': 'SY', 'JORDAN': 'JO', 'LEBANON': 'LB', 'KUWAIT': 'KW', 'QATAR': 'QA', 'BAHRAIN': 'BH', 'OMAN': 'OM', 'YEMEN': 'YE'
+            'SERBIA': 'RS', 'MONTENEGRO': 'ME', 'ALBANIA': 'AL', 'MACEDONIA': 'MK', 'BOSNIA': 'BA', 'IRELAND': 'IE', 'DENMARK': 'DK',
+            'FINLAND': 'FI', 'PHILIPPINES': 'PH', 'CAMBODIA': 'KH', 'LAOS': 'LA', 'MYANMAR': 'MM', 'BANGLADESH': 'BD', 'SRI LANKA': 'LK',
+            'NEPAL': 'NP', 'MONGOLIA': 'MN', 'ZAMBIA': 'ZM', 'ZIMBABWE': 'ZW', 'UGANDA': 'UG', 'TANZANIA': 'TZ', 'ETHIOPIA': 'ET', 'EGYPT': 'EG',
+            'LIBYA': 'LY', 'SUDAN': 'SD', 'IRAQ': 'IQ', 'IRAN': 'IR', 'SYRIA': 'SY', 'JORDAN': 'JO', 'KUWAIT': 'KW', 'QATAR': 'QA',
+            'BAHRAIN': 'BH', 'OMAN': 'OM', 'YEMEN': 'YE', 'AFGHANISTAN': 'AF', 'ANGOLA': 'AO', 'ANTIGUA AND BARBUDA': 'AG', 'ARUBA': 'AW',
+            'BAHAMAS': 'BS', 'BARBADOS': 'BB', 'BELIZE': 'BZ', 'BENIN': 'BJ', 'BERMUDA': 'BM', 'BHUTAN': 'BT', 'BOTSWANA': 'BW',
+            'BRUNEI': 'BN', 'BURKINA FASO': 'BF', 'BURUNDI': 'BI', 'CAPE VERDE': 'CV', 'CAYMAN ISLANDS': 'KY', 'CENTRAL AFRICAN REPUBLIC': 'CF',
+            'CHAD': 'TD', 'COMOROS': 'KM', 'CONGO': 'CG', 'COOK ISLANDS': 'CK', 'CYPRUS': 'CY', 'DJIBOUTI': 'DJ', 'DOMINICA': 'DM',
+            'EQUATORIAL GUINEA': 'GQ', 'ERITREA': 'ER', 'FIJI': 'FJ', 'GABON': 'GA', 'GIBRALTAR': 'GI', 'GREENLAND': 'GL', 'GRENADA': 'GD',
+            'GUAM': 'GU', 'GUINEA': 'GN', 'GUINEA-BISSAU': 'GW', 'ICELAND': 'IS', 'KIRIBATI': 'KI', 'LESOTHO': 'LS', 'LIECHTENSTEIN': 'LI',
+            'LUXEMBOURG': 'LU', 'MACAU': 'MO', 'MADAGASCAR': 'MG', 'MALAWI': 'MW', 'MALDIVES': 'MV', 'MALI': 'ML', 'MALTA': 'MT',
+            'MARSHALL ISLANDS': 'MH', 'MAURITANIA': 'MR', 'MAURITIUS': 'MU', 'MICRONESIA': 'FM', 'MONACO': 'MC', 'MONTSERRAT': 'MS',
+            'NAMIBIA': 'NA', 'NAURU': 'NR', 'NEW CALEDONIA': 'NC', 'NIGER': 'NE', 'NIU': 'NU', 'PALAU': 'PW', 'PALESTINE': 'PS',
+            'PAPUA NEW GUINEA': 'PG', 'PUERTO RICO': 'PR', 'RWANDA': 'RW', 'SAMOA': 'WS', 'SAN MARINO': 'SM', 'SAO TOME AND PRINCIPE': 'ST',
+            'SEYCHELLES': 'SC', 'SIERRA LEONE': 'SL', 'SOLOMON ISLANDS': 'SB', 'SOMALIA': 'SO', 'SURINAME': 'SR', 'SWAZILAND': 'SZ',
+            'TIMOR-LESTE': 'TL', 'TOGO': 'TG', 'TOKELAU': 'TK', 'TONGA': 'TO', 'TRINIDAD AND TOBAGO': 'TT', 'TURKS AND CAICOS ISLANDS': 'TC',
+            'TUVALU': 'TV', 'VANUATU': 'VU', 'WALLIS AND FUTUNA': 'WF', 'WESTERN SAHARA': 'EH'
+        };
         };
         
         let countryCode = countryMap[rawCountry] || (rawCountry.length === 2 ? rawCountry : 'XX');
