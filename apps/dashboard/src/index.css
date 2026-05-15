@@ -198,3 +198,29 @@ body {
 ::selection {
   @apply bg-primary/30 text-primary-hover;
 }
+/* ?? MOBILE OPTIMIZATION: Disable heavy effects on mobile ?? */
+@media (max-width: 768px) {
+  .glass-panel, .glass-panel-deep, .glass-input, .glass-interactive {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  
+  .glass-panel {
+    background-color: white !important;
+    border-color: #e5e7eb !important;
+  }
+  
+  .dark .glass-panel {
+    background-color: #111827 !important;
+    border-color: #374151 !important;
+  }
+
+  .shimmer-overlay::after {
+    display: none !important;
+  }
+  
+  .animate-blob {
+    animation: none !important;
+    display: none !important;
+  }
+}

@@ -88,11 +88,14 @@ const LiveTraffic = () => {
         mountedRef.current = true;
         fetchClicks();
 
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        const intervalDuration = isMobile ? 10000 : 5000;
+
         const intervalId = setInterval(() => {
             if (mountedRef.current && document.visibilityState === 'visible') {
                 fetchClicks();
             }
-        }, 5000); // Polling reduced to 5s for better performance
+        }, intervalDuration);
 
         return () => {
             mountedRef.current = false;
