@@ -7,7 +7,7 @@ import LoginPage from './pages/LoginPage';
 import ChangePasswordPage from './pages/ChangePasswordPage';
 import ClickIdStatsPage from './pages/ClickIdStatsPage';
 import ClickPerformancePage from './pages/ClickPerformancePage';
-import LiveClickToast from './components/LiveClickToast';
+// import LiveClickToast from './components/LiveClickToast';
 import { useTheme } from './context/ThemeContext';
 
 // Component to handle sidebar closing on route change
@@ -86,8 +86,8 @@ function ProtectedLayout({ children, isSidebarOpen, setIsSidebarOpen, isMobile, 
         </main>
       </div>
 
-      {/* Live Click Toast Notification */}
-      <LiveClickToast />
+      {/* Live Click Toast Notification disabled for performance */}
+      {/* <LiveClickToast /> */}
     </div>
   );
 }
