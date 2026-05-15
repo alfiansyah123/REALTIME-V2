@@ -108,7 +108,6 @@ export async function onRequestGet(context) {
             'TIMOR-LESTE': 'TL', 'TOGO': 'TG', 'TOKELAU': 'TK', 'TONGA': 'TO', 'TRINIDAD AND TOBAGO': 'TT', 'TURKS AND CAICOS ISLANDS': 'TC',
             'TUVALU': 'TV', 'VANUATU': 'VU', 'WALLIS AND FUTUNA': 'WF', 'WESTERN SAHARA': 'EH'
         };
-        };
         
         let countryCode = countryMap[rawCountry] || (rawCountry.length === 2 ? rawCountry : 'XX');
         let countryName = countryCode !== 'XX' ? countryCode : rawCountry;
