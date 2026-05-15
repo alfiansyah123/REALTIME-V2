@@ -10,7 +10,7 @@ const ClickPerformancePage = () => {
         setLoading(true);
 
         try {
-            const response = await api.getClicks(200);
+            const response = await api.getClicks(100);
             const data = response.data;
 
             if (data) {
