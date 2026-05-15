@@ -28,11 +28,14 @@ export async function onRequestGet(context) {
         let subId = params.sub_id || params.subid || 'Unknown';
         
         // --- GHOST CONVERSION BLOCKER ---
-        // Jika data berisi list negara (koma/%2C) atau kepanjangan, ini konversi GHOIB. BLOKIR!
-        if (
-            (clickId && (clickId.includes(',') || clickId.includes('%2C') || clickId.length > 50)) ||
-            (subId && (subId.includes(',') || subId.includes('%2C') || subId.length > 50))
-        ) {
+        // Hanya blokir jika isinya LIST NEGARA (banyak koma/%2C). 
+        const isJunk = (str) => {
+            if (!str) return false;
+            const count = (str.match(/%2C|,/g) || []).length;
+            return count > 4; // Cuma list negara ghoib yang punya koma sebanyak ini
+        };
+
+        if (isJunk(clickId) || isJunk(subId)) {
             console.log("Blocking Ghost Conversion:", clickId || subId);
             return new Response(JSON.stringify({ error: 'Ghost conversion blocked' }), { status: 400, headers });
         }

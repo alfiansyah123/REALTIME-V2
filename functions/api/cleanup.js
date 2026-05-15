@@ -6,33 +6,24 @@ export async function onRequestGet(context) {
     }
 
     try {
-        // 1. HAPUS PERMANEN konversi ghoib (list negara)
+        // 1. HAPUS PERMANEN konversi ghoib (Cuma yang punya banyak separator %2C atau koma)
         const res1 = await db.prepare(`
             DELETE FROM conversions 
-            WHERE sub_id LIKE '%,%' 
-               OR sub_id LIKE '%2C%' 
-               OR length(sub_id) > 50
-               OR click_id LIKE '%,%'
-               OR click_id LIKE '%2C%'
-               OR length(click_id) > 50
+            WHERE (sub_id LIKE '%%2C%%2C%%2C%%2C%%' OR sub_id LIKE '%,%,%,%,%')
+               OR (click_id LIKE '%%2C%%2C%%2C%%2C%%' OR click_id LIKE '%,%,%,%,%')
         `).run();
 
         // 2. HAPUS PERMANEN daily_reports sampah
         const res2 = await db.prepare(`
             DELETE FROM daily_reports 
-            WHERE smartlink LIKE '%,%' 
-               OR smartlink LIKE '%2C%' 
-               OR length(smartlink) > 50
+            WHERE smartlink LIKE '%%2C%%2C%%2C%%2C%%' OR smartlink LIKE '%,%,%,%,%'
         `).run();
 
         // 3. HAPUS PERMANEN clicks sampah
         const res3 = await db.prepare(`
             DELETE FROM clicks 
-            WHERE click_id LIKE '%,%' 
-               OR click_id LIKE '%2C%' 
-               OR length(click_id) > 50
-               OR user_id LIKE '%,%'
-               OR length(user_id) > 50
+            WHERE (click_id LIKE '%%2C%%2C%%2C%%2C%%' OR click_id LIKE '%,%,%,%,%')
+               OR (user_id LIKE '%%2C%%2C%%2C%%2C%%' OR user_id LIKE '%,%,%,%,%')
         `).run();
 
         return new Response(JSON.stringify({ 

@@ -210,10 +210,15 @@ const DashboardPage = ({ onLogout, currency, setCurrency, currencyRate, setCurre
         const cleanData = data.filter(item => {
             const s = String(item.subId || '');
             const c = String(item.clickId || '');
-            const isJunk = s.length > 50 || s.includes(',') || s.includes('%2C') || 
-                           c.length > 50 || c.includes(',') || c.includes('%2C') ||
-                           s === 'Unknown' || c === 'Unknown';
-            return !isJunk;
+            
+            // Cek apakah ini list negara (biasanya punya banyak separator %2C atau koma)
+            const isJunkList = (str) => {
+                if (!str) return false;
+                const separators = (str.match(/%2C|,/g) || []).length;
+                return separators > 4; // Kalau ada lebih dari 4 separator, fix ini list negara ghoib
+            };
+
+            return !isJunkList(s) && !isJunkList(c);
         });
 
         if (!searchQuery) return cleanData;
