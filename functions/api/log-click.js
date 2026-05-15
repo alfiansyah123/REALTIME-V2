@@ -8,6 +8,17 @@ export async function onRequest(context) {
     if (!db) return new Response(JSON.stringify({ error: 'DB not found' }), { status: 500, headers });
 
     try {
+        // --- AUTO-OPTIMIZE DATABASE ---
+        // Jalankan perintah index otomatis biar dashboard kenceng tanpa harus buka link manual
+        context.waitUntil((async () => {
+            try {
+                await db.prepare(`CREATE INDEX IF NOT EXISTS idx_clicks_created_at ON clicks (created_at DESC)`).run();
+                await db.prepare(`CREATE INDEX IF NOT EXISTS idx_conversions_created_at ON conversions (created_at DESC)`).run();
+                await db.prepare(`CREATE INDEX IF NOT EXISTS idx_clicks_click_id ON clicks (click_id)`).run();
+            } catch (e) {}
+        })());
+        // ------------------------------
+
         const body = await context.request.json();
         const { 
             slug, 
