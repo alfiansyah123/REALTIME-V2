@@ -56,7 +56,7 @@ const LiveTraffic = () => {
 
     const fetchClicks = useCallback(async () => {
         try {
-            const response = await api.getClicks(20);
+            const response = await api.getClicks(10);
             const data = response.data;
 
             if (data && mountedRef.current) {

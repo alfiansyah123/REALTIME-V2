@@ -17,8 +17,9 @@ export async function onRequest(context) {
         // Fetch clicks from D1 sorted by ID or created_at
         // Using SQLite syntax
         const { results } = await db.prepare(`
-            SELECT * FROM clicks 
-            ORDER BY id DESC 
+            SELECT id, slug, country, ip_address, created_at, os, browser, click_id, network, s3, user_id, referer 
+            FROM clicks 
+            ORDER BY created_at DESC 
             LIMIT ?
         `).bind(limit).all();
 
