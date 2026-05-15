@@ -6,28 +6,28 @@ export async function onRequestGet(context) {
     }
 
     try {
-        // 1. Bersihkan tabel conversions dari sub_id sampah (list negara)
+        // 1. HAPUS PERMANEN konversi ghoib (list negara)
         const res1 = await db.prepare(`
-            UPDATE conversions 
-            SET sub_id = 'Unknown' 
+            DELETE FROM conversions 
             WHERE sub_id LIKE '%,%' 
                OR sub_id LIKE '%2C%' 
                OR length(sub_id) > 50
+               OR click_id LIKE '%,%'
+               OR click_id LIKE '%2C%'
+               OR length(click_id) > 50
         `).run();
 
-        // 2. Bersihkan tabel daily_reports dari smartlink sampah
+        // 2. HAPUS PERMANEN daily_reports sampah
         const res2 = await db.prepare(`
-            UPDATE daily_reports 
-            SET smartlink = 'Unknown' 
+            DELETE FROM daily_reports 
             WHERE smartlink LIKE '%,%' 
                OR smartlink LIKE '%2C%' 
                OR length(smartlink) > 50
         `).run();
 
-        // 3. Bersihkan tabel clicks dari click_id dan user_id sampah
+        // 3. HAPUS PERMANEN clicks sampah
         const res3 = await db.prepare(`
-            UPDATE clicks 
-            SET click_id = NULL, user_id = 'Unknown'
+            DELETE FROM clicks 
             WHERE click_id LIKE '%,%' 
                OR click_id LIKE '%2C%' 
                OR length(click_id) > 50

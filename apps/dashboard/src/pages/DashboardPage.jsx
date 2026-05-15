@@ -86,8 +86,12 @@ const DashboardPage = ({ onLogout, currency, setCurrency, currencyRate, setCurre
 
         return {
             id: row.id,
-            subId: row.sub_id,
-            clickId: row.click_id,
+            subId: (row.sub_id && (row.sub_id.length > 50 || row.sub_id.includes(',') || row.sub_id.includes('%2C'))) 
+                ? 'Unknown' 
+                : row.sub_id,
+            clickId: (row.click_id && (row.click_id.length > 50 || row.click_id.includes(',') || row.click_id.includes('%2C')))
+                ? 'Unknown'
+                : row.click_id,
             network: row.network,
             country: row.country,
             flag: row.country && row.country !== 'XX'
@@ -202,9 +206,19 @@ const DashboardPage = ({ onLogout, currency, setCurrency, currencyRate, setCurre
     }, [fetchData]);
 
     const filteredData = useMemo(() => {
-        if (!searchQuery) return data;
+        // --- GHOST FILTER: Jangan tampilkan data ghoib di tabel ---
+        const cleanData = data.filter(item => {
+            const s = String(item.subId || '');
+            const c = String(item.clickId || '');
+            const isJunk = s.length > 50 || s.includes(',') || s.includes('%2C') || 
+                           c.length > 50 || c.includes(',') || c.includes('%2C') ||
+                           s === 'Unknown' || c === 'Unknown';
+            return !isJunk;
+        });
+
+        if (!searchQuery) return cleanData;
         const query = searchQuery.toLowerCase();
-        return data.filter(item =>
+        return cleanData.filter(item =>
             (item.clickId && String(item.clickId).toLowerCase().includes(query)) ||
             (item.subId && String(item.subId).toLowerCase().includes(query)) ||
             (item.network && String(item.network).toLowerCase().includes(query)) ||

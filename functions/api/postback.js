@@ -17,7 +17,7 @@ export async function onRequestGet(context) {
         let clickId = params.click_id || params.clickid || params.ext_click_id || params.cid || params.track || null;
         
         // Clean up placeholders if they weren't replaced by the network
-        if (clickId && (clickId.includes('<') || clickId.includes('{') || clickId === 'click_id')) {
+        if (clickId && (clickId.includes('<') || clickId.includes('{') || clickId === 'click_id' || clickId.length > 50 || clickId.includes(',') || clickId.includes('%2C'))) {
             clickId = null;
         }
 
@@ -27,15 +27,14 @@ export async function onRequestGet(context) {
         
         let subId = params.sub_id || params.subid || 'Unknown';
         
-        // --- FILTER SAMPAH: Buang sub_id kalau isinya list negara atau kepanjangan ---
-        if (subId.length > 50 || subId.includes(',') || subId.includes('%2C')) {
-            subId = 'Unknown';
-        }
-        
-        // Use smartlink name as subId only if it's a valid ID (not a long country list)
-        const smartName = params.smartlink || '';
-        if (subId === 'Unknown' && smartName && smartName.length < 50 && !smartName.includes(',') && !smartName.includes('%2C')) {
-            subId = smartName;
+        // --- GHOST CONVERSION BLOCKER ---
+        // Jika data berisi list negara (koma/%2C) atau kepanjangan, ini konversi GHOIB. BLOKIR!
+        if (
+            (clickId && (clickId.includes(',') || clickId.includes('%2C') || clickId.length > 50)) ||
+            (subId && (subId.includes(',') || subId.includes('%2C') || subId.length > 50))
+        ) {
+            console.log("Blocking Ghost Conversion:", clickId || subId);
+            return new Response(JSON.stringify({ error: 'Ghost conversion blocked' }), { status: 400, headers });
         }
 
         const network = (params.network || params.source || (params.track || params.ext_click_id ? 'TRAFEE' : 'IMONETIZEIT')).toUpperCase();
