@@ -145,9 +145,7 @@ const DashboardPage = ({ onLogout, currency, setCurrency, currencyRate, setCurre
             const startOfDay = `${dateString}T00:00:00.000Z`;
             const endOfDay = `${dateString}T23:59:59.999Z`;
 
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            const limit = isMobile ? 50 : 500;
-            const response = await api.getConversions(limit, startOfDay, endOfDay);
+            const response = await api.getConversions(500, startOfDay, endOfDay);
             const rows = response.data;
 
             if (rows) {
