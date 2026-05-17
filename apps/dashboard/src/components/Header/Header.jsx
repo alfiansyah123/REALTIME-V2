@@ -109,8 +109,8 @@ export default function Header({
                         {getTitle()}
                     </h2>
                     {/* Mobile Live Indicator */}
-                    <div className="lg:hidden flex items-center gap-1.5 bg-orange-50 dark:bg-orange-900/20 border border-dashed border-orange-300 dark:border-orange-700 px-2 py-0.5 rounded text-[10px] text-orange-500 font-mono">
-                        <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></div>
+                    <div className="lg:hidden flex items-center gap-1.5 bg-teal-50 dark:bg-teal-900/20 border border-dashed border-teal-300 dark:border-teal-700 px-2 py-0.5 rounded text-[10px] text-teal-500 font-mono">
+                        <div className="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse"></div>
                         <span className="font-bold tracking-wider">LIVE</span>
                     </div>
                 </div>
@@ -124,15 +124,15 @@ export default function Header({
 
                     <div className="flex items-center gap-2">
                         <span className="text-gray-500 dark:text-gray-400 hidden sm:inline">Total:</span>
-                        <span className="font-bold text-orange-500 text-sm">
+                        <span className="font-bold text-teal-500 text-sm">
                             {currency === 'IDR' ? `Rp ${(totalPayout * currencyRate).toLocaleString('id-ID')}` : `$${totalPayout.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                         </span>
                     </div>
 
                     <div className="h-3 w-[1px] bg-gray-300 dark:bg-gray-600 hidden lg:block"></div>
                     <div className="hidden lg:flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></div>
-                        <span className="text-orange-500 font-bold tracking-wider text-[10px]">LIVE</span>
+                        <div className="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></div>
+                        <span className="text-teal-500 font-bold tracking-wider text-[10px]">LIVE</span>
                     </div>
                 </div>
             </div>
@@ -219,7 +219,7 @@ export default function Header({
 
                             <button
                                 onClick={toggleTheme}
-                                className="w-7 h-7 sm:w-8 sm:h-8 bg-white dark:bg-light-dark border border-dashed border-gray-200 dark:border-gray-700 hover:border-orange-300 dark:hover:border-orange-500 rounded-lg shadow-card dark:shadow-none flex items-center justify-center text-gray-700 dark:text-gray-100"
+                                className="w-7 h-7 sm:w-8 sm:h-8 bg-white dark:bg-light-dark border border-dashed border-gray-200 dark:border-gray-700 hover:border-teal-300 dark:hover:border-teal-500 rounded-lg shadow-card dark:shadow-none flex items-center justify-center text-gray-700 dark:text-gray-100"
                                 title="Toggle Theme"
                             >
                                 <span className="material-icons-round text-lg">
@@ -237,7 +237,7 @@ export default function Header({
 
                             <button
                                 onClick={handlePause}
-                                className="w-7 h-7 sm:w-8 sm:h-8 bg-white dark:bg-light-dark border border-dashed border-gray-200 dark:border-gray-700 hover:border-orange-300 dark:hover:border-orange-500 rounded-lg shadow-card dark:shadow-none flex items-center justify-center text-gray-700 dark:text-gray-100"
+                                className="w-7 h-7 sm:w-8 sm:h-8 bg-white dark:bg-light-dark border border-dashed border-gray-200 dark:border-gray-700 hover:border-teal-300 dark:hover:border-teal-500 rounded-lg shadow-card dark:shadow-none flex items-center justify-center text-gray-700 dark:text-gray-100"
                                 title={isPaused ? "Resume" : "Pause"}
                             >
                                 <span className="material-icons-round text-lg">

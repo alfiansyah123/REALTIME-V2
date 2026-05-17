@@ -24,7 +24,7 @@ function SidebarController({ setSidebarOpen, isMobile }) {
 function ProtectedLayout({ children, isSidebarOpen, setIsSidebarOpen, isMobile, toggleTheme, isDarkMode, currency, setCurrency, currencyRate, setCurrencyRate, showSidebar = true }) {
   if (!children) return null;
   return (
-    <div className="bg-body dark:bg-dark text-gray-900 dark:text-white font-sans h-screen flex flex-col overflow-hidden selection:bg-orange-500/30 selection:text-orange-600 relative">
+    <div className="bg-body dark:bg-dark text-gray-900 dark:text-white font-sans h-screen flex flex-col overflow-hidden selection:bg-teal-500/30 selection:text-teal-600 relative">
 
       {showSidebar && <SidebarController setSidebarOpen={setIsSidebarOpen} isMobile={isMobile} />}
 
@@ -33,12 +33,12 @@ function ProtectedLayout({ children, isSidebarOpen, setIsSidebarOpen, isMobile, 
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsSidebarOpen(true)}
-            className="p-2 -ml-2 rounded-lg hover:bg-gray-100 dark:hover:bg-orange-500 active:scale-95 transition-all text-gray-700 dark:text-gray-100"
+            className="p-2 -ml-2 rounded-lg hover:bg-gray-100 dark:hover:bg-teal-500 active:scale-95 transition-all text-gray-700 dark:text-gray-100"
           >
             <span className="material-icons-round text-2xl">menu</span>
           </button>
-          <div className="h-2.5 w-2.5 rounded-full bg-orange-500 animate-pulse"></div>
-          <h1 className="font-bold text-lg leading-tight font-mono text-orange-500">SCATTER TEAM</h1>
+          <div className="h-2.5 w-2.5 rounded-full bg-teal-500 animate-pulse"></div>
+          <h1 className="font-bold text-lg leading-tight font-mono text-teal-500">SCATTER TEAM</h1>
         </div>
         {/* Theme Toggle for Mobile */}
         <button

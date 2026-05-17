@@ -19,7 +19,7 @@ export default function Sidebar({ currency, currencyRate, isOpen, onClose }) {
             <div className="lg:hidden absolute top-4 right-4 z-50">
                 <button
                     onClick={onClose}
-                    className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-orange-500 text-gray-500 dark:text-gray-400 transition-all active:scale-95"
+                    className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-teal-500 text-gray-500 dark:text-gray-400 transition-all active:scale-95"
                 >
                     <span className="material-icons-round text-xl">close</span>
                 </button>
@@ -28,7 +28,7 @@ export default function Sidebar({ currency, currencyRate, isOpen, onClose }) {
             {/* Logo and Title */}
             <div className="h-16 flex items-center px-4 border-b border-dashed border-gray-200 dark:border-gray-700">
                 <div className="flex items-center gap-3">
-                    <div className="h-2.5 w-2.5 rounded-full bg-orange-500 animate-pulse"></div>
+                    <div className="h-2.5 w-2.5 rounded-full bg-teal-500 animate-pulse"></div>
                     <div>
                         <h1 className="font-bold text-sm font-mono text-gray-900 dark:text-white tracking-wider uppercase">Realtime</h1>
                         <p className="text-[10px] text-gray-500 dark:text-gray-400 font-mono tracking-wider">
@@ -40,13 +40,13 @@ export default function Sidebar({ currency, currencyRate, isOpen, onClose }) {
 
             {/* Main Content */}
             <div className="flex-1 overflow-y-auto p-4 flex flex-col h-[calc(100vh-8rem)] scrollbar-hide">
-                {/* Navigation - with orange highlight bar */}
+                {/* Navigation - with teal highlight bar */}
                 <div className="relative flex flex-col gap-2">
                     <NavLink
                         to="/dashboard?date=rt_1"
                         className={({ isActive }) =>
                             `flex items-center gap-3 px-3 py-2.5 rounded transition-colors duration-200 font-mono relative text-sm ${isActive
-                                ? 'bg-orange-500 text-white font-semibold shadow-sm'
+                                ? 'bg-teal-500 text-white font-semibold shadow-sm'
                                 : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 active:scale-95'
                             }`
                         }
@@ -58,7 +58,7 @@ export default function Sidebar({ currency, currencyRate, isOpen, onClose }) {
                         to="/dashboard?date=rt_2"
                         className={({ isActive }) =>
                             `flex items-center gap-3 px-3 py-2.5 rounded transition-colors duration-200 font-mono relative text-sm ${isActive
-                                ? 'bg-orange-500 text-white font-semibold shadow-sm'
+                                ? 'bg-teal-500 text-white font-semibold shadow-sm'
                                 : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 active:scale-95'
                             }`
                         }
@@ -70,7 +70,7 @@ export default function Sidebar({ currency, currencyRate, isOpen, onClose }) {
                         to="/reports"
                         className={({ isActive }) =>
                             `flex items-center gap-3 px-3 py-2.5 rounded transition-colors duration-200 font-mono relative text-sm ${isActive
-                                ? 'bg-orange-500 text-white font-semibold shadow-sm'
+                                ? 'bg-teal-500 text-white font-semibold shadow-sm'
                                 : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 active:scale-95'
                             }`
                         }
@@ -82,7 +82,7 @@ export default function Sidebar({ currency, currencyRate, isOpen, onClose }) {
                         to="/click-performance"
                         className={({ isActive }) =>
                             `flex items-center gap-3 px-3 py-2.5 rounded transition-colors duration-200 font-mono relative text-sm ${isActive
-                                ? 'bg-orange-500 text-white font-semibold shadow-sm'
+                                ? 'bg-teal-500 text-white font-semibold shadow-sm'
                                 : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 active:scale-95'
                             }`
                         }
@@ -114,7 +114,7 @@ export default function Sidebar({ currency, currencyRate, isOpen, onClose }) {
 
             {/* Footer */}
             <div className="p-4 mt-auto text-center border-t border-dashed border-gray-200 dark:border-gray-700">
-                <p className="text-[10px] font-bold font-mono tracking-widest text-orange-500 uppercase">
+                <p className="text-[10px] font-bold font-mono tracking-widest text-teal-500 uppercase">
                     POWERED BY CCPXNGINE
                 </p>
             </div>

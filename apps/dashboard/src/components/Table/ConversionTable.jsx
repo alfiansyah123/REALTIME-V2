@@ -126,13 +126,13 @@ export default function ConversionTable({ searchQuery, currency = 'USD', currenc
                         const isTopWinner = topClickId && row.clickId === topClickId;
                         const isOdd = index % 2 === 1;
                         return (
-                            <tr key={row.id} className={`hover:bg-orange-50 dark:hover:bg-orange-900/10 transition ${isOdd ? 'bg-gray-50 dark:bg-[#0d1321]' : 'bg-white dark:bg-[#171e2e]'}`}>
+                            <tr key={row.id} className={`hover:bg-teal-50 dark:hover:bg-teal-900/10 transition ${isOdd ? 'bg-gray-50 dark:bg-[#0d1321]' : 'bg-white dark:bg-[#171e2e]'}`}>
                                 <td className="px-2 py-2 text-center text-gray-400 dark:text-gray-500">{index + 1}</td>
                                 <td className="px-2 py-2 text-left text-gray-900 dark:text-gray-100 whitespace-nowrap font-mono text-xs">
                                     {isTopWinner && <span className="mr-0.5 text-lg">👑</span>}
                                     <button
                                         onClick={() => navigate(`/stats?click_id=${encodeURIComponent(row.clickId)}`)}
-                                        className={`hover:text-orange-500 dark:hover:text-orange-400 hover:underline text-left ${isTopWinner ? 'rgb-text font-bold' : ''}`}
+                                        className={`hover:text-teal-500 dark:hover:text-teal-400 hover:underline text-left ${isTopWinner ? 'rgb-text font-bold' : ''}`}
                                     >
                                         {row.clickId}
                                     </button>
@@ -181,7 +181,7 @@ export default function ConversionTable({ searchQuery, currency = 'USD', currenc
                                         {getBrowserIcon(row.browser)}
                                     </div>
                                 </td>
-                                <td className="px-2 py-2 text-center font-semibold text-orange-600 dark:text-orange-400 whitespace-nowrap font-mono">
+                                <td className="px-2 py-2 text-center font-semibold text-teal-600 dark:text-teal-400 whitespace-nowrap font-mono">
                                     {formatCurrency(row.earning)}
                                 </td>
                                 <td className="px-2 py-2 text-center text-[9px] text-gray-500 dark:text-gray-400 whitespace-nowrap">

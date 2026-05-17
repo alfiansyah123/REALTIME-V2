@@ -68,9 +68,9 @@
 }
 
 .click-perf-filter-btn.active {
-    background: #f97316;
+    background: #14b8a6;
     color: white;
-    box-shadow: 0 2px 8px rgba(249, 115, 22, 0.4);
+    box-shadow: 0 2px 8px rgba(20, 184, 166, 0.4);
 }
 
 /* Stats Cards */
@@ -102,7 +102,7 @@
 .click-perf-stat-value {
     font-size: 1.6rem;
     font-weight: 800;
-    color: #f97316;
+    color: #14b8a6;
 }
 
 .click-perf-stat-label {
@@ -226,7 +226,7 @@
 }
 
 .click-perf-url {
-    color: #f97316;
+    color: #14b8a6;
     font-weight: 500;
     max-width: 200px;
     overflow: hidden;

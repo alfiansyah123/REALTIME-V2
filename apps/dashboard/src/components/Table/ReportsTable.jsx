@@ -170,7 +170,7 @@ export default function ReportsTable({ data = [], currency = 'USD', currencyRate
 
                             return (
                                 <Fragment key={index}>
-                                    <tr className={`hover:bg-orange-50 dark:hover:bg-orange-900/10 transition group ${isOdd ? 'bg-gray-50 dark:bg-[#0d1321]' : 'bg-white dark:bg-[#171e2e]'}`}>
+                                    <tr className={`hover:bg-teal-50 dark:hover:bg-teal-900/10 transition group ${isOdd ? 'bg-gray-50 dark:bg-[#0d1321]' : 'bg-white dark:bg-[#171e2e]'}`}>
                                         <td className="px-2 py-2 text-left text-gray-900 dark:text-gray-100 whitespace-nowrap cursor-pointer font-mono text-xs" onClick={() => handleExpandClick(row, index)}>
                                             <div className="flex items-center gap-2">
                                                 <button className="p-0.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors focus:outline-none">
@@ -189,7 +189,7 @@ export default function ReportsTable({ data = [], currency = 'USD', currencyRate
                                         <td className="px-2 py-2 text-center text-gray-900 dark:text-gray-100 font-mono">{row.clicks}</td>
                                         <td className="px-2 py-2 text-center text-gray-900 dark:text-gray-100 font-mono">{row.leads}</td>
                                         <td className="px-2 py-2 text-center text-gray-500 dark:text-gray-400 font-mono">{cr}</td>
-                                        <td className="px-2 py-2 text-center font-semibold text-orange-600 dark:text-orange-400 whitespace-nowrap font-mono">{formatCurrency(row.payouts)}</td>
+                                        <td className="px-2 py-2 text-center font-semibold text-teal-600 dark:text-teal-400 whitespace-nowrap font-mono">{formatCurrency(row.payouts)}</td>
                                     </tr>
                                     {isExpanded && !isLoading && countries.length > 0 && (
                                         countries.map((country, cIndex) => {
@@ -200,7 +200,7 @@ export default function ReportsTable({ data = [], currency = 'USD', currencyRate
                                             const countryCode = country.country || 'XX';
                                             const flagUrl = `https://flagcdn.com/20x15/${getAlpha2Code(countryCode)}.png`;
                                             return (
-                                                <tr key={`${index}-${cIndex}`} className="bg-orange-50/50 dark:bg-orange-900/5 hover:bg-orange-50 dark:hover:bg-orange-900/10 text-[11px] border-b border-dashed border-gray-100 dark:border-gray-800/50 last:border-0 text-gray-600 dark:text-gray-400">
+                                                <tr key={`${index}-${cIndex}`} className="bg-teal-50/50 dark:bg-teal-900/5 hover:bg-teal-50 dark:hover:bg-teal-900/10 text-[11px] border-b border-dashed border-gray-100 dark:border-gray-800/50 last:border-0 text-gray-600 dark:text-gray-400">
                                                     <td className="px-2 py-1.5 text-left pl-12 border-r border-transparent">
                                                         <div className="flex items-center gap-2">
                                                             <img src={flagUrl} alt={countryCode} className="w-5 h-5 object-cover rounded-full ring-1 ring-gray-200 dark:ring-gray-700" onError={(e) => e.target.style.display = 'none'} />
@@ -213,7 +213,7 @@ export default function ReportsTable({ data = [], currency = 'USD', currencyRate
                                                     <td className="px-2 py-1.5 text-center">{cClicks}</td>
                                                     <td className="px-2 py-1.5 text-center">{cLeads}</td>
                                                     <td className="px-2 py-1.5 text-center text-gray-500">{cCr}</td>
-                                                    <td className="px-2 py-1.5 text-center font-medium text-orange-600 dark:text-orange-500 font-mono">{formatCurrency(country.payouts)}</td>
+                                                    <td className="px-2 py-1.5 text-center font-medium text-teal-600 dark:text-teal-500 font-mono">{formatCurrency(country.payouts)}</td>
                                                 </tr>
                                             );
                                         })
@@ -227,15 +227,15 @@ export default function ReportsTable({ data = [], currency = 'USD', currencyRate
                             );
                         })}
                     </tbody>
-                    <tfoot className="bg-gray-100 dark:bg-[#0d1321] font-bold border-t-2 border-dashed border-orange-300 dark:border-orange-700 sticky bottom-0 z-10 font-mono">
+                    <tfoot className="bg-gray-100 dark:bg-[#0d1321] font-bold border-t-2 border-dashed border-teal-300 dark:border-teal-700 sticky bottom-0 z-10 font-mono">
                         <tr>
-                            <td className="px-2 py-2 text-center text-[10px] uppercase text-orange-600 dark:text-orange-400" colSpan="2">TOTAL</td>
+                            <td className="px-2 py-2 text-center text-[10px] uppercase text-teal-600 dark:text-teal-400" colSpan="2">TOTAL</td>
                             {!isTrafee && <td className="px-2 py-2 text-center text-gray-900 dark:text-gray-100">{totalStats.visits}</td>}
                             {!isTrafee && <td className="px-2 py-2 text-center text-gray-900 dark:text-gray-100">{totalStats.unique}</td>}
                             <td className="px-2 py-2 text-center text-gray-900 dark:text-gray-100">{totalStats.clicks}</td>
                             <td className="px-2 py-2 text-center text-gray-900 dark:text-gray-100">{totalStats.leads}</td>
                             <td className="px-2 py-2 text-center text-gray-500 dark:text-gray-400">{totalStats.clicks > 0 ? ((totalStats.leads / totalStats.clicks) * 100).toFixed(2) + '%' : '0.00%'}</td>
-                            <td className="px-2 py-2 text-center font-semibold text-orange-600 dark:text-orange-400">{formatCurrency(totalStats.payouts)}</td>
+                            <td className="px-2 py-2 text-center font-semibold text-teal-600 dark:text-teal-400">{formatCurrency(totalStats.payouts)}</td>
                         </tr>
                     </tfoot>
                 </table>
