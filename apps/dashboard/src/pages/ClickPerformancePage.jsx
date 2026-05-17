@@ -61,13 +61,13 @@ const ClickPerformancePage = () => {
 
     const getCountryFlag = (country) => {
         if (!country || country === 'XX') {
-            return <span style={{ fontSize: '1.2rem' }}>🌍</span>;
+            return <span style={{ fontSize: '1.2rem', filter: 'grayscale(100%)', opacity: 0.5 }}>🌍</span>;
         }
         return (
             <img
                 src={`https://flagcdn.com/w40/${country.toLowerCase()}.png`}
                 alt={country}
-                style={{ width: '24px', height: '18px', borderRadius: '2px', verticalAlign: 'middle', objectFit: 'cover' }}
+                style={{ width: '22px', height: '22px', borderRadius: '50%', verticalAlign: 'middle', objectFit: 'cover', border: '1px solid rgba(128,128,128,0.2)' }}
                 onError={(e) => { e.target.style.display = 'none'; }}
             />
         );
@@ -101,7 +101,7 @@ const ClickPerformancePage = () => {
     const getBrowserIcon = (browser) => {
         const iconStyle = { width: '16px', height: '16px', verticalAlign: 'middle', opacity: 0.9 };
         if (!browser || browser === 'Unknown' || browser === 'Other') {
-            return <span style={{ fontSize: '14px' }}>🌐</span>;
+            return <span style={{ fontSize: '14px', filter: 'grayscale(100%)', opacity: 0.5 }}>🌐</span>;
         }
         const lb = browser.toLowerCase();
 
@@ -113,7 +113,7 @@ const ClickPerformancePage = () => {
         if (lb.includes('safari')) return <svg style={iconStyle} viewBox="0 0 24 24" fill="#006CFF"><path d="M12 24C5.373 24 0 18.627 0 12S5.373 0 12 0s12 5.373 12 12-5.373 12-12 12zm0-2c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zm1.25-15.75L8.5 15.5l9.25-4.75-4.5-4.5z" /></svg>;
         if (lb.includes('firefox')) return <svg style={iconStyle} viewBox="0 0 24 24" fill="#FF7139"><path d="M22.42 8.78c-1.55-2.3-4.05-3.32-6.53-2.65a7.95 7.95 0 00-3.08-3.68c3.07-.55 4.42 2.03 4.3 2.5 0 0 .19-1.25-1.29-3.48C13.2-2.22 8.03.38 8.03.38s.82 1.17.53 3.97c-4.21 1.46-5.32 5.87-5.39 6.21 0 0-.27 2.15 1.44 3.9.58.6 1.64.9 1.64.9s-.69-.43-1.4-1.57c-.71-1.15-.66-2.9.23-4.27.89-1.36 3.32-2.23 4.23-2.07-.79 2.72 1.26 4.54 2.81 6.38-2.19.36-4.13 1.81-4.5 4.77-.07.57.22.73.22.73s.67-2.36 3.65-1.84c.2 1.5 2.1 3.21 4.88 2.46 2.78-.75 3.24-2.67 3.24-2.67s1.4.22 1.94-.88c.54-1.11-.64-1.57-.64-1.57s2.45-2.13 1.1-5.72z" /></svg>;
 
-        return <span style={{ fontSize: '14px' }}>🌐</span>;
+        return <span style={{ fontSize: '14px', filter: 'grayscale(100%)', opacity: 0.5 }}>🌐</span>;
     };
 
     const stats = useMemo(() => {
@@ -149,7 +149,7 @@ const ClickPerformancePage = () => {
                 </div>
             </div>
 
-            <div className="flex-1 h-fit min-w-0 rounded-3xl glass-panel relative z-10 pb-4 overflow-clip">
+            <div className="flex-1 h-fit min-w-0 rounded-lg bg-white dark:bg-[#171e2e] border border-dashed border-gray-200 dark:border-gray-700 shadow-card dark:shadow-none relative z-10 pb-4 overflow-clip">
                 {loading ? (
                     <div className="click-perf-loading">Loading data...</div>
                 ) : clicks.length === 0 ? (

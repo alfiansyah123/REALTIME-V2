@@ -82,21 +82,21 @@
 }
 
 .click-perf-stat-card {
-    background: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    border-radius: 16px;
+    background: #ffffff;
+    border: 1px dashed #e5e7eb;
+    border-radius: 8px;
     padding: 16px 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 4px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.06);
 }
 
 .dark .click-perf-stat-card {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.08);
+    background: #171e2e;
+    border-color: #374151;
+    box-shadow: none;
 }
 
 .click-perf-stat-value {
@@ -155,37 +155,53 @@
     font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.08);
     white-space: nowrap;
 }
 
 .dark .click-perf-table th {
     color: #9ca3af;
-    border-bottom-color: rgba(255, 255, 255, 0.06);
+    border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 
 .click-perf-table td {
     padding: 10px 14px;
     color: #374151;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+    border-bottom: none;
     vertical-align: middle;
 }
 
 .dark .click-perf-table td {
     color: #d1d5db;
-    border-bottom-color: rgba(255, 255, 255, 0.04);
+    border-bottom: none;
 }
 
 .click-perf-table tr:last-child td {
     border-bottom: none;
 }
 
+.click-perf-table tbody tr:nth-child(odd) {
+    background: #ffffff;
+}
+
+.click-perf-table tbody tr:nth-child(even) {
+    background: #f9fafb;
+}
+
+.dark .click-perf-table tbody tr:nth-child(odd) {
+    background: #171e2e;
+}
+
+.dark .click-perf-table tbody tr:nth-child(even) {
+    background: #0d1321;
+}
+
 .click-perf-table tr:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: #fff7ed !important;
 }
 
 .dark .click-perf-table tr:hover {
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(249, 115, 22, 0.05) !important;
 }
 
 /* Cell Styles */

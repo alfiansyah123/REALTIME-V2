@@ -93,7 +93,7 @@ export default function Header({
     };
 
     return (
-        <header className="glass-panel sticky top-0 z-40 rounded-2xl p-2 sm:p-4 flex flex-col gap-2 sm:gap-4 transition-all duration-300 backdrop-blur-xl">
+        <header className="sticky top-0 z-10 bg-body dark:bg-dark border border-dashed border-gray-200 dark:border-gray-700 rounded-lg p-2 sm:p-4 flex flex-col gap-2 sm:gap-4 shadow-card dark:shadow-none">
             {/* Top Row: Title & Status */}
             <div className="flex flex-row justify-between items-center gap-2">
                 <div className="flex items-center gap-3">
@@ -105,34 +105,34 @@ export default function Header({
                             <span className="material-icons-round text-xl text-gray-600 dark:text-gray-400">arrow_back</span>
                         </button>
                     )}
-                    <h2 className="text-sm sm:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-400 whitespace-nowrap">
+                    <h2 className="text-sm sm:text-lg font-medium uppercase text-gray-900 dark:text-white font-mono tracking-wider whitespace-nowrap">
                         {getTitle()}
                     </h2>
                     {/* Mobile Live Indicator */}
-                    <div className="lg:hidden flex items-center gap-1.5 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full text-[10px] text-green-500">
-                        <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]"></div>
+                    <div className="lg:hidden flex items-center gap-1.5 bg-orange-50 dark:bg-orange-900/20 border border-dashed border-orange-300 dark:border-orange-700 px-2 py-0.5 rounded text-[10px] text-orange-500 font-mono">
+                        <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></div>
                         <span className="font-bold tracking-wider">LIVE</span>
                     </div>
                 </div>
 
                 {/* Status Box - Glass Card */}
-                <div className="flex items-center gap-2 sm:gap-4 text-xs font-mono glass-interactive px-2 sm:px-4 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl">
+                <div className="flex items-center gap-2 sm:gap-4 text-xs font-mono bg-white dark:bg-light-dark border border-dashed border-gray-200 dark:border-gray-700 px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg shadow-card dark:shadow-none">
                     <span className="hidden sm:inline opacity-60">
                         <Clock />
                     </span>
                     <div className="h-3 w-[1px] bg-gray-300 dark:bg-gray-700 hidden sm:block"></div>
 
                     <div className="flex items-center gap-2">
-                        <span className="text-text-muted-light dark:text-text-muted-dark hidden sm:inline opacity-80">Total:</span>
-                        <span className="font-bold text-primary text-sm shadow-green-500/20 drop-shadow-sm">
+                        <span className="text-gray-500 dark:text-gray-400 hidden sm:inline">Total:</span>
+                        <span className="font-bold text-orange-500 text-sm">
                             {currency === 'IDR' ? `Rp ${(totalPayout * currencyRate).toLocaleString('id-ID')}` : `$${totalPayout.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                         </span>
                     </div>
 
-                    <div className="h-3 w-[1px] bg-gray-300 dark:bg-gray-700 hidden lg:block"></div>
+                    <div className="h-3 w-[1px] bg-gray-300 dark:bg-gray-600 hidden lg:block"></div>
                     <div className="hidden lg:flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.8)]"></div>
-                        <span className="text-green-500 font-bold tracking-wider text-[10px]">LIVE</span>
+                        <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></div>
+                        <span className="text-orange-500 font-bold tracking-wider text-[10px]">LIVE</span>
                     </div>
                 </div>
             </div>
@@ -209,24 +209,17 @@ export default function Header({
 
                 {/* Row 3: Item Count + Actions (Side-by-side) */}
                 <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium text-text-muted-light dark:text-text-muted-dark opacity-60 ml-1">
+                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400 font-mono ml-1">
                         {itemCount} items
                     </span>
 
                     {/* Actions */}
                     {!hideActions && (
                         <div className="flex items-center gap-2">
-                            <button
-                                onClick={onRefresh}
-                                className="w-7 h-7 sm:w-8 sm:h-8 glass-interactive rounded-lg shadow-sm flex items-center justify-center text-text-main-light dark:text-text-main-dark group"
-                                title="Refresh"
-                            >
-                                <span className="material-icons-round text-lg group-hover:rotate-180 transition-transform duration-500">refresh</span>
-                            </button>
 
                             <button
                                 onClick={toggleTheme}
-                                className="w-7 h-7 sm:w-8 sm:h-8 glass-interactive rounded-lg shadow-sm flex items-center justify-center text-text-main-light dark:text-text-main-dark"
+                                className="w-7 h-7 sm:w-8 sm:h-8 bg-white dark:bg-light-dark border border-dashed border-gray-200 dark:border-gray-700 hover:border-orange-300 dark:hover:border-orange-500 rounded-lg shadow-card dark:shadow-none flex items-center justify-center text-gray-700 dark:text-gray-100"
                                 title="Toggle Theme"
                             >
                                 <span className="material-icons-round text-lg">
@@ -236,7 +229,7 @@ export default function Header({
 
                             <button
                                 onClick={onLogout}
-                                className="w-7 h-7 sm:w-8 sm:h-8 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 backdrop-blur-md active:scale-95 transition-all rounded-lg shadow-sm flex items-center justify-center"
+                                className="w-7 h-7 sm:w-8 sm:h-8 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 active:scale-95 transition-all rounded-lg shadow-sm flex items-center justify-center"
                                 title="Logout"
                             >
                                 <span className="material-icons-round text-lg">logout</span>
@@ -244,7 +237,7 @@ export default function Header({
 
                             <button
                                 onClick={handlePause}
-                                className="w-7 h-7 sm:w-8 sm:h-8 glass-interactive rounded-lg shadow-sm flex items-center justify-center text-text-main-light dark:text-text-main-dark"
+                                className="w-7 h-7 sm:w-8 sm:h-8 bg-white dark:bg-light-dark border border-dashed border-gray-200 dark:border-gray-700 hover:border-orange-300 dark:hover:border-orange-500 rounded-lg shadow-card dark:shadow-none flex items-center justify-center text-gray-700 dark:text-gray-100"
                                 title={isPaused ? "Resume" : "Pause"}
                             >
                                 <span className="material-icons-round text-lg">

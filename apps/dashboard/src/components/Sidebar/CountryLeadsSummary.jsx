@@ -77,11 +77,11 @@ export default function CountryLeadsSummary() {
                 <img
                     src={flagUrl}
                     alt={country}
-                    className="w-5 h-3.5 object-cover rounded-[1px] shadow-sm"
+                    className="w-5 h-5 object-cover rounded-full ring-1 ring-gray-200 dark:ring-gray-700"
                     onError={(e) => e.target.style.display = 'none'}
                 />
-                <span className="text-xs font-medium text-gray-600 dark:text-gray-300 flex-1">{country}</span>
-                <span className="text-xs font-bold text-emerald-500">{leads}</span>
+                <span className="text-xs font-medium text-gray-600 dark:text-gray-300 flex-1 font-mono">{country}</span>
+                <span className="text-xs font-bold text-orange-500">{leads}</span>
             </div>
         );
     };
@@ -107,7 +107,7 @@ export default function CountryLeadsSummary() {
 
             {isLoading ? (
                 <div className="flex items-center justify-center py-8">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                    <span className="text-xs text-gray-400 dark:text-gray-500 font-mono">Loading...</span>
                 </div>
             ) : currentData.length === 0 ? (
                 <div className="text-center py-6 text-gray-400 text-xs">No leads yet</div>

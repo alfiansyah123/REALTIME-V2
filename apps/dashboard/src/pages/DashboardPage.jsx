@@ -260,13 +260,10 @@ const DashboardPage = ({ onLogout, currency, setCurrency, currencyRate, setCurre
                 onLogout={onLogout}
             />
 
-            <div className="flex-1 h-fit min-w-0 rounded-3xl glass-panel relative z-10 pb-4 overflow-clip">
+            <div className="flex-1 h-fit min-w-0 rounded-lg bg-white dark:bg-[#171e2e] border border-dashed border-gray-200 dark:border-gray-700 shadow-card dark:shadow-none relative z-10 pb-4 overflow-clip">
                 {isLoading && data.length === 0 ? (
-                    <div className="flex items-center justify-center h-full">
-                        <div className="relative">
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary blur-sm absolute top-0 left-0"></div>
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-                        </div>
+                    <div className="flex items-center justify-center h-40">
+                        <span className="text-sm text-gray-400 dark:text-gray-500 font-mono">Loading...</span>
                     </div>
                 ) : (
                     <ConversionTable

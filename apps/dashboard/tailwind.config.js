@@ -8,22 +8,26 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "#10b981",
-        "primary-hover": "#059669",
-        "background-light": "#f8f9fa",
-        "background-dark": "#111827",
+        primary: "#f97316",
+        "primary-hover": "#ea580c",
+        "background-light": "#fcfcfc",
+        "background-dark": "#0d1321",
         "surface-light": "#ffffff",
-        "surface-dark": "#1f2937",
+        "surface-dark": "#171e2e",
         "border-light": "#e5e7eb",
         "border-dark": "#374151",
-        "text-main-light": "#1f2937",
+        "text-main-light": "#111827",
         "text-main-dark": "#f3f4f6",
         "text-muted-light": "#6b7280",
         "text-muted-dark": "#9ca3af",
+        "body": "#fcfcfc",
+        "dark": "#0d1321",
+        "light-dark": "#171e2e",
       },
       fontFamily: {
         sans: ["Inter", "sans-serif"],
-        mono: ["JetBrains Mono", "monospace"],
+        mono: ["Fira Code", "monospace"],
+        body: ["Fira Code", "monospace"],
       },
       borderRadius: {
         DEFAULT: "0.375rem",
@@ -31,30 +35,25 @@ export default {
         '2xl': '1.5rem',
         '3xl': '2rem',
       },
+      boxShadow: {
+        'card': '0px 2px 6px rgba(0, 0, 0, 0.06)',
+      },
       animation: {
-        blob: "blob 7s infinite",
-        'liquid-flow': "liquid-flow 4s ease infinite",
-        shimmer: "shimmer 3s infinite",
+        'slide-in-row': 'slideInRow 0.4s ease-out forwards',
+        'highlight-row': 'highlightRow 2s ease-in-out forwards',
       },
       keyframes: {
-        blob: {
-          "0%": { transform: "translate(0px, 0px) scale(1)" },
-          "33%": { transform: "translate(30px, -50px) scale(1.1)" },
-          "66%": { transform: "translate(-20px, 20px) scale(0.9)" },
-          "100%": { transform: "translate(0px, 0px) scale(1)" },
+        slideInRow: {
+          "0%": { opacity: "0", transform: "translateY(-20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
         },
-        "liquid-flow": {
-          "0%, 100%": { backgroundPosition: "0% 50%" },
-          "50%": { backgroundPosition: "100% 50%" },
-        },
-        shimmer: {
-          "100%": { transform: "translateX(100%)" },
+        highlightRow: {
+          "0%": { backgroundColor: "rgba(34, 197, 94, 0.2)" },
+          "100%": { backgroundColor: "transparent" },
         },
       },
-      backdropBlur: {
-        xs: '2px',
-      }
     },
   },
   plugins: [],
 }
+

@@ -95,12 +95,12 @@ const ReportsPage = ({ onLogout, currency, setCurrency, currencyRate, setCurrenc
             />
 
             <div className="flex justify-start px-6 -mb-2 mt-2">
-                <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 p-1 rounded-xl border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-2 bg-white dark:bg-[#171e2e] p-1 rounded-lg border border-dashed border-gray-200 dark:border-gray-700 shadow-card dark:shadow-none">
                     <button
                         onClick={() => setSelectedNetwork('IMONETIZEIT')}
                         className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                             selectedNetwork === 'IMONETIZEIT'
-                                ? 'bg-white dark:bg-gray-700 text-primary shadow-sm'
+                                ? 'bg-orange-500 text-white shadow-sm'
                                 : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'
                         }`}
                     >
@@ -110,7 +110,7 @@ const ReportsPage = ({ onLogout, currency, setCurrency, currencyRate, setCurrenc
                         onClick={() => setSelectedNetwork('TRAFEE')}
                         className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                             selectedNetwork === 'TRAFEE'
-                                ? 'bg-white dark:bg-gray-700 text-primary shadow-sm'
+                                ? 'bg-orange-500 text-white shadow-sm'
                                 : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'
                         }`}
                     >
@@ -119,10 +119,10 @@ const ReportsPage = ({ onLogout, currency, setCurrency, currencyRate, setCurrenc
                 </div>
             </div>
 
-            <div className="flex-1 h-fit min-w-0 rounded-3xl glass-panel relative z-10 pb-4 overflow-clip">
+            <div className="flex-1 h-fit min-w-0 rounded-lg bg-white dark:bg-[#171e2e] border border-dashed border-gray-200 dark:border-gray-700 shadow-card dark:shadow-none relative z-10 pb-4 overflow-clip">
                 {isLoading ? (
-                    <div className="flex items-center justify-center h-64">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    <div className="flex items-center justify-center h-40">
+                        <span className="text-sm text-gray-400 dark:text-gray-500 font-mono">Loading...</span>
                     </div>
                 ) : (
                     <ReportsTable

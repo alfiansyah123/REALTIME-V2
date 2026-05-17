@@ -139,13 +139,13 @@ export default function ReportsTable({ data = [], currency = 'USD', currencyRate
     return (
         <div className="w-full overflow-x-auto relative scrollbar-hide">
             {data.length === 0 ? (
-                <div className="flex flex-col items-center justify-center p-8 text-text-muted-light dark:text-text-muted-dark opacity-60 h-64">
+                <div className="flex flex-col items-center justify-center p-8 text-gray-500 dark:text-gray-400 opacity-60 h-64">
                     <span className="material-icons-round text-4xl mb-2">inbox</span>
                     <span>No data available</span>
                 </div>
             ) : (
                 <table className="w-full text-left border-collapse text-[11px]">
-                    <thead className="bg-gray-50 dark:bg-gray-800 text-[10px] uppercase text-gray-500 dark:text-gray-400 font-semibold sticky top-0 z-10 border-b border-gray-200 dark:border-gray-700">
+                    <thead className="bg-gray-50 dark:bg-[#171e2e] text-[10px] uppercase text-gray-600 dark:text-gray-400 font-semibold font-mono sticky top-0 z-10 border-b border-dashed border-gray-200 dark:border-gray-700">
                         <tr>
                             <th className="px-2 py-2.5 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('smartlink')}>SMARTLINK</th>
                             <th className="px-2 py-2.5 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('network')}>NETWORK</th>
@@ -157,7 +157,7 @@ export default function ReportsTable({ data = [], currency = 'USD', currencyRate
                             <th className="px-2 py-2.5 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('payouts')}>PAYOUTS</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+                    <tbody>
                         {sortedData.map((row, index) => {
                             if (!row) return null;
                             const clicks = parseInt(row.clicks) || 0;
@@ -166,11 +166,12 @@ export default function ReportsTable({ data = [], currency = 'USD', currencyRate
                             const isExpanded = expandedRows.has(index);
                             const isLoading = loadingRows.has(index);
                             const countries = rowDetails[row.smartlink] || [];
+                            const isOdd = index % 2 === 1;
 
                             return (
                                 <Fragment key={index}>
-                                    <tr className="hover:bg-gray-50 dark:hover:bg-gray-800/40 group">
-                                        <td className="px-2 py-2 text-left text-gray-800 dark:text-gray-200 whitespace-nowrap cursor-pointer" onClick={() => handleExpandClick(row, index)}>
+                                    <tr className={`hover:bg-orange-50 dark:hover:bg-orange-900/10 transition group ${isOdd ? 'bg-gray-50 dark:bg-[#0d1321]' : 'bg-white dark:bg-[#171e2e]'}`}>
+                                        <td className="px-2 py-2 text-left text-gray-900 dark:text-gray-100 whitespace-nowrap cursor-pointer font-mono text-xs" onClick={() => handleExpandClick(row, index)}>
                                             <div className="flex items-center gap-2">
                                                 <button className="p-0.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors focus:outline-none">
                                                     {isLoading ? (
@@ -183,12 +184,12 @@ export default function ReportsTable({ data = [], currency = 'USD', currencyRate
                                             </div>
                                         </td>
                                         <td className="px-2 py-2 text-center">{getNetworkBadge(row.network || 'IMONETIZEIT')}</td>
-                                        {!isTrafee && <td className="px-2 py-2 text-center text-gray-800 dark:text-gray-200">{row.visits}</td>}
-                                        {!isTrafee && <td className="px-2 py-2 text-center text-gray-800 dark:text-gray-200">{row.unique}</td>}
-                                        <td className="px-2 py-2 text-center text-gray-800 dark:text-gray-200">{row.clicks}</td>
-                                        <td className="px-2 py-2 text-center text-gray-800 dark:text-gray-200">{row.leads}</td>
-                                        <td className="px-2 py-2 text-center text-gray-500 dark:text-gray-400">{cr}</td>
-                                        <td className="px-2 py-2 text-center font-semibold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">{formatCurrency(row.payouts)}</td>
+                                        {!isTrafee && <td className="px-2 py-2 text-center text-gray-900 dark:text-gray-100 font-mono">{row.visits}</td>}
+                                        {!isTrafee && <td className="px-2 py-2 text-center text-gray-900 dark:text-gray-100 font-mono">{row.unique}</td>}
+                                        <td className="px-2 py-2 text-center text-gray-900 dark:text-gray-100 font-mono">{row.clicks}</td>
+                                        <td className="px-2 py-2 text-center text-gray-900 dark:text-gray-100 font-mono">{row.leads}</td>
+                                        <td className="px-2 py-2 text-center text-gray-500 dark:text-gray-400 font-mono">{cr}</td>
+                                        <td className="px-2 py-2 text-center font-semibold text-orange-600 dark:text-orange-400 whitespace-nowrap font-mono">{formatCurrency(row.payouts)}</td>
                                     </tr>
                                     {isExpanded && !isLoading && countries.length > 0 && (
                                         countries.map((country, cIndex) => {
@@ -199,10 +200,10 @@ export default function ReportsTable({ data = [], currency = 'USD', currencyRate
                                             const countryCode = country.country || 'XX';
                                             const flagUrl = `https://flagcdn.com/20x15/${getAlpha2Code(countryCode)}.png`;
                                             return (
-                                                <tr key={`${index}-${cIndex}`} className="bg-gray-50/50 dark:bg-gray-900/30 hover:bg-gray-100 dark:hover:bg-gray-800/50 text-[11px] border-b border-gray-100 dark:border-gray-800/50 last:border-0 text-gray-600 dark:text-gray-400">
+                                                <tr key={`${index}-${cIndex}`} className="bg-orange-50/50 dark:bg-orange-900/5 hover:bg-orange-50 dark:hover:bg-orange-900/10 text-[11px] border-b border-dashed border-gray-100 dark:border-gray-800/50 last:border-0 text-gray-600 dark:text-gray-400">
                                                     <td className="px-2 py-1.5 text-left pl-12 border-r border-transparent">
                                                         <div className="flex items-center gap-2">
-                                                            <img src={flagUrl} alt={countryCode} className="w-5 h-3.5 object-cover rounded-[1px] shadow-sm" onError={(e) => e.target.style.display = 'none'} />
+                                                            <img src={flagUrl} alt={countryCode} className="w-5 h-5 object-cover rounded-full ring-1 ring-gray-200 dark:ring-gray-700" onError={(e) => e.target.style.display = 'none'} />
                                                             <span className="font-medium text-[10px]">{countryCode}</span>
                                                         </div>
                                                     </td>
@@ -212,7 +213,7 @@ export default function ReportsTable({ data = [], currency = 'USD', currencyRate
                                                     <td className="px-2 py-1.5 text-center">{cClicks}</td>
                                                     <td className="px-2 py-1.5 text-center">{cLeads}</td>
                                                     <td className="px-2 py-1.5 text-center text-gray-500">{cCr}</td>
-                                                    <td className="px-2 py-1.5 text-center font-medium text-emerald-600 dark:text-emerald-500">{formatCurrency(country.payouts)}</td>
+                                                    <td className="px-2 py-1.5 text-center font-medium text-orange-600 dark:text-orange-500 font-mono">{formatCurrency(country.payouts)}</td>
                                                 </tr>
                                             );
                                         })
@@ -226,15 +227,15 @@ export default function ReportsTable({ data = [], currency = 'USD', currencyRate
                             );
                         })}
                     </tbody>
-                    <tfoot className="bg-gray-100 dark:bg-gray-800 font-bold border-t-2 border-gray-300 dark:border-gray-600 sticky bottom-0 z-10">
+                    <tfoot className="bg-gray-100 dark:bg-[#0d1321] font-bold border-t-2 border-dashed border-orange-300 dark:border-orange-700 sticky bottom-0 z-10 font-mono">
                         <tr>
-                            <td className="px-2 py-2 text-center text-[10px] uppercase" colSpan="2">TOTAL</td>
-                            {!isTrafee && <td className="px-2 py-2 text-center text-gray-800 dark:text-gray-200">{totalStats.visits}</td>}
-                            {!isTrafee && <td className="px-2 py-2 text-center text-gray-800 dark:text-gray-200">{totalStats.unique}</td>}
-                            <td className="px-2 py-2 text-center text-gray-800 dark:text-gray-200">{totalStats.clicks}</td>
-                            <td className="px-2 py-2 text-center text-gray-800 dark:text-gray-200">{totalStats.leads}</td>
+                            <td className="px-2 py-2 text-center text-[10px] uppercase text-orange-600 dark:text-orange-400" colSpan="2">TOTAL</td>
+                            {!isTrafee && <td className="px-2 py-2 text-center text-gray-900 dark:text-gray-100">{totalStats.visits}</td>}
+                            {!isTrafee && <td className="px-2 py-2 text-center text-gray-900 dark:text-gray-100">{totalStats.unique}</td>}
+                            <td className="px-2 py-2 text-center text-gray-900 dark:text-gray-100">{totalStats.clicks}</td>
+                            <td className="px-2 py-2 text-center text-gray-900 dark:text-gray-100">{totalStats.leads}</td>
                             <td className="px-2 py-2 text-center text-gray-500 dark:text-gray-400">{totalStats.clicks > 0 ? ((totalStats.leads / totalStats.clicks) * 100).toFixed(2) + '%' : '0.00%'}</td>
-                            <td className="px-2 py-2 text-center font-semibold text-emerald-600 dark:text-emerald-400">{formatCurrency(totalStats.payouts)}</td>
+                            <td className="px-2 py-2 text-center font-semibold text-orange-600 dark:text-orange-400">{formatCurrency(totalStats.payouts)}</td>
                         </tr>
                     </tfoot>
                 </table>

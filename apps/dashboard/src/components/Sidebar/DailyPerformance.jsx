@@ -78,9 +78,8 @@ export default function DailyPerformance({ currency = 'USD', currencyRate = 1600
 
     if (loading) {
         return (
-            <div className="py-4 flex justify-center text-text-muted-light dark:text-text-muted-dark items-center">
-                <span className="material-icons-round animate-spin text-lg mr-2">refresh</span>
-                <span className="text-xs">Loading...</span>
+            <div className="py-4 flex justify-center text-gray-400 dark:text-gray-500 items-center">
+                <span className="text-xs font-mono">Loading...</span>
             </div>
         );
     }

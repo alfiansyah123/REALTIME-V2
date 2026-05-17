@@ -24,8 +24,10 @@ const getNetworkIcon = (network) => {
     return null;
 };
 
-const TrafficItem = React.memo(({ click, getCountryFlag, getOSIcon, getBrowserIcon }) => (
-    <div className="flex items-center gap-2 p-2 rounded bg-gray-50/50 dark:bg-gray-700/20 hover:bg-white dark:hover:bg-gray-700 border border-transparent hover:border-gray-100 dark:hover:border-gray-600 group transition-all duration-200">
+const TrafficItem = React.memo(({ click, index, getCountryFlag, getOSIcon, getBrowserIcon }) => {
+    const isOdd = index % 2 === 1;
+    return (
+    <div className={`flex items-center gap-2 p-2 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-900/10 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group transition-all duration-200 ${isOdd ? 'bg-gray-50 dark:bg-[#0d1321]' : 'bg-white dark:bg-[#171e2e]'}`}>
         <div className="flex items-center gap-2 min-w-0 w-full">
             <div className="flex-shrink-0 w-5 flex justify-center">
                 {getCountryFlag(click.country)}
@@ -47,7 +49,8 @@ const TrafficItem = React.memo(({ click, getCountryFlag, getOSIcon, getBrowserIc
             </div>
         </div>
     </div>
-));
+    );
+});
 
 const LiveTraffic = () => {
     const [clicks, setClicks] = useState([]);
@@ -111,7 +114,7 @@ const LiveTraffic = () => {
             <img
                 src={`https://flagcdn.com/w40/${String(country).toLowerCase()}.png`}
                 alt={country}
-                className="w-5 h-3.5 object-cover rounded-[2px] shadow-sm"
+                className="w-5 h-5 object-cover rounded-full ring-1 ring-gray-200 dark:ring-gray-700"
                 onError={(e) => { e.target.style.display = 'none'; }}
             />
         );
@@ -152,7 +155,7 @@ const LiveTraffic = () => {
         if (lowerBrowser.includes('safari')) return safariSvg;
         if (lowerBrowser.includes('firefox')) return firefoxSvg;
 
-        return <span style={{ fontSize: '12px' }}>🌐</span>;
+        return <span style={{ fontSize: '12px', filter: 'grayscale(100%)', opacity: 0.5 }}>🌐</span>;
     };
 
     if (loading) {
@@ -188,10 +191,11 @@ const LiveTraffic = () => {
                 {clicks.length === 0 ? (
                     <div className="text-center py-8 text-gray-400 text-xs italic">Waiting for clicks...</div>
                 ) : (
-                    clicks.map((click) => (
+                    clicks.map((click, index) => (
                         <TrafficItem 
                             key={click.id} 
                             click={click} 
+                            index={index}
                             getCountryFlag={getCountryFlag}
                             getOSIcon={getOSIcon}
                             getBrowserIcon={getBrowserIcon}

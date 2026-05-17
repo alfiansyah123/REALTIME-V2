@@ -192,11 +192,11 @@ export default function ClickIdStatsPage({
             />
 
             {/* Conversion History Table Container */}
-            <div className="flex-1 h-fit min-w-0 rounded-3xl glass-panel relative z-10 pb-4 overflow-clip flex flex-col">
-                <div className="relative p-4 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex-1 h-fit min-w-0 rounded-lg bg-white dark:bg-[#171e2e] border border-dashed border-gray-200 dark:border-gray-700 shadow-card dark:shadow-none relative z-10 pb-4 overflow-clip flex flex-col">
+                <div className="relative p-4 border-b border-dashed border-gray-200 dark:border-gray-700">
                     <div className="flex items-center justify-between">
-                        <h2 className="font-semibold text-gray-800 dark:text-gray-100">Conversion History</h2>
-                        <span className="text-xs font-mono text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-lg">
+                        <h2 className="font-semibold text-gray-900 dark:text-white font-mono uppercase tracking-wider">Conversion History</h2>
+                        <span className="text-xs font-mono text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-[#0d1321] border border-dashed border-gray-200 dark:border-gray-700 px-2 py-1 rounded-lg">
                             ID: {clickId}
                         </span>
                     </div>
@@ -205,10 +205,7 @@ export default function ClickIdStatsPage({
                 <div className="w-full max-w-full overflow-x-auto relative scrollbar-hide">
                     {isLoading ? (
                         <div className="flex items-center justify-center p-8">
-                            <svg className="animate-spin h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
+                            <span className="text-sm text-gray-400 dark:text-gray-500 font-mono">Loading...</span>
                         </div>
                     ) : error ? (
                         <div className="flex flex-col items-center justify-center p-8 text-red-500">
@@ -222,7 +219,7 @@ export default function ClickIdStatsPage({
                         </div>
                     ) : (
                         <table className="w-full text-left border-collapse text-[11px]">
-                            <thead className="bg-white/5 dark:bg-black/20 text-[10px] uppercase text-gray-500 dark:text-gray-400 font-semibold sticky top-0 z-10 border-b border-white/10 backdrop-blur-sm">
+                            <thead className="bg-gray-50 dark:bg-[#171e2e] text-[10px] uppercase text-gray-600 dark:text-gray-400 font-semibold font-mono sticky top-0 z-10 border-b border-dashed border-gray-200 dark:border-gray-700">
                                 <tr>
                                     <th className="px-2 py-2.5 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('id')}>#</th>
                                     <th className="px-2 py-2.5 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('clickId')}>CLICK ID</th>
@@ -234,14 +231,15 @@ export default function ClickIdStatsPage({
                                     <th className="px-2 py-2.5 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('created_at')}>DATE</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-white/5 dark:divide-white/5">
+                            <tbody>
                                 {sortedData.map((row, index) => {
+                                    const isOdd = index % 2 === 1;
                                     return (
-                                        <tr key={row.id} className="hover:bg-white/5 dark:hover:bg-white/5">
+                                        <tr key={row.id} className={`hover:bg-orange-50 dark:hover:bg-orange-900/10 transition ${isOdd ? 'bg-gray-50 dark:bg-[#0d1321]' : 'bg-white dark:bg-[#171e2e]'}`}>
                                             <td className="px-2 py-2 text-center text-gray-400 dark:text-gray-500">
                                                 {index + 1}
                                             </td>
-                                            <td className="px-2 py-2 text-left text-gray-800 dark:text-gray-200 whitespace-nowrap">
+                                            <td className="px-2 py-2 text-left text-gray-900 dark:text-gray-100 whitespace-nowrap font-mono text-xs">
                                                 <span className="font-bold">
                                                     {row.clickId}
                                                 </span>
@@ -273,15 +271,15 @@ export default function ClickIdStatsPage({
                                                     );
                                                 })()}
                                             </td>
-                                            <td className="px-2 py-2 text-center">
+                                        <td className="px-2 py-2 text-center">
                                                 {row.flag && row.country && row.country !== 'XX' ? (
                                                     <img
                                                         alt={row.country}
-                                                        className="w-5 h-3.5 object-cover rounded-sm inline-block"
+                                                        className="w-5 h-5 object-cover rounded-full inline-block ring-1 ring-gray-200 dark:ring-gray-700"
                                                         src={row.flag}
                                                     />
                                                 ) : (
-                                                    <span>
+                                                    <span style={{ filter: 'grayscale(100%)', opacity: 0.5 }}>
                                                         {row.country !== 'XX' ? row.country : (row.countryName || '🌐')}
                                                     </span>
                                                 )}
@@ -289,7 +287,7 @@ export default function ClickIdStatsPage({
                                             <td className="px-2 py-2 text-center whitespace-nowrap">
                                                 {getTrafficIcon(row.traffic)}
                                             </td>
-                                            <td className="px-2 py-2 text-center font-semibold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
+                                            <td className="px-2 py-2 text-center font-semibold text-orange-600 dark:text-orange-400 whitespace-nowrap font-mono">
                                                 {formatCurrency(row.earning)}
                                             </td>
                                             <td className="px-2 py-2 text-center text-[9px] text-gray-500 dark:text-gray-400 whitespace-nowrap">

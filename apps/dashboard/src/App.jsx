@@ -24,26 +24,21 @@ function SidebarController({ setSidebarOpen, isMobile }) {
 function ProtectedLayout({ children, isSidebarOpen, setIsSidebarOpen, isMobile, toggleTheme, isDarkMode, currency, setCurrency, currencyRate, setCurrencyRate, showSidebar = true }) {
   if (!children) return null;
   return (
-    <div className="bg-gray-200 dark:bg-gray-900 text-text-main-light dark:text-text-main-dark font-sans h-screen flex flex-col overflow-hidden selection:bg-primary selection:text-white relative transition-colors duration-500">
-
-      {/* 🔮 OPTIMIZED BACKGROUND - Linear Gradient instead of heavy blobs */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0 opacity-10">
-        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-purple-500 via-transparent to-blue-500"></div>
-      </div>
+    <div className="bg-body dark:bg-dark text-gray-900 dark:text-white font-sans h-screen flex flex-col overflow-hidden selection:bg-orange-500/30 selection:text-orange-600 relative">
 
       {showSidebar && <SidebarController setSidebarOpen={setIsSidebarOpen} isMobile={isMobile} />}
 
-      {/* Mobile Header / Toggle Button - Glass Effect */}
-      <div className={`lg:hidden flex items-center justify-between p-4 border-b border-white/20 dark:border-gray-700/30 sticky top-0 z-30 backdrop-blur-xl bg-white/70 dark:bg-gray-900/70 ${!showSidebar ? 'hidden' : ''}`}>
+      {/* Mobile Header */}
+      <div className={`lg:hidden flex items-center justify-between p-4 border-b border-dashed border-gray-200 dark:border-gray-700 sticky top-0 z-30 bg-body dark:bg-dark ${!showSidebar ? 'hidden' : ''}`}>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsSidebarOpen(true)}
-            className="p-2 -ml-2 rounded-xl hover:bg-white/20 dark:hover:bg-gray-800/20 active:scale-95 transition-all text-text-main-light dark:text-text-main-dark"
+            className="p-2 -ml-2 rounded-lg hover:bg-gray-100 dark:hover:bg-orange-500 active:scale-95 transition-all text-gray-700 dark:text-gray-100"
           >
             <span className="material-icons-round text-2xl">menu</span>
           </button>
-          <div className="h-3 w-3 rounded-full bg-primary animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
-          <h1 className="font-bold text-lg leading-tight liquid-text">Realtime</h1>
+          <div className="h-2.5 w-2.5 rounded-full bg-orange-500 animate-pulse"></div>
+          <h1 className="font-bold text-lg leading-tight font-mono text-orange-500">SICK TEAM</h1>
         </div>
         {/* Theme Toggle for Mobile */}
         <button

@@ -71,7 +71,7 @@ export default function ConversionTable({ searchQuery, currency = 'USD', currenc
     const getBrowserIcon = (browser) => {
         const iconStyle = { width: '16px', height: '16px', verticalAlign: 'middle', opacity: 0.9 };
         if (!browser || browser === 'Unknown' || browser === 'Other') {
-            return <span style={{ fontSize: '14px' }}>🌐</span>;
+            return <span style={{ fontSize: '14px', filter: 'grayscale(100%)', opacity: 0.5 }}>🌐</span>;
         }
         const lb = String(browser).toLowerCase();
 
@@ -83,7 +83,7 @@ export default function ConversionTable({ searchQuery, currency = 'USD', currenc
         if (lb.includes('safari')) return <svg style={iconStyle} viewBox="0 0 24 24" fill="#006CFF"><path d="M12 24C5.373 24 0 18.627 0 12S5.373 0 12 0s12 5.373 12 12-5.373 12-12 12zm0-2c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zm1.25-15.75L8.5 15.5l9.25-4.75-4.5-4.5z" /></svg>;
         if (lb.includes('firefox')) return <svg style={iconStyle} viewBox="0 0 24 24" fill="#FF7139"><path d="M22.42 8.78c-1.55-2.3-4.05-3.32-6.53-2.65a7.95 7.95 0 00-3.08-3.68c3.07-.55 4.42 2.03 4.3 2.5 0 0 .19-1.25-1.29-3.48C13.2-2.22 8.03.38 8.03.38s.82 1.17.53 3.97c-4.21 1.46-5.32 5.87-5.39 6.21 0 0-.27 2.15 1.44 3.9.58.6 1.64.9 1.64.9s-.69-.43-1.4-1.57c-.71-1.15-.66-2.9.23-4.27.89-1.36 3.32-2.23 4.23-2.07-.79 2.72 1.26 4.54 2.81 6.38-2.19.36-4.13 1.81-4.5 4.77-.07.57.22.73.22.73s.67-2.36 3.65-1.84c.2 1.5 2.1 3.21 4.88 2.46 2.78-.75 3.24-2.67 3.24-2.67s1.4.22 1.94-.88c.54-1.11-.64-1.57-.64-1.57s2.45-2.13 1.1-5.72z" /></svg>;
 
-        return <span style={{ fontSize: '14px' }}>🌐</span>;
+        return <span style={{ fontSize: '14px', filter: 'grayscale(100%)', opacity: 0.5 }}>🌐</span>;
     };
 
     const formatCurrency = (num) => {
@@ -110,7 +110,7 @@ export default function ConversionTable({ searchQuery, currency = 'USD', currenc
     return (
         <div className="w-full overflow-x-auto relative scrollbar-hide">
             <table className="w-full text-left border-collapse text-[11px]">
-                <thead className="bg-gray-50 dark:bg-gray-800 text-[10px] uppercase text-gray-500 dark:text-gray-400 font-semibold sticky top-0 z-10 border-b border-gray-200 dark:border-gray-700">
+                <thead className="bg-gray-50 dark:bg-[#171e2e] text-[10px] uppercase text-gray-600 dark:text-gray-400 font-semibold font-mono sticky top-0 z-10 border-b border-dashed border-gray-200 dark:border-gray-700">
                     <tr>
                         <th className="px-2 py-2.5 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('id')}>#</th>
                         <th className="px-2 py-2.5 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('clickId')}>CLICK ID</th>
@@ -121,17 +121,18 @@ export default function ConversionTable({ searchQuery, currency = 'USD', currenc
                         <th className="px-2 py-2.5 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('ipAddress')}>IP</th>
                     </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+                <tbody>
                     {filteredData.map((row, index) => {
                         const isTopWinner = topClickId && row.clickId === topClickId;
+                        const isOdd = index % 2 === 1;
                         return (
-                            <tr key={row.id} className="hover:bg-white/5 dark:hover:bg-white/5">
+                            <tr key={row.id} className={`hover:bg-orange-50 dark:hover:bg-orange-900/10 transition ${isOdd ? 'bg-gray-50 dark:bg-[#0d1321]' : 'bg-white dark:bg-[#171e2e]'}`}>
                                 <td className="px-2 py-2 text-center text-gray-400 dark:text-gray-500">{index + 1}</td>
-                                <td className="px-2 py-2 text-left text-gray-800 dark:text-gray-200 whitespace-nowrap">
+                                <td className="px-2 py-2 text-left text-gray-900 dark:text-gray-100 whitespace-nowrap font-mono text-xs">
                                     {isTopWinner && <span className="mr-0.5 text-lg">👑</span>}
                                     <button
                                         onClick={() => navigate(`/stats?click_id=${encodeURIComponent(row.clickId)}`)}
-                                        className={`hover:text-blue-500 dark:hover:text-blue-400 hover:underline text-left ${isTopWinner ? 'rgb-text font-bold' : ''}`}
+                                        className={`hover:text-orange-500 dark:hover:text-orange-400 hover:underline text-left ${isTopWinner ? 'rgb-text font-bold' : ''}`}
                                     >
                                         {row.clickId}
                                     </button>
@@ -165,7 +166,7 @@ export default function ConversionTable({ searchQuery, currency = 'USD', currenc
                                             return (
                                                 <img
                                                     alt={country}
-                                                    className="w-5 h-3.5 object-cover rounded-sm inline-block"
+                                                    className="w-5 h-5 object-cover rounded-full inline-block ring-1 ring-gray-200 dark:ring-gray-700"
                                                     src={`https://flagcdn.com/${country.toLowerCase()}.svg`}
                                                     onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'inline'; }}
                                                 />
@@ -180,7 +181,7 @@ export default function ConversionTable({ searchQuery, currency = 'USD', currenc
                                         {getBrowserIcon(row.browser)}
                                     </div>
                                 </td>
-                                <td className="px-2 py-2 text-center font-semibold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
+                                <td className="px-2 py-2 text-center font-semibold text-orange-600 dark:text-orange-400 whitespace-nowrap font-mono">
                                     {formatCurrency(row.earning)}
                                 </td>
                                 <td className="px-2 py-2 text-center text-[9px] text-gray-500 dark:text-gray-400 whitespace-nowrap">
