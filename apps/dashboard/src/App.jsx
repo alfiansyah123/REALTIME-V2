@@ -38,7 +38,7 @@ function ProtectedLayout({ children, isSidebarOpen, setIsSidebarOpen, isMobile, 
             <span className="material-icons-round text-2xl">menu</span>
           </button>
           <div className="h-2.5 w-2.5 rounded-full bg-orange-500 animate-pulse"></div>
-          <h1 className="font-bold text-lg leading-tight font-mono text-orange-500">SICK TEAM</h1>
+          <h1 className="font-bold text-lg leading-tight font-mono text-orange-500">SCATTER TEAM</h1>
         </div>
         {/* Theme Toggle for Mobile */}
         <button
