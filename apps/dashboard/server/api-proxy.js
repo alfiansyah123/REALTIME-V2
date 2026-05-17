@@ -147,10 +147,29 @@ async function handleReportCountries(body) {
 }
 
 // Vite plugin for local API routes
+// Vite plugin for local API routes
 export function localApiProxy() {
     return {
         name: 'local-api-proxy',
         configureServer(server) {
+            // POST /api/verify-password
+            server.middlewares.use('/api/verify-password', async (req, res) => {
+                res.setHeader('Access-Control-Allow-Origin', '*');
+                res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+                res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+                if (req.method === 'OPTIONS') {
+                    res.statusCode = 200;
+                    res.end();
+                    return;
+                }
+
+                console.log('[Local API] /api/verify-password called (auto-approving for development)');
+                res.setHeader('Content-Type', 'application/json');
+                res.statusCode = 200;
+                res.end(JSON.stringify({ success: true, message: 'Welcome to local dev dashboard' }));
+            });
+
             // POST /api/reports
             server.middlewares.use('/api/reports', async (req, res) => {
                 // Handle CORS
@@ -176,6 +195,31 @@ export function localApiProxy() {
                     res.statusCode = 500;
                     res.end(JSON.stringify({ error: e.message }));
                 }
+            });
+
+            // GET /api/trafee-reports
+            server.middlewares.use('/api/trafee-reports', async (req, res) => {
+                res.setHeader('Access-Control-Allow-Origin', '*');
+                res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+                res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+                if (req.method === 'OPTIONS') {
+                    res.statusCode = 200;
+                    res.end();
+                    return;
+                }
+
+                console.log('[Local API] /api/trafee-reports called (returning mock Trafee data)');
+                const mockData = [
+                    { smartlink: 'NGANCAS', user_id: 'NGANCAS', smartlink_id: 'NGANCAS', network: 'TRAFEE', visits: 506, unique: 480, clicks: 506, leads: 7, payouts: 9.38 },
+                    { smartlink: 'DRACIN', user_id: 'DRACIN', smartlink_id: 'DRACIN', network: 'TRAFEE', visits: 10, unique: 8, clicks: 10, leads: 3, payouts: 4.50 },
+                    { smartlink: 'TOSERBA', user_id: 'TOSERBA', smartlink_id: 'TOSERBA', network: 'TRAFEE', visits: 25, unique: 20, clicks: 25, leads: 10, payouts: 15.00 },
+                    { smartlink: 'RAFFA', user_id: 'RAFFA', smartlink_id: 'RAFFA', network: 'TRAFEE', visits: 126, unique: 110, clicks: 126, leads: 1, payouts: 1.35 }
+                ];
+
+                res.setHeader('Content-Type', 'application/json');
+                res.statusCode = 200;
+                res.end(JSON.stringify({ data: mockData }));
             });
 
             // POST /api/report_countries
@@ -204,9 +248,66 @@ export function localApiProxy() {
                 }
             });
 
+            // POST /api/report-countries
+            server.middlewares.use('/api/report-countries', async (req, res) => {
+                res.setHeader('Access-Control-Allow-Origin', '*');
+                res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+                res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+                if (req.method === 'OPTIONS') {
+                    res.statusCode = 200;
+                    res.end();
+                    return;
+                }
+
+                try {
+                    const body = await readBody(req);
+                    const { smartlinkId, network } = body;
+                    console.log(`[Local API] /api/report-countries called: smartlink=${smartlinkId}, network=${network}`);
+
+                    res.setHeader('Content-Type', 'application/json');
+                    res.statusCode = 200;
+
+                    if (String(network).toUpperCase() === 'TRAFEE') {
+                        let countryData = [];
+                        if (smartlinkId === 'DRACIN') {
+                            countryData = [
+                                { country: 'ID', visits: 6, unique: 5, clicks: 6, leads: 2, payouts: 3.00 },
+                                { country: 'US', visits: 4, unique: 3, clicks: 4, leads: 1, payouts: 1.50 }
+                            ];
+                        } else if (smartlinkId === 'TOSERBA') {
+                            countryData = [
+                                { country: 'US', visits: 15, unique: 12, clicks: 15, leads: 6, payouts: 9.00 },
+                                { country: 'GB', visits: 10, unique: 8, clicks: 10, leads: 4, payouts: 6.00 }
+                            ];
+                        } else if (smartlinkId === 'NGANCAS') {
+                            countryData = [
+                                { country: 'ID', visits: 300, unique: 280, clicks: 300, leads: 4, payouts: 5.38 },
+                                { country: 'MY', visits: 206, unique: 200, clicks: 206, leads: 3, payouts: 4.00 }
+                            ];
+                        } else {
+                            countryData = [
+                                { country: 'US', visits: 70, unique: 60, clicks: 70, leads: 1, payouts: 1.35 },
+                                { country: 'ID', visits: 56, unique: 50, clicks: 56, leads: 0, payouts: 0.00 }
+                            ];
+                        }
+                        res.end(JSON.stringify({ data: countryData }));
+                    } else {
+                        const result = await handleReportCountries(body);
+                        res.end(JSON.stringify(result));
+                    }
+                } catch (e) {
+                    console.error('[Local API] Error:', e);
+                    res.statusCode = 500;
+                    res.end(JSON.stringify({ error: e.message }));
+                }
+            });
+
             console.log('✅ Local API Proxy active:');
             console.log('   POST /api/reports');
+            console.log('   GET  /api/trafee-reports (mock)');
             console.log('   POST /api/report_countries');
+            console.log('   POST /api/report-countries (with Trafee mock)');
         }
     };
 }

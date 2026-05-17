@@ -1,7 +1,7 @@
 // API Utility for Cloudflare D1 Backend
 // This replaces direct Supabase calls
 
-const API_BASE = window.location.hostname === 'localhost' ? 'https://realtime-v2.pages.dev' : ''; // Use production backend for local testing
+const API_BASE = ''; // Relative path for both local emulation (Wrangler) and production
 const GENERATOR_API = 'https://ngeteam-v2.pages.dev'; // Production Generator URL
 
 export const api = {
@@ -56,11 +56,11 @@ export const api = {
         return await response.json();
     },
 
-    async getReportCountries(startDate, endDate, smartlinkId) {
+    async getReportCountries(startDate, endDate, smartlinkId, network = 'IMONETIZEIT') {
         const response = await fetch(`${API_BASE}/api/report-countries`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ startDate, endDate, smartlinkId })
+            body: JSON.stringify({ startDate, endDate, smartlinkId, network })
         });
         return await response.json();
     }

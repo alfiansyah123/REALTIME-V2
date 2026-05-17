@@ -39,8 +39,14 @@ export default defineConfig({
     },
   },
   server: {
-    // No proxy needed — all calls go directly to Supabase
     port: 3005,
     strictPort: true,
+    proxy: {
+      '/api': {
+        target: 'https://realtime-v2.pages.dev',
+        changeOrigin: true,
+        secure: false
+      }
+    }
   }
 })

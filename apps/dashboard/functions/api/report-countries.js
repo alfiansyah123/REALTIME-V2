@@ -88,23 +88,100 @@ export async function onRequest(context) {
     }
 
     try {
-        let startDate, endDate, smartlinkId
+        let startDate, endDate, smartlinkId, network
+        const db = context.env.DB;
 
         if (context.request.method === 'POST') {
             const body = await context.request.json()
             startDate = body.startDate
             endDate = body.endDate
             smartlinkId = body.smartlinkId
+            network = body.network || 'IMONETIZEIT'
         } else {
             const url = new URL(context.request.url)
             startDate = url.searchParams.get('startDate')
             endDate = url.searchParams.get('endDate')
             smartlinkId = url.searchParams.get('smartlinkId')
+            network = url.searchParams.get('network') || 'IMONETIZEIT'
         }
 
         if (!startDate) startDate = new Date().toISOString().split('T')[0]
         if (!endDate) endDate = new Date().toISOString().split('T')[0]
 
+        // --- TRAFEE D1 DATABASE LOGIC ---
+        if (String(network).toUpperCase() === 'TRAFEE') {
+            if (!db) {
+                return new Response(JSON.stringify({ error: 'DB not connected', data: [] }), {
+                    headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+                });
+            }
+
+            // 1. Clicks dari D1 clicks table
+            const { results: clickStats } = await db.prepare(`
+                SELECT 
+                    country,
+                    COUNT(id) as clicks,
+                    COUNT(DISTINCT ip_address) as unique_clicks
+                FROM clicks
+                WHERE user_id = ?
+                  AND DATE(created_at) BETWEEN ? AND ?
+                  AND LOWER(COALESCE(network, '')) != 'imonetizeit'
+                GROUP BY country
+            `).bind(smartlinkId, startDate, endDate).all();
+
+            // 2. Leads dari D1 conversions table
+            const { results: leadStats } = await db.prepare(`
+                SELECT 
+                    country,
+                    COUNT(id) as leads,
+                    SUM(earning) as payouts
+                FROM conversions
+                WHERE sub_id = ?
+                  AND DATE(created_at) BETWEEN ? AND ?
+                  AND network = 'TRAFEE'
+                GROUP BY country
+            `).bind(smartlinkId, startDate, endDate).all();
+
+            // 3. Gabungkan Klik & Leads per negara
+            const countryMap = {};
+
+            for (const row of (clickStats || [])) {
+                const countryCode = (row.country || 'XX').toUpperCase();
+                countryMap[countryCode] = {
+                    country: countryCode,
+                    visits: row.clicks,
+                    unique: row.unique_clicks,
+                    clicks: row.clicks,
+                    leads: 0,
+                    payouts: 0.0
+                };
+            }
+
+            for (const row of (leadStats || [])) {
+                const countryCode = (row.country || 'XX').toUpperCase();
+                if (countryMap[countryCode]) {
+                    countryMap[countryCode].leads += row.leads || 0;
+                    countryMap[countryCode].payouts += row.payouts || 0.0;
+                } else {
+                    countryMap[countryCode] = {
+                        country: countryCode,
+                        visits: 0,
+                        unique: 0,
+                        clicks: 0,
+                        leads: row.leads || 0,
+                        payouts: row.payouts || 0.0
+                    };
+                }
+            }
+
+            const data = Object.values(countryMap).sort((a, b) => b.payouts - a.payouts || b.clicks - a.clicks);
+
+            return new Response(JSON.stringify({ data }), {
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            });
+        }
+
+        // --- IMONETIZEIT API LOGIC ---
         const tokens = await getTokens(API_CREDENTIALS)
         if (tokens.length === 0) throw new Error('Failed to authenticate with iMonetizeIt')
 

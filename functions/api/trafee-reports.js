@@ -57,6 +57,7 @@ export async function onRequest(context) {
             dataMap[key] = {
                 smartlink: row.smartlink,
                 user_id: row.user_id,
+                smartlink_id: row.user_id,
                 network: 'TRAFEE',
                 visits: row.clicks,
                 unique: row.unique_clicks,
@@ -77,6 +78,7 @@ export async function onRequest(context) {
                 dataMap[key] = {
                     smartlink: row.smartlink,
                     user_id: row.user_id,
+                    smartlink_id: row.user_id,
                     network: (row.network || 'TRAFEE').toUpperCase(),
                     visits: 0, unique: 0, clicks: 0,
                     leads: row.leads || 0,

@@ -26,7 +26,7 @@ export default function ReportsTable({ data = [], currency = 'USD', currencyRate
             const end = endDate || new Date().toISOString().split('T')[0];
 
             if (smartlinkId) {
-                const fnData = await api.getReportCountries(start, end, smartlinkId);
+                const fnData = await api.getReportCountries(start, end, smartlinkId, selectedNetwork);
                 if (fnData && Array.isArray(fnData.data)) {
                     setRowDetails(prev => ({ ...prev, [smartlinkName]: fnData.data }));
                     return;
