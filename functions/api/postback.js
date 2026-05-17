@@ -77,7 +77,7 @@ export async function onRequestGet(context) {
             'SDN': 'SD', 'SUR': 'SR', 'SJM': 'SJ', 'SWZ': 'SZ', 'SWE': 'SE', 'CHE': 'CH', 'SYR': 'SY', 'TWN': 'TW', 'TJK': 'TJ', 'TZA': 'TZ',
             'THA': 'TH', 'TLS': 'TL', 'TGO': 'TG', 'TKL': 'TK', 'TON': 'TO', 'TTO': 'TT', 'TUN': 'TN', 'TUR': 'TR', 'TKM': 'TM', 'TCA': 'TC',
             'TUV': 'TV', 'UGA': 'UG', 'UKR': 'UA', 'ARE': 'AE', 'GBR': 'GB', 'USA': 'US', 'UMI': 'UM', 'URY': 'UY', 'UZB': 'UZ', 'VUT': 'VU',
-            'VEN': 'VE', 'VNM': 'VN', 'VGB': 'VG', 'VIR': 'VI', 'WLF': 'WF', 'ESH': 'EH', 'YEM': 'YE', 'ZMB': 'ZM', 'ZWE': 'ZW',
+            'VEN': 'VE', 'VNM': 'VN', 'VGB': 'VG', 'VIR': 'VI', 'WLF': 'WF', 'ESH': 'EH', 'YEM': 'YE', 'ZMB': 'ZM', 'ZWE': 'ZW', 'UK': 'GB',
             // Full Names to 2-letter
             'UNITED STATES': 'US', 'UNITED KINGDOM': 'GB', 'GREAT BRITAIN': 'GB', 'MEXICO': 'MX', 'GERMANY': 'DE', 'FRANCE': 'FR', 'SPAIN': 'ES',
             'ITALY': 'IT', 'BRAZIL': 'BR', 'JAPAN': 'JP', 'CHINA': 'CN', 'INDIA': 'IN', 'RUSSIA': 'RU', 'INDONESIA': 'ID', 'NETHERLANDS': 'NL',

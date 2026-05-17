@@ -146,19 +146,29 @@ export async function onRequest(context) {
             const countryMap = {};
 
             for (const row of (clickStats || [])) {
-                const countryCode = (row.country || 'XX').toUpperCase();
-                countryMap[countryCode] = {
-                    country: countryCode,
-                    visits: row.clicks,
-                    unique: row.unique_clicks,
-                    clicks: row.clicks,
-                    leads: 0,
-                    payouts: 0.0
-                };
+                let countryCode = (row.country || 'XX').toUpperCase();
+                if (countryCode === 'UK') countryCode = 'GB';
+                
+                if (countryMap[countryCode]) {
+                    countryMap[countryCode].visits += row.clicks;
+                    countryMap[countryCode].unique += row.unique_clicks;
+                    countryMap[countryCode].clicks += row.clicks;
+                } else {
+                    countryMap[countryCode] = {
+                        country: countryCode,
+                        visits: row.clicks,
+                        unique: row.unique_clicks,
+                        clicks: row.clicks,
+                        leads: 0,
+                        payouts: 0.0
+                    };
+                }
             }
 
             for (const row of (leadStats || [])) {
-                const countryCode = (row.country || 'XX').toUpperCase();
+                let countryCode = (row.country || 'XX').toUpperCase();
+                if (countryCode === 'UK') countryCode = 'GB';
+                
                 if (countryMap[countryCode]) {
                     countryMap[countryCode].leads += row.leads || 0;
                     countryMap[countryCode].payouts += row.payouts || 0.0;
