@@ -81,7 +81,7 @@ export default function CountryLeadsSummary() {
                     onError={(e) => e.target.style.display = 'none'}
                 />
                 <span className="text-xs font-medium text-gray-600 dark:text-gray-300 flex-1 font-mono">{country}</span>
-                <span className="text-xs font-bold text-orange-500">{leads}</span>
+                <span className="text-xs font-bold text-teal-500">{leads}</span>
             </div>
         );
     };

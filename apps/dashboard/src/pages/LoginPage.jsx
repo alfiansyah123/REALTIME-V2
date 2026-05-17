@@ -86,7 +86,7 @@ export default function LoginPage({ onLogin }) {
 
                     <button
                         type="submit"
-                        className="w-full bg-gradient-to-r from-primary to-primary-hover hover:from-green-400 hover:to-primary text-white font-bold py-3.5 rounded-2xl shadow-[0_8px_20px_-4px_rgba(16,185,129,0.5)] transition-all active:scale-[0.98] flex items-center justify-center gap-2 group relative overflow-hidden"
+                        className="w-full bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white font-bold py-3.5 rounded-2xl shadow-[0_8px_20px_-4px_rgba(20,184,166,0.4)] transition-all active:scale-[0.98] flex items-center justify-center gap-2 group relative overflow-hidden"
                     >
                         <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
                         <span className="relative z-10">Access Dashboard</span>

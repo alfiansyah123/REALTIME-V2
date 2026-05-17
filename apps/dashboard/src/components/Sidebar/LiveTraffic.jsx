@@ -27,7 +27,7 @@ const getNetworkIcon = (network) => {
 const TrafficItem = React.memo(({ click, index, getCountryFlag, getOSIcon, getBrowserIcon }) => {
     const isOdd = index % 2 === 1;
     return (
-    <div className={`flex items-center gap-2 p-2 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-900/10 border border-transparent hover:border-orange-200 dark:hover:border-orange-800 group transition-all duration-200 ${isOdd ? 'bg-gray-50 dark:bg-[#0d1321]' : 'bg-white dark:bg-[#171e2e]'}`}>
+    <div className={`flex items-center gap-2 p-2 rounded-lg hover:bg-teal-50 dark:hover:bg-teal-900/10 border border-transparent hover:border-teal-200 dark:hover:border-teal-800 group transition-all duration-200 ${isOdd ? 'bg-gray-50 dark:bg-[#0d1321]' : 'bg-white dark:bg-[#171e2e]'}`}>
         <div className="flex items-center gap-2 min-w-0 w-full">
             <div className="flex-shrink-0 w-5 flex justify-center">
                 {getCountryFlag(click.country)}

@@ -100,7 +100,7 @@ const ReportsPage = ({ onLogout, currency, setCurrency, currencyRate, setCurrenc
                         onClick={() => setSelectedNetwork('IMONETIZEIT')}
                         className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                             selectedNetwork === 'IMONETIZEIT'
-                                ? 'bg-orange-500 text-white shadow-sm'
+                                ? 'bg-teal-500 text-white shadow-sm'
                                 : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'
                         }`}
                     >
@@ -110,7 +110,7 @@ const ReportsPage = ({ onLogout, currency, setCurrency, currencyRate, setCurrenc
                         onClick={() => setSelectedNetwork('TRAFEE')}
                         className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                             selectedNetwork === 'TRAFEE'
-                                ? 'bg-orange-500 text-white shadow-sm'
+                                ? 'bg-teal-500 text-white shadow-sm'
                                 : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'
                         }`}
                     >

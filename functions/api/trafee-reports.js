@@ -19,7 +19,7 @@ export async function onRequest(context) {
 
     try {
         // 1. Klik dari tabel clicks, JOIN ke team buat dapet nama asli member
-        // HANYA ambil clicks yang network-nya TRAFEE (bukan semua clicks)
+        // HANYA ambil clicks yang BUKAN network-nya IMONETIZEIT (karena iMonetizeIt pake API eksternal)
         const { results: clickStats } = await db.prepare(`
             SELECT 
                 COALESCE(t.name, c.user_id) as smartlink,
@@ -30,7 +30,7 @@ export async function onRequest(context) {
             FROM clicks c
             LEFT JOIN team t ON c.user_id = t.user_id
             WHERE DATE(c.created_at) BETWEEN ? AND ?
-              AND (c.network = 'TRAFEE' OR c.network = 'NETWORK' OR c.s3 = 'TRAFEE')
+              AND LOWER(COALESCE(c.network, '')) != 'imonetizeit'
             GROUP BY c.user_id
             ORDER BY clicks DESC
         `).bind(startDate, endDate).all();

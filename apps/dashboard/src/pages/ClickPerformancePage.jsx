@@ -189,7 +189,7 @@ const ClickPerformancePage = () => {
                                                         }}
                                                     />
                                                 ) : null}
-                                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${click.network === 'TRAFEE' ? 'bg-orange-100 text-orange-600' :
+                                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${click.network === 'TRAFEE' ? 'bg-teal-100 text-teal-600' :
                                                         click.network === 'IMONETIZEIT' ? 'bg-blue-100 text-blue-600' :
                                                             'bg-gray-100 text-gray-600'
                                                     }`} style={{ display: click.network && click.network !== 'Unknown' && click.network !== 'UNKNOWN' ? 'none' : 'inline-block' }}>

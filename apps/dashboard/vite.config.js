@@ -40,7 +40,7 @@ export default defineConfig({
   },
   server: {
     // No proxy needed — all calls go directly to Supabase
-    port: 3000,
+    port: 3005,
     strictPort: true,
   }
 })
