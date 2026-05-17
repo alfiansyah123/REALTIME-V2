@@ -8,8 +8,8 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "#f97316",
-        "primary-hover": "#ea580c",
+        primary: "#14b8a6",
+        "primary-hover": "#0d9488",
         "background-light": "#fcfcfc",
         "background-dark": "#0d1321",
         "surface-light": "#ffffff",

@@ -6,7 +6,7 @@
 
 /* 🔥 WST-INSPIRED DESIGN SYSTEM 🔥 */
 
-/* Custom scrollbar - Turquoise accent like WST */
+/* Custom scrollbar - teal accent like WST */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -64,7 +64,11 @@ body.dark {
   font-family: 'Fira Code', monospace;
 }
 
+<<<<<<< HEAD
 /* RGB Text -> Turquoise gradient */
+=======
+/* RGB Text -> teal gradient */
+>>>>>>> 85e5d245eae6c4488e154ac8cf83ca7a9e507410
 .rgb-text {
   background: linear-gradient(to right, #14b8a6, #0d9488);
   -webkit-background-clip: text;
@@ -120,7 +124,11 @@ body.dark {
   box-shadow: none;
 }
 
+<<<<<<< HEAD
 /* Liquid Text -> Teal accent */
+=======
+/* Liquid Text -> teal accent */
+>>>>>>> 85e5d245eae6c4488e154ac8cf83ca7a9e507410
 .liquid-text {
   color: #14b8a6;
   font-weight: 700;
