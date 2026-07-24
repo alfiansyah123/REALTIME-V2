@@ -16,7 +16,7 @@ export async function onRequest(context) {
         if (Math.random() < 0.10) {
             context.waitUntil((async () => {
                 try {
-                    await db.prepare(`DELETE FROM clicks WHERE created_at < date('now')`).run();
+                    await db.prepare(`DELETE FROM clicks WHERE created_at < date('now', '-1 day')`).run();
                 } catch (e) {}
             })());
         }

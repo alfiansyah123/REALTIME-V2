@@ -92,7 +92,7 @@ const LiveTraffic = () => {
         fetchClicks();
 
         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        const intervalDuration = isMobile ? 10000 : 5000;
+        const intervalDuration = isMobile ? 30000 : 20000; // Hemat D1: desktop 20s, mobile 30s
 
         const intervalId = setInterval(() => {
             if (mountedRef.current && document.visibilityState === 'visible') {
