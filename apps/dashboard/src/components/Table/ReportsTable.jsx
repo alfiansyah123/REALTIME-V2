@@ -7,7 +7,6 @@ export default function ReportsTable({ data = [], currency = 'USD', currencyRate
     const [loadingRows, setLoadingRows] = useState(new Set());
     const [rowDetails, setRowDetails] = useState({}); // Cache for country details
 
-    const isTrafee = selectedNetwork === 'TRAFEE';
 
     const fetchCountryDetails = async (row, rowIndex) => {
         if (!row) return;
@@ -149,8 +148,8 @@ export default function ReportsTable({ data = [], currency = 'USD', currencyRate
                         <tr>
                             <th className="px-2 py-2.5 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('smartlink')}>SMARTLINK</th>
                             <th className="px-2 py-2.5 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('network')}>NETWORK</th>
-                            {!isTrafee && <th className="px-2 py-2.5 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('visits')}>VISITS</th>}
-                            {!isTrafee && <th className="px-2 py-2.5 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('unique')}>UNIQUE</th>}
+                            <th className="px-2 py-2.5 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('visits')}>VISITS</th>
+                            <th className="px-2 py-2.5 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('unique')}>UNIQUE</th>
                             <th className="px-2 py-2.5 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('clicks')}>CLICKS</th>
                             <th className="px-2 py-2.5 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('leads')}>LEADS</th>
                             <th className="px-2 py-2.5 text-center cursor-pointer hover:text-primary whitespace-nowrap" onClick={() => handleSort('cr')}>CR</th>
@@ -184,8 +183,8 @@ export default function ReportsTable({ data = [], currency = 'USD', currencyRate
                                             </div>
                                         </td>
                                         <td className="px-2 py-2 text-center">{getNetworkBadge(row.network || 'IMONETIZEIT')}</td>
-                                        {!isTrafee && <td className="px-2 py-2 text-center text-gray-900 dark:text-gray-100 font-mono">{row.visits}</td>}
-                                        {!isTrafee && <td className="px-2 py-2 text-center text-gray-900 dark:text-gray-100 font-mono">{row.unique}</td>}
+                                        <td className="px-2 py-2 text-center text-gray-900 dark:text-gray-100 font-mono">{row.visits}</td>
+                                        <td className="px-2 py-2 text-center text-gray-900 dark:text-gray-100 font-mono">{row.unique}</td>
                                         <td className="px-2 py-2 text-center text-gray-900 dark:text-gray-100 font-mono">{row.clicks}</td>
                                         <td className="px-2 py-2 text-center text-gray-900 dark:text-gray-100 font-mono">{row.leads}</td>
                                         <td className="px-2 py-2 text-center text-gray-500 dark:text-gray-400 font-mono">{cr}</td>
@@ -208,8 +207,8 @@ export default function ReportsTable({ data = [], currency = 'USD', currencyRate
                                                         </div>
                                                     </td>
                                                     <td className="px-2 py-1.5 text-center"></td>
-                                                    {!isTrafee && <td className="px-2 py-1.5 text-center">{parseInt(country.visits) || 0}</td>}
-                                                    {!isTrafee && <td className="px-2 py-1.5 text-center">{parseInt(country.unique) || 0}</td>}
+                                                    <td className="px-2 py-1.5 text-center">{parseInt(country.visits) || 0}</td>
+                                                    <td className="px-2 py-1.5 text-center">{parseInt(country.unique) || 0}</td>
                                                     <td className="px-2 py-1.5 text-center">{cClicks}</td>
                                                     <td className="px-2 py-1.5 text-center">{cLeads}</td>
                                                     <td className="px-2 py-1.5 text-center text-gray-500">{cCr}</td>
@@ -220,7 +219,7 @@ export default function ReportsTable({ data = [], currency = 'USD', currencyRate
                                     )}
                                     {isExpanded && !isLoading && countries.length === 0 && (
                                         <tr className="bg-gray-50/50 dark:bg-gray-900/30">
-                                            <td colSpan={isTrafee ? "6" : "8"} className="px-2 py-2 text-center text-xs text-gray-400 italic">No country data or unable to fetch details.</td>
+                                            <td colSpan="8" className="px-2 py-2 text-center text-xs text-gray-400 italic">No country data or unable to fetch details.</td>
                                         </tr>
                                     )}
                                 </Fragment>
@@ -230,8 +229,8 @@ export default function ReportsTable({ data = [], currency = 'USD', currencyRate
                     <tfoot className="bg-gray-100 dark:bg-[#0d1321] font-bold border-t-2 border-dashed border-teal-300 dark:border-teal-700 sticky bottom-0 z-10 font-mono">
                         <tr>
                             <td className="px-2 py-2 text-center text-[10px] uppercase text-teal-600 dark:text-teal-400" colSpan="2">TOTAL</td>
-                            {!isTrafee && <td className="px-2 py-2 text-center text-gray-900 dark:text-gray-100">{totalStats.visits}</td>}
-                            {!isTrafee && <td className="px-2 py-2 text-center text-gray-900 dark:text-gray-100">{totalStats.unique}</td>}
+                            <td className="px-2 py-2 text-center text-gray-900 dark:text-gray-100">{totalStats.visits}</td>
+                            <td className="px-2 py-2 text-center text-gray-900 dark:text-gray-100">{totalStats.unique}</td>
                             <td className="px-2 py-2 text-center text-gray-900 dark:text-gray-100">{totalStats.clicks}</td>
                             <td className="px-2 py-2 text-center text-gray-900 dark:text-gray-100">{totalStats.leads}</td>
                             <td className="px-2 py-2 text-center text-gray-500 dark:text-gray-400">{totalStats.clicks > 0 ? ((totalStats.leads / totalStats.clicks) * 100).toFixed(2) + '%' : '0.00%'}</td>

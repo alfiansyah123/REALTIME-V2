@@ -23,8 +23,6 @@ const ReportsPage = ({ onLogout, currency, setCurrency, currencyRate, setCurrenc
 
     const [startDate, setStartDate] = useState(getWIBDateString);
     const [endDate, setEndDate] = useState(getWIBDateString);
-    const [selectedNetwork, setSelectedNetwork] = useState('IMONETIZEIT');
-
     const [searchQuery, setSearchQuery] = useState('');
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -32,12 +30,7 @@ const ReportsPage = ({ onLogout, currency, setCurrency, currencyRate, setCurrenc
     const fetchReports = async () => {
         setIsLoading(true);
         try {
-            let response;
-            if (selectedNetwork === 'TRAFEE') {
-                response = await api.getTrafeeReports(startDate, endDate);
-            } else {
-                response = await api.getDailyReports(startDate, endDate);
-            }
+            const response = await api.getDailyReports(startDate, endDate);
 
             if (response && Array.isArray(response.data)) {
                 // Sort by payouts desc
@@ -56,7 +49,7 @@ const ReportsPage = ({ onLogout, currency, setCurrency, currencyRate, setCurrenc
 
     useEffect(() => {
         fetchReports();
-    }, [startDate, endDate, selectedNetwork]);
+    }, [startDate, endDate]);
 
     const totalPayout = useMemo(() => {
         return data.reduce((acc, curr) => acc + (parseFloat(curr.payouts) || 0), 0);
@@ -94,30 +87,7 @@ const ReportsPage = ({ onLogout, currency, setCurrency, currencyRate, setCurrenc
                 onLogout={onLogout}
             />
 
-            <div className="flex justify-start px-6 -mb-2 mt-2">
-                <div className="flex items-center gap-2 bg-white dark:bg-[#171e2e] p-1 rounded-lg border border-dashed border-gray-200 dark:border-gray-700 shadow-card dark:shadow-none">
-                    <button
-                        onClick={() => setSelectedNetwork('IMONETIZEIT')}
-                        className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                            selectedNetwork === 'IMONETIZEIT'
-                                ? 'bg-teal-500 text-white shadow-sm'
-                                : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'
-                        }`}
-                    >
-                        IMONETIZEIT
-                    </button>
-                    <button
-                        onClick={() => setSelectedNetwork('TRAFEE')}
-                        className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                            selectedNetwork === 'TRAFEE'
-                                ? 'bg-teal-500 text-white shadow-sm'
-                                : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'
-                        }`}
-                    >
-                        TRAFEE
-                    </button>
-                </div>
-            </div>
+
 
             <div className="flex-1 h-fit min-w-0 rounded-lg bg-white dark:bg-[#171e2e] border border-dashed border-gray-200 dark:border-gray-700 shadow-card dark:shadow-none relative z-10 pb-4 overflow-clip">
                 {isLoading ? (
@@ -131,7 +101,7 @@ const ReportsPage = ({ onLogout, currency, setCurrency, currencyRate, setCurrenc
                         currencyRate={currencyRate}
                         startDate={startDate}
                         endDate={endDate}
-                        selectedNetwork={selectedNetwork}
+                        selectedNetwork="IMONETIZEIT"
                     />
                 )}
             </div>
