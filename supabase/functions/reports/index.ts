@@ -13,10 +13,11 @@ const corsHeaders = {
 
 // iMonetizeIt API Credentials
 const API_CREDENTIALS = [
-    { clientId: 232922, apiKey: '0d92f1bfe4bc4aa894825a66db3aa1e8406eaa66cc084fd06c73f47287c20027' },
+    { clientId: 232922, apiKey: '0d92f1bfe4bc4aa894825a66db3aa1e8406eaa66cc084fd06c73f47287c20027', network: 'IMONETIZEIT' },
+    { clientId: 253423, apiKey: 'fb6a76da0d2f0ae9db4abd239699a5e14520ead232f25e6f4ed936a5da9b8b29', network: 'IMONETIZEIT2' },
 ]
 
-// 1. Get Auth Token from iMonetizeIt
+// 1. Get Auth Token from iMonetizeIt (returns array of {token, network})
 async function getTokens(credentials) {
     const url = 'https://api.imonetizeit.com/v1/auth/session'
 
@@ -28,7 +29,7 @@ async function getTokens(credentials) {
                 body: JSON.stringify({ client_id: cred.clientId, api_key: cred.apiKey }),
             })
             const data = await resp.json()
-            return data.access_token || null
+            return data.access_token ? { token: data.access_token, network: cred.network } : null
         } catch (e) {
             console.error('Token fetch error:', e)
             return null
@@ -39,8 +40,8 @@ async function getTokens(credentials) {
     return tokens.filter(Boolean)
 }
 
-// 2. Fetch Statistics from iMonetizeIt
-async function getStats(tokens, startDate, endDate) {
+// 2. Fetch Statistics from iMonetizeIt (each token carries its network name)
+async function getStats(tokenObjs, startDate, endDate) {
     const baseUrl = `https://api.imonetizeit.com/v1/statistics/sm`
         + `?start_date=${startDate}`
         + `&end_date=${endDate}`
@@ -49,13 +50,13 @@ async function getStats(tokens, startDate, endDate) {
         + `&include_archived=1`
         + `&limit=1000`
 
-    const statsPromises = tokens.map(async (token) => {
+    const statsPromises = tokenObjs.map(async ({ token, network }) => {
         try {
             const resp = await fetch(baseUrl, {
                 headers: { 'Authorization': `Bearer ${token}` },
             })
             const json = await resp.json()
-            return json.data || []
+            return (json.data || []).map(row => ({ ...row, _accountNetwork: network }))
         } catch (e) {
             console.error('Stats fetch error:', e)
             return []
@@ -70,7 +71,7 @@ async function getStats(tokens, startDate, endDate) {
             allData.push({
                 smartlink: row.smartlink || 'Unknown',
                 smartlink_id: row.smartlink_id || null,
-                network: row.tracker || 'IMONETIZEIT',
+                network: row._accountNetwork || 'IMONETIZEIT',
                 visits: parseInt(row.visits) || 0,
                 unique: parseInt(row.unique || row.unigue || row.uniques) || 0,
                 clicks: parseInt(row.clicks) || 0,

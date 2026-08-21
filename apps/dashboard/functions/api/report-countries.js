@@ -10,7 +10,8 @@ export async function onRequest(context) {
     }
 
     const API_CREDENTIALS = [
-        { clientId: 232922, apiKey: '0d92f1bfe4bc4aa894825a66db3aa1e8406eaa66cc084fd06c73f47287c20027' },
+        { clientId: 232922, apiKey: '0d92f1bfe4bc4aa894825a66db3aa1e8406eaa66cc084fd06c73f47287c20027', network: 'IMONETIZEIT' },
+        { clientId: 253423, apiKey: 'fb6a76da0d2f0ae9db4abd239699a5e14520ead232f25e6f4ed936a5da9b8b29', network: 'IMONETIZEIT2' },
     ]
 
     async function getTokens(credentials) {
@@ -23,7 +24,7 @@ export async function onRequest(context) {
                     body: JSON.stringify({ client_id: cred.clientId, api_key: cred.apiKey }),
                 })
                 const data = await resp.json()
-                return data.access_token || null
+                return data.access_token ? { token: data.access_token, network: cred.network } : null
             } catch (e) {
                 console.error('Token fetch error:', e)
                 return null
@@ -32,7 +33,7 @@ export async function onRequest(context) {
         return (await Promise.all(tokenPromises)).filter(Boolean)
     }
 
-    async function getCountryStats(tokens, startDate, endDate, smartlinkId) {
+    async function getCountryStats(tokenObjs, startDate, endDate, smartlinkId) {
         let baseUrl = `https://api.imonetizeit.com/v1/statistics/sm`
             + `?start_date=${startDate}`
             + `&end_date=${endDate}`
@@ -45,7 +46,7 @@ export async function onRequest(context) {
             baseUrl += `&sm_id[]=${encodeURIComponent(smartlinkId)}`
         }
 
-        const statsPromises = tokens.map(async (token) => {
+        const statsPromises = tokenObjs.map(async ({ token }) => {
             try {
                 const resp = await fetch(baseUrl, {
                     headers: { 'Authorization': `Bearer ${token}` },

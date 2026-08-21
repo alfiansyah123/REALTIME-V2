@@ -11,7 +11,8 @@ const corsHeaders = {
 }
 
 const API_CREDENTIALS = [
-    { clientId: 232922, apiKey: '0d92f1bfe4bc4aa894825a66db3aa1e8406eaa66cc084fd06c73f47287c20027' },
+    { clientId: 232922, apiKey: '0d92f1bfe4bc4aa894825a66db3aa1e8406eaa66cc084fd06c73f47287c20027', network: 'IMONETIZEIT' },
+    { clientId: 253423, apiKey: 'fb6a76da0d2f0ae9db4abd239699a5e14520ead232f25e6f4ed936a5da9b8b29', network: 'IMONETIZEIT2' },
 ]
 
 async function getTokens(credentials) {
@@ -24,7 +25,7 @@ async function getTokens(credentials) {
                 body: JSON.stringify({ client_id: cred.clientId, api_key: cred.apiKey }),
             })
             const data = await resp.json()
-            return data.access_token || null
+            return data.access_token ? { token: data.access_token, network: cred.network } : null
         } catch (e) {
             console.error('Token fetch error:', e)
             return null
@@ -33,7 +34,7 @@ async function getTokens(credentials) {
     return (await Promise.all(tokenPromises)).filter(Boolean)
 }
 
-async function getCountryStats(tokens, startDate, endDate, smartlinkId) {
+async function getCountryStats(tokenObjs, startDate, endDate, smartlinkId) {
     // Build URL with country segment and smartlink ID filter
     let baseUrl = `https://api.imonetizeit.com/v1/statistics/sm`
         + `?start_date=${startDate}`
@@ -47,7 +48,7 @@ async function getCountryStats(tokens, startDate, endDate, smartlinkId) {
         baseUrl += `&sm_id[]=${encodeURIComponent(smartlinkId)}`
     }
 
-    const statsPromises = tokens.map(async (token) => {
+    const statsPromises = tokenObjs.map(async ({ token }) => {
         try {
             const resp = await fetch(baseUrl, {
                 headers: { 'Authorization': `Bearer ${token}` },
@@ -97,7 +98,7 @@ serve(async (req) => {
     if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
 
     try {
-        let startDate, endDate, smartlinkId, smartlinkName
+        let startDate, endDate, smartlinkId, smartlinkName, network
 
         if (req.method === 'POST') {
             const body = await req.json()
@@ -105,21 +106,25 @@ serve(async (req) => {
             endDate = body.endDate
             smartlinkId = body.smartlinkId
             smartlinkName = body.smartlinkName // Optional, fallback/meta
+            network = body.network
         } else {
             const url = new URL(req.url)
             startDate = url.searchParams.get('startDate')
             endDate = url.searchParams.get('endDate')
             smartlinkId = url.searchParams.get('smartlinkId')
+            network = url.searchParams.get('network')
         }
 
         if (!startDate) startDate = new Date().toISOString().split('T')[0]
         if (!endDate) endDate = new Date().toISOString().split('T')[0]
 
         // If no smartlinkId is provided, we can't filter correctly for this view.
-        // Ensure frontend sends it.
-
-        const tokens = await getTokens(API_CREDENTIALS)
-        if (tokens.length === 0) throw new Error('Failed to authenticate with iMonetizeIt')
+        // --- IMONETIZEIT API LOGIC ---
+        let tokens = await getTokens(API_CREDENTIALS)
+        if (network && network.toUpperCase() !== 'TRAFEE') {
+            tokens = tokens.filter(t => t.network === network);
+        }
+        if (tokens.length === 0) throw new Error('Failed to authenticate with iMonetizeIt or network not found')
 
         const data = await getCountryStats(tokens, startDate, endDate, smartlinkId)
 

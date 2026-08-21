@@ -2,7 +2,8 @@
 // Used in development (localhost) to bypass Supabase Edge Functions
 
 const API_CREDENTIALS = [
-    { clientId: 232922, apiKey: '0d92f1bfe4bc4aa894825a66db3aa1e8406eaa66cc084fd06c73f47287c20027' },
+    { clientId: 232922, apiKey: '0d92f1bfe4bc4aa894825a66db3aa1e8406eaa66cc084fd06c73f47287c20027', network: 'IMONETIZEIT' },
+    { clientId: 253423, apiKey: 'fb6a76da0d2f0ae9db4abd239699a5e14520ead232f25e6f4ed936a5da9b8b29', network: 'IMONETIZEIT2' },
 ];
 
 async function getTokens(credentials) {
@@ -15,7 +16,7 @@ async function getTokens(credentials) {
                 body: JSON.stringify({ client_id: cred.clientId, api_key: cred.apiKey }),
             });
             const data = await resp.json();
-            return data.access_token || null;
+            return data.access_token ? { token: data.access_token, network: cred.network } : null;
         } catch (e) {
             console.error('Token fetch error:', e);
             return null;
@@ -29,8 +30,8 @@ async function handleReports(body) {
     const startDate = body.startDate || new Date().toISOString().split('T')[0];
     const endDate = body.endDate || new Date().toISOString().split('T')[0];
 
-    const tokens = await getTokens(API_CREDENTIALS);
-    if (tokens.length === 0) {
+    const tokenObjs = await getTokens(API_CREDENTIALS);
+    if (tokenObjs.length === 0) {
         return { error: 'Failed to authenticate with iMonetizeIt' };
     }
 
@@ -43,7 +44,7 @@ async function handleReports(body) {
         + `&limit=1000`;
 
     const allData = [];
-    for (const token of tokens) {
+    for (const { token, network } of tokenObjs) {
         try {
             const resp = await fetch(baseUrl, {
                 headers: { 'Authorization': `Bearer ${token}` },
@@ -54,7 +55,7 @@ async function handleReports(body) {
                     allData.push({
                         smartlink: row.smartlink || 'Unknown',
                         smartlink_id: row.smartlink_id || null,
-                        network: row.tracker || 'IMONETIZEIT',
+                        network: network,
                         visits: parseInt(row.visits) || 0,
                         unique: parseInt(row.unique || row.unigue || row.uniques) || 0,
                         clicks: parseInt(row.clicks) || 0,
@@ -68,18 +69,18 @@ async function handleReports(body) {
         }
     }
 
-    // Aggregate by smartlink
+    // Aggregate by smartlink + network (keep accounts separate)
     const aggregated = {};
     for (const row of allData) {
-        const name = row.smartlink;
-        if (!aggregated[name]) {
-            aggregated[name] = { ...row };
+        const key = `${row.smartlink}__${row.network}`;
+        if (!aggregated[key]) {
+            aggregated[key] = { ...row };
         } else {
-            aggregated[name].visits += row.visits;
-            aggregated[name].unique += row.unique;
-            aggregated[name].clicks += row.clicks;
-            aggregated[name].leads += row.leads;
-            aggregated[name].payouts += row.payouts;
+            aggregated[key].visits += row.visits;
+            aggregated[key].unique += row.unique;
+            aggregated[key].clicks += row.clicks;
+            aggregated[key].leads += row.leads;
+            aggregated[key].payouts += row.payouts;
         }
     }
 
@@ -92,9 +93,13 @@ async function handleReportCountries(body) {
     const endDate = body.endDate || new Date().toISOString().split('T')[0];
     const smartlinkId = body.smartlinkId;
 
-    const tokens = await getTokens(API_CREDENTIALS);
-    if (tokens.length === 0) {
-        return { error: 'Failed to authenticate with iMonetizeIt' };
+    let tokenObjs = await getTokens(API_CREDENTIALS);
+    if (body.network && body.network.toUpperCase() !== 'TRAFEE') {
+        tokenObjs = tokenObjs.filter(t => t.network === body.network);
+    }
+    
+    if (tokenObjs.length === 0) {
+        return { error: 'Failed to authenticate with iMonetizeIt or network not found' };
     }
 
     let baseUrl = `https://api.imonetizeit.com/v1/statistics/sm`
@@ -110,13 +115,15 @@ async function handleReportCountries(body) {
     }
 
     const countryStats = {};
-    for (const token of tokens) {
+    for (const { token, network } of tokenObjs) {
         try {
+            console.log(`[Local API Debug] Fetching country stats using token for ${network}`);
             const resp = await fetch(baseUrl, {
                 headers: { 'Authorization': `Bearer ${token}` },
             });
             const json = await resp.json();
             if (json.data) {
+                console.log(`[Local API Debug] Received ${json.data.length} country rows for network ${network}`);
                 for (const row of json.data) {
                     const countryCode = row.country || 'XX';
                     if (!countryStats[countryCode]) {
@@ -132,11 +139,14 @@ async function handleReportCountries(body) {
                     countryStats[countryCode].leads += parseInt(row.leads) || 0;
                     countryStats[countryCode].payouts += parseFloat(row.payouts) || 0.0;
                 }
+            } else {
+                console.log(`[Local API Debug] API Error or no data for ${network}:`, json);
             }
         } catch (e) {
             console.error('Stats fetch error:', e);
         }
     }
+    console.log(`[Local API Debug] Final aggregated country stats length: ${Object.keys(countryStats).length}`);
 
     return {
         data: Object.values(countryStats).sort((a, b) => {
@@ -170,11 +180,10 @@ export function localApiProxy() {
                 res.end(JSON.stringify({ success: true, message: 'Welcome to local dev dashboard' }));
             });
 
-            // POST /api/reports
-            server.middlewares.use('/api/reports', async (req, res) => {
-                // Handle CORS
+            // POST/GET /api/daily-reports
+            server.middlewares.use('/api/daily-reports', async (req, res) => {
                 res.setHeader('Access-Control-Allow-Origin', '*');
-                res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+                res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
                 res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
                 if (req.method === 'OPTIONS') {
@@ -184,8 +193,18 @@ export function localApiProxy() {
                 }
 
                 try {
-                    const body = await readBody(req);
-                    console.log('[Local API] /api/reports called:', body);
+                    let body = {};
+                    if (req.method === 'POST') {
+                        body = await readBody(req);
+                    } else if (req.method === 'GET') {
+                        const url = new URL(req.url, `http://${req.headers.host}`);
+                        body = {
+                            startDate: url.searchParams.get('startDate'),
+                            endDate: url.searchParams.get('endDate'),
+                            network: url.searchParams.get('network')
+                        };
+                    }
+                    console.log('[Local API] /api/daily-reports called:', body);
                     const result = await handleReports(body);
                     res.setHeader('Content-Type', 'application/json');
                     res.statusCode = result.error ? 500 : 200;

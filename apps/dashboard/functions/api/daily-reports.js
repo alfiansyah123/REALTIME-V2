@@ -16,7 +16,8 @@ export async function onRequest(context) {
     }
 
     const API_CREDENTIALS = [
-        { clientId: 232922, apiKey: '0d92f1bfe4bc4aa894825a66db3aa1e8406eaa66cc084fd06c73f47287c20027' },
+        { clientId: 232922, apiKey: '0d92f1bfe4bc4aa894825a66db3aa1e8406eaa66cc084fd06c73f47287c20027', network: 'IMONETIZEIT' },
+        { clientId: 253423, apiKey: 'fb6a76da0d2f0ae9db4abd239699a5e14520ead232f25e6f4ed936a5da9b8b29', network: 'IMONETIZEIT2' },
     ];
 
     async function getTokens(credentials) {
@@ -29,41 +30,42 @@ export async function onRequest(context) {
                     body: JSON.stringify({ client_id: cred.clientId, api_key: cred.apiKey }),
                 });
                 const data = await resp.json();
-                return data.access_token || null;
+                return data.access_token ? { token: data.access_token, network: cred.network } : null;
             } catch (e) { return null; }
         });
         const results = await Promise.all(tokenPromises);
         return results.filter(Boolean);
     }
 
-    async function getIMonStats(tokens, start, end) {
+    async function getIMonStats(tokenObjs, start, end) {
         const baseUrl = `https://api.imonetizeit.com/v1/statistics/sm?start_date=${start}&end_date=${end}&segments[]=smartlink&timezone=%2B00%3A00&include_archived=1&limit=1000`;
-        const statsPromises = tokens.map(async (token) => {
+        const statsPromises = tokenObjs.map(async ({ token, network }) => {
             try {
                 const resp = await fetch(baseUrl, { headers: { 'Authorization': `Bearer ${token}` } });
                 const json = await resp.json();
-                return json.data || [];
+                return (json.data || []).map(row => ({ ...row, _accountNetwork: network }));
             } catch (e) { return []; }
         });
         const results = await Promise.all(statsPromises);
         const aggregated = {};
         for (const dataArray of results) {
             for (const row of dataArray) {
-                const name = row.smartlink || 'Unknown';
-                if (!aggregated[name]) {
-                    aggregated[name] = {
-                        smartlink: name,
-                        slug: name,
+                // Key by smartlink name + account network to keep accounts separate
+                const key = `${row.smartlink || 'Unknown'}__${row._accountNetwork || 'IMONETIZEIT'}`;
+                if (!aggregated[key]) {
+                    aggregated[key] = {
+                        smartlink: row.smartlink || 'Unknown',
+                        slug: row.smartlink || 'Unknown',
                         smartlink_id: row.smartlink_id || null,
-                        network: row.tracker || 'IMONETIZEIT',
+                        network: row._accountNetwork || 'IMONETIZEIT',
                         visits: 0, unique: 0, clicks: 0, leads: 0, payouts: 0.0
                     };
                 }
-                aggregated[name].visits += parseInt(row.visits) || 0;
-                aggregated[name].unique += parseInt(row.unique || row.unigue || row.uniques) || 0;
-                aggregated[name].clicks += parseInt(row.clicks) || 0;
-                aggregated[name].leads += parseInt(row.leads) || 0;
-                aggregated[name].payouts += parseFloat(row.payouts) || 0.0;
+                aggregated[key].visits += parseInt(row.visits) || 0;
+                aggregated[key].unique += parseInt(row.unique || row.unigue || row.uniques) || 0;
+                aggregated[key].clicks += parseInt(row.clicks) || 0;
+                aggregated[key].leads += parseInt(row.leads) || 0;
+                aggregated[key].payouts += parseFloat(row.payouts) || 0.0;
             }
         }
         return aggregated;

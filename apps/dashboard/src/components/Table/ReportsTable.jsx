@@ -25,7 +25,11 @@ export default function ReportsTable({ data = [], currency = 'USD', currencyRate
             const end = endDate || new Date().toISOString().split('T')[0];
 
             if (smartlinkId) {
-                const fnData = await api.getReportCountries(start, end, smartlinkId, selectedNetwork);
+                // Gunakan network dari row (bisa IMONETIZEIT atau IMONETIZEIT2)
+                const rowNetwork = row.network || selectedNetwork || 'IMONETIZEIT';
+                console.log(`[DEBUG] Fetching country details for ${smartlinkName} (${smartlinkId}) on network ${rowNetwork}`);
+                const fnData = await api.getReportCountries(start, end, smartlinkId, rowNetwork);
+                console.log(`[DEBUG] Received country details for ${smartlinkName}:`, fnData);
                 if (fnData && Array.isArray(fnData.data)) {
                     setRowDetails(prev => ({ ...prev, [smartlinkName]: fnData.data }));
                     return;

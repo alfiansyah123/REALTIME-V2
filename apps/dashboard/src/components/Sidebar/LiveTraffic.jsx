@@ -5,6 +5,15 @@ const getNetworkIcon = (network) => {
     const iconStyle = { width: '12px', height: '12px', display: 'inline-block' };
     const net = String(network || '').toLowerCase();
     
+    if (net === 'imonetizeit2') {
+        return (
+            <svg viewBox="0 0 100 100" style={iconStyle} fill="#818CF8" className="opacity-80">
+                <circle cx="50" cy="50" r="48" fillOpacity="0.1" stroke="currentColor" strokeWidth="4" />
+                <path d="M25 70V30L50 55L75 30V70" stroke="currentColor" strokeWidth="8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                <circle cx="50" cy="50" r="8" fill="currentColor" />
+            </svg>
+        );
+    }
     if (net.includes('imonetizeit')) {
         return (
             <svg viewBox="0 0 100 100" style={iconStyle} fill="#4ADE80" className="opacity-80">
